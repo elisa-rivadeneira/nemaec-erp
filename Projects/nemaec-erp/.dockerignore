@@ -1,0 +1,37 @@
+# ===================================
+# NEMAEC ERP - .dockerignore
+# ===================================
+
+# Ignorar node_modules y archivos de build
+frontend/node_modules/
+frontend/dist/
+backend/__pycache__/
+backend/.venv/
+backend/venv/
+
+# Archivos de desarrollo
+.git/
+.claude/
+*.log
+*.tmp
+*.cache
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de prueba y desarrollo
+debug_*.py
+analyze_excel.py
+simple_app.py
+*.xlsx
+*.xls
+
+# Base de datos temporal
+/tmp/nemaec_*.json
+*.db
+*.sqlite
+
+# Variables de entorno locales
+.env.local
+.env.development

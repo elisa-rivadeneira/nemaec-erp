@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Cronograma Completo - NEMAEC ERP</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .header { background: #1e40af; color: white; padding: 15px; margin-bottom: 20px; border-radius: 8px; }
+        .stats { display: flex; gap: 20px; margin-bottom: 20px; }
+        .stat-box { background: #f3f4f6; padding: 15px; border-radius: 8px; flex: 1; text-align: center; }
+        .stat-number { font-size: 24px; font-weight: bold; color: #1e40af; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; font-size: 12px; }
+        th { background-color: #f2f2f2; position: sticky; top: 0; }
+        .nivel-1 { background-color: #fee2e2; font-weight: bold; }
+        .nivel-2 { background-color: #fef3c7; font-weight: 600; }
+        .nivel-3 { background-color: #e0f2fe; font-weight: 500; }
+        .nivel-4 { background-color: #f0f9ff; font-weight: normal; }
+        .precio { text-align: right; font-family: monospace; }
+        .search-box { margin-bottom: 20px; padding: 10px; border: 2px solid #1e40af; border-radius: 5px; width: 300px; }
+        .loading { color: #666; font-style: italic; }
+        .error { color: #dc2626; background: #fee2e2; padding: 10px; border-radius: 5px; }
+        .success { color: #16a34a; background: #dcfce7; padding: 10px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📊 Cronograma Valorizado - Comisaría Collique</h1>
+        <p>Verificación completa de importación Excel</p>
+    </div>
+
+    <div class="stats" id="stats">
+        <div class="stat-box">
+            <div class="stat-number" id="totalPartidas">-</div>
+            <div>Total Partidas</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number" id="totalPresupuesto">-</div>
+            <div>Presupuesto Total</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number" id="fechasRango">-</div>
+            <div>Rango Fechas</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number" id="nivelMax">-</div>
+            <div>Niveles Jerarquía</div>
+        </div>
+    </div>
+
+    <div id="mensaje" class="loading">🔄 Cargando cronograma...</div>
+
+    <input type="text" class="search-box" placeholder="🔍 Buscar partida por código o descripción..." id="searchInput" onkeyup="filtrarPartidas()">
+
+    <div style="max-height: 600px; overflow-y: auto;">
+        <table id="tablaPartidas" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Código Interno</th>
+                    <th>Código Partida</th>
+                    <th>Descripción</th>
+                    <th>Unidad</th>
+                    <th>Metrado</th>
+                    <th>P.U.</th>
+                    <th>P. Total</th>
+                    <th>Fecha Inicio</th>
+                    <th>Fecha Fin</th>
+                    <th>Nivel</th>
+                </tr>
+            </thead>
+            <tbody id="cuerpoTabla"></tbody>
+        </table>
+    </div>
+
+    <script>
+        let partidasOriginales = [];
+
+        async function cargarCronograma() {
+            try {
+                const response = await fetch('/api/v1/cronogramas/comisaria/3');
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status}`);
+                }
+
+                const cronograma = await response.json();
+
+                if (!cronograma || !cronograma.partidas) {
+                    throw new Error('No se encontró cronograma para la comisaría 3');
+                }
+
+                partidasOriginales = cronograma.partidas;
+
+                // Actualizar estadísticas
+                document.getElementById('totalPartidas').textContent = cronograma.total_partidas;
+                document.getElementById('totalPresupuesto').textContent =
+                    'S/ ' + cronograma.total_presupuesto.toLocaleString('es-PE', { minimumFractionDigits: 2 });
+
+                // Calcular rango de fechas
+                const fechas = cronograma.partidas.map(p => new Date(p.fecha_inicio));
+                const fechaMin = new Date(Math.min(...fechas));
+                const fechaMax = new Date(Math.max(...fechas.map(p => new Date(cronograma.partidas.find(x => x.fecha_inicio === p.fecha_inicio).fecha_fin))));
+                document.getElementById('fechasRango').textContent =
+                    fechaMin.toLocaleDateString('es-PE') + ' - ' + fechaMax.toLocaleDateString('es-PE');
+
+                // Calcular nivel máximo
+                const nivelMax = Math.max(...cronograma.partidas.map(p => p.nivel_jerarquia));
+                document.getElementById('nivelMax').textContent = nivelMax + ' niveles';
+
+                // Mostrar partidas
+                mostrarPartidas(cronograma.partidas);
+
+                document.getElementById('mensaje').innerHTML =
+                    `<div class="success">✅ Cronograma cargado exitosamente: ${cronograma.nombre_cronograma}</div>`;
+
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('mensaje').innerHTML =
+                    `<div class="error">❌ Error al cargar cronograma: ${error.message}</div>`;
+            }
+        }
+
+        function mostrarPartidas(partidas) {
+            const cuerpoTabla = document.getElementById('cuerpoTabla');
+            const tabla = document.getElementById('tablaPartidas');
+
+            cuerpoTabla.innerHTML = partidas.map(partida => {
+                const fechaInicio = new Date(partida.fecha_inicio).toLocaleDateString('es-PE');
+                const fechaFin = new Date(partida.fecha_fin).toLocaleDateString('es-PE');
+                const claseNivel = `nivel-${partida.nivel_jerarquia}`;
+
+                return `
+                    <tr class="${claseNivel}">
+                        <td>${partida.codigo_interno}</td>
+                        <td><strong>${partida.codigo_partida}</strong></td>
+                        <td>${partida.descripcion}</td>
+                        <td>${partida.unidad}</td>
+                        <td class="precio">${partida.metrado.toFixed(2)}</td>
+                        <td class="precio">S/ ${partida.precio_unitario.toFixed(2)}</td>
+                        <td class="precio"><strong>S/ ${partida.precio_total.toFixed(2)}</strong></td>
+                        <td>${fechaInicio}</td>
+                        <td>${fechaFin}</td>
+                        <td>${partida.nivel_jerarquia}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            tabla.style.display = 'table';
+        }
+
+        function filtrarPartidas() {
+            const busqueda = document.getElementById('searchInput').value.toLowerCase();
+            const partidasFiltradas = partidasOriginales.filter(partida =>
+                partida.codigo_interno.toLowerCase().includes(busqueda) ||
+                partida.codigo_partida.toLowerCase().includes(busqueda) ||
+                partida.descripcion.toLowerCase().includes(busqueda)
+            );
+
+            mostrarPartidas(partidasFiltradas);
+
+            // Mostrar resultado del filtro
+            if (busqueda) {
+                document.getElementById('mensaje').innerHTML =
+                    `<div class="success">🔍 Mostrando ${partidasFiltradas.length} de ${partidasOriginales.length} partidas</div>`;
+            } else {
+                document.getElementById('mensaje').innerHTML =
+                    `<div class="success">📋 Mostrando todas las ${partidasOriginales.length} partidas</div>`;
+            }
+        }
+
+        // Cargar automáticamente al iniciar
+        document.addEventListener('DOMContentLoaded', cargarCronograma);
+    </script>
+</body>
+</html>

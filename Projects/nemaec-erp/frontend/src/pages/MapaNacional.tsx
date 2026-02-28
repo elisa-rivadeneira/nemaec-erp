@@ -1,0 +1,526 @@
+/**
+ * 🗺️ MAPA NACIONAL - NEMAEC ERP
+ * Vista de mapa nacional mostrando todas las comisarías con pins de Google Maps.
+ */
+import React, { useState, useEffect, useMemo, useRef } from 'react';
+import {
+  MapPinIcon,
+  FunnelIcon,
+  ArrowPathIcon,
+  EyeIcon,
+  PencilIcon,
+  BuildingOfficeIcon
+} from '@heroicons/react/24/outline';
+import {
+  MapPinIcon as MapPinIconSolid,
+  BuildingOfficeIcon as BuildingOfficeIconSolid
+} from '@heroicons/react/24/solid';
+
+import { useComisarias } from '@/hooks/useComisarias';
+import Button from '@/components/ui/Button';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import ComisariaModal from '@/components/comisarias/ComisariaModal';
+import type { Comisaria } from '@/types/comisarias';
+import type { MapLocation } from '@/data/mockLocations';
+
+const MapaNacional: React.FC = () => {
+  const [selectedComisaria, setSelectedComisaria] = useState<Comisaria | null>(null);
+  const [modalMode, setModalMode] = useState<'view' | 'edit' | null>(null);
+  const [filterDepartamento, setFilterDepartamento] = useState<string>('all');
+  const [filterEstado, setFilterEstado] = useState<string>('all');
+  const [mapInstance, setMapInstance] = useState<any>(null);
+  const markersRef = useRef<any[]>([]);
+  const [selectedMapLocation, setSelectedMapLocation] = useState<MapLocation | null>(null);
+
+  const { data: comisarias = [], isLoading, error, refetch } = useComisarias();
+
+  // Convertir comisarías a formato de mapa usando useMemo para evitar recálculos
+  const comisariasMapFormat: MapLocation[] = useMemo(() => {
+    return comisarias
+      .filter(comisaria => !!comisaria.ubicacion?.coordenadas) // Solo las que tienen coordenadas
+    .map(comisaria => ({
+      id: comisaria.id.toString(),
+      name: comisaria.nombre,
+      address: comisaria.ubicacion.direccion,
+      coordinates: {
+        lat: comisaria.ubicacion.coordenadas!.lat,
+        lng: comisaria.ubicacion.coordenadas!.lng
+      },
+      type: comisaria.tipo as any,
+      distrito: comisaria.ubicacion.distrito,
+      provincia: comisaria.ubicacion.provincia,
+      departamento: comisaria.ubicacion.departamento,
+      comisaria: comisaria // Referencia a la comisaría original
+    }));
+  }, [comisarias]);
+
+  // Filtrar comisarías según los filtros seleccionados
+  const filteredMapLocations = comisariasMapFormat.filter(location => {
+    const matchesDepartamento = filterDepartamento === 'all' ||
+                               location.departamento === filterDepartamento;
+    const matchesEstado = filterEstado === 'all' ||
+                         (location.comisaria as Comisaria).estado === filterEstado;
+
+    return matchesDepartamento && matchesEstado;
+  });
+
+  // Obtener departamentos únicos para el filtro
+  const departamentosUnicos = Array.from(
+    new Set(comisarias.map(c => c.ubicacion.departamento))
+  ).sort();
+
+  // Inicializar Google Maps
+  useEffect(() => {
+    const initMap = async () => {
+      // Esperar a que Google Maps esté disponible
+      while (!window.google?.maps) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+
+      const mapElement = document.getElementById('national-map');
+      if (!mapElement) return;
+
+      const map = new window.google.maps.Map(mapElement, {
+        center: { lat: -12.0464, lng: -77.0428 }, // Centro de Lima, Perú
+        zoom: 6, // Vista nacional
+        mapTypeControl: true,
+        streetViewControl: true,
+        fullscreenControl: true,
+        zoomControl: true,
+        draggable: true,
+        scrollwheel: true,
+        disableDoubleClickZoom: false,
+        gestureHandling: 'auto',
+      });
+
+      setMapInstance(map);
+    };
+
+    // Cargar script de Google Maps si no existe
+    if (!window.google?.maps) {
+      const script = document.createElement('script');
+      const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
+      script.async = true;
+      script.onload = initMap;
+      document.head.appendChild(script);
+    } else {
+      initMap();
+    }
+  }, []);
+
+  // Actualizar marcadores cuando cambien las comisarías filtradas
+  useEffect(() => {
+    if (!mapInstance || !filteredMapLocations.length) return;
+
+    // Limpiar marcadores existentes
+    markersRef.current.forEach(marker => marker.setMap(null));
+    markersRef.current = [];
+
+    const newMarkers: any[] = [];
+    const bounds = new window.google.maps.LatLngBounds();
+
+    filteredMapLocations.forEach((location) => {
+      const comisaria = location.comisaria as Comisaria;
+
+      // Crear marcador con colores según estado
+      const getMarkerColor = (estado: string) => {
+        switch (estado) {
+          case 'completada': return '#10B981'; // Verde
+          case 'en_proceso': return '#3B82F6'; // Azul
+          case 'pendiente': return '#F59E0B'; // Amarillo
+          default: return '#EF4444'; // Rojo
+        }
+      };
+
+      const marker = new window.google.maps.Marker({
+        position: location.coordinates,
+        map: mapInstance,
+        title: location.name,
+        animation: window.google.maps.Animation.DROP,
+        icon: {
+          url: `data:image/svg+xml,${encodeURIComponent(`
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32">
+              <path fill="${getMarkerColor(comisaria.estado)}" stroke="#fff" stroke-width="2"
+                    d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+              <circle cx="12" cy="9" r="3" fill="#fff"/>
+            </svg>
+          `)}`
+        }
+      });
+
+      // InfoWindow con información de la comisaría
+      const infoWindow = new window.google.maps.InfoWindow({
+        content: `
+          <div style="padding: 16px; max-width: 300px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+            <div style="margin-bottom: 16px;">
+              <img src="${comisaria.foto_url}"
+                   alt="${location.name}"
+                   style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"
+                   onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+              <div style="width: 100%; height: 120px; background: linear-gradient(135deg, ${getMarkerColor(comisaria.estado)}, ${getMarkerColor(comisaria.estado)}CC); border-radius: 8px; display: none; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                <span style="font-size: 48px;">🏛️</span>
+              </div>
+            </div>
+            <div style="text-align: center; margin-bottom: 12px;">
+              <h3 style="font-weight: 600; color: #111827; margin: 0; font-size: 16px;">${location.name}</h3>
+              <div style="color: #6B7280; font-size: 12px; margin-top: 4px;">${comisaria.codigo} • ${comisaria.tipo}</div>
+            </div>
+            <div style="color: #374151; font-size: 13px; line-height: 1.4; margin-bottom: 12px;">
+              <div style="margin-bottom: 6px;"><strong>Estado:</strong> ${comisaria.estado.replace('_', ' ')}</div>
+              <div style="margin-bottom: 6px;"><strong>Ubicación:</strong> ${location.address}</div>
+              <div style="margin-bottom: 6px;"><strong>Distrito:</strong> ${location.distrito}, ${location.provincia}</div>
+              <div style="margin-bottom: 6px;"><strong>Departamento:</strong> ${location.departamento}</div>
+              <div><strong>Presupuesto:</strong> S/ ${comisaria.presupuesto_total?.toLocaleString('es-PE', { minimumFractionDigits: 2 }) || '0.00'}</div>
+            </div>
+            <div style="display: flex; gap: 8px; justify-content: center;">
+              <button onclick="window.viewComisaria(${comisaria.id})"
+                      style="padding: 8px 16px; background-color: #2563EB; color: white; font-size: 12px; border-radius: 6px; border: none; cursor: pointer; font-weight: 500;">
+                👁️ Ver
+              </button>
+              <button onclick="window.editComisaria(${comisaria.id})"
+                      style="padding: 8px 16px; background-color: #059669; color: white; font-size: 12px; border-radius: 6px; border: none; cursor: pointer; font-weight: 500;">
+                ✏️ Editar
+              </button>
+            </div>
+          </div>
+        `
+      });
+
+      marker.addListener('click', () => {
+        // Cerrar otros InfoWindows
+        markersRef.current.forEach(m => m.infoWindow?.close());
+
+        // Centrar mapa en el marcador con offset para evitar que el InfoWindow se corte
+        const offsetLat = location.coordinates.lat + 0.5; // Offset hacia abajo
+        mapInstance.setCenter({ lat: offsetLat, lng: location.coordinates.lng });
+        mapInstance.setZoom(8); // Zoom intermedio para mejor visualización
+
+        // Abrir InfoWindow después de centrar
+        setTimeout(() => {
+          infoWindow.open(mapInstance, marker);
+        }, 300);
+
+        setSelectedMapLocation(location);
+      });
+
+      marker.infoWindow = infoWindow;
+      newMarkers.push(marker);
+      bounds.extend(location.coordinates);
+    });
+
+    markersRef.current = newMarkers;
+
+    // Limpiar listeners previos y agregar nuevo listener para cerrar InfoWindows
+    window.google.maps.event.clearListeners(mapInstance, 'click');
+    mapInstance.addListener('click', (event: any) => {
+      // Solo cerrar si el click no fue en un marcador
+      if (!event.placeId) {
+        markersRef.current.forEach(marker => marker.infoWindow?.close());
+      }
+    });
+
+    // Ajustar vista para mostrar todos los marcadores
+    if (filteredMapLocations.length > 0) {
+      mapInstance.fitBounds(bounds);
+
+      // Ajustar zoom mínimo para vista nacional
+      const listener = window.google.maps.event.addListenerOnce(mapInstance, 'idle', () => {
+        if (mapInstance.getZoom() > 12) mapInstance.setZoom(12);
+        if (mapInstance.getZoom() < 5) mapInstance.setZoom(5);
+      });
+    }
+  }, [mapInstance, filteredMapLocations]);
+
+  // Funciones globales para los botones del InfoWindow
+  useEffect(() => {
+    (window as any).viewComisaria = (id: number) => {
+      const comisaria = comisarias.find(c => c.id === id);
+      if (comisaria) {
+        setSelectedComisaria(comisaria);
+        setModalMode('view');
+      }
+    };
+
+    (window as any).editComisaria = (id: number) => {
+      const comisaria = comisarias.find(c => c.id === id);
+      if (comisaria) {
+        setSelectedComisaria(comisaria);
+        setModalMode('edit');
+      }
+    };
+
+    return () => {
+      delete (window as any).viewComisaria;
+      delete (window as any).editComisaria;
+    };
+  }, [comisarias]);
+
+  const handleView = (comisaria: Comisaria) => {
+    setSelectedComisaria(comisaria);
+    setModalMode('view');
+  };
+
+  const handleEdit = (comisaria: Comisaria) => {
+    setSelectedComisaria(comisaria);
+    setModalMode('edit');
+  };
+
+  const closeModal = () => {
+    setSelectedComisaria(null);
+    setModalMode(null);
+  };
+
+  const getEstadoBadge = (estado: string) => {
+    const styles = {
+      pendiente: 'bg-yellow-100 text-yellow-700 border-yellow-200',
+      en_proceso: 'bg-blue-100 text-blue-700 border-blue-200',
+      completada: 'bg-green-100 text-green-700 border-green-200',
+    };
+    return styles[estado as keyof typeof styles] || styles.pendiente;
+  };
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-6xl mb-4">🗺️</div>
+          <h3 className="text-xl font-bold text-red-600 mb-2">Error al cargar el mapa</h3>
+          <p className="text-gray-600 mb-4">Ha ocurrido un error al obtener los datos de comisarías.</p>
+          <Button onClick={() => refetch()} variant="primary">
+            Reintentar
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white shadow-sm border-b border-gray-200">
+        <div className="px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                <MapPinIconSolid className="w-6 h-6 text-blue-600" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">Mapa Nacional NEMAEC</h1>
+                <p className="text-sm text-gray-600">
+                  Vista geográfica de las {comisarias.length} comisarías del proyecto
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-3">
+              <span className="text-sm text-gray-600">
+                Mostrando {filteredMapLocations.length} comisarías
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => refetch()}
+                leftIcon={<ArrowPathIcon className="w-4 h-4" />}
+                loading={isLoading}
+              >
+                Actualizar
+              </Button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Filtros */}
+      <div className="px-6 py-4 bg-white border-b border-gray-200">
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex items-center space-x-2">
+            <FunnelIcon className="w-4 h-4 text-gray-400" />
+            <span className="text-sm font-medium text-gray-700">Filtros:</span>
+          </div>
+
+          {/* Filtro por Departamento */}
+          <div className="sm:w-48">
+            <select
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+              value={filterDepartamento}
+              onChange={(e) => setFilterDepartamento(e.target.value)}
+            >
+              <option value="all">Todos los departamentos</option>
+              {departamentosUnicos.map(dept => (
+                <option key={dept} value={dept}>{dept}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Filtro por Estado */}
+          <div className="sm:w-48">
+            <select
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+              value={filterEstado}
+              onChange={(e) => setFilterEstado(e.target.value)}
+            >
+              <option value="all">Todos los estados</option>
+              <option value="pendiente">Pendientes</option>
+              <option value="en_proceso">En Proceso</option>
+              <option value="completada">Completadas</option>
+            </select>
+          </div>
+
+          {/* Leyenda de colores */}
+          <div className="flex items-center space-x-4 ml-auto">
+            <div className="text-xs text-gray-600">Leyenda:</div>
+            <div className="flex items-center space-x-1">
+              <div className="w-3 h-3 rounded-full bg-green-500"></div>
+              <span className="text-xs text-gray-600">Completadas</span>
+            </div>
+            <div className="flex items-center space-x-1">
+              <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+              <span className="text-xs text-gray-600">En Proceso</span>
+            </div>
+            <div className="flex items-center space-x-1">
+              <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+              <span className="text-xs text-gray-600">Pendientes</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Contenido Principal */}
+      <div className="flex h-[calc(100vh-200px)]">
+        {/* Panel Lateral de Comisarías */}
+        <div className="w-80 bg-white border-r border-gray-200 overflow-y-auto">
+          <div className="p-4 border-b border-gray-200">
+            <h2 className="font-semibold text-gray-800 flex items-center space-x-2">
+              <BuildingOfficeIconSolid className="w-5 h-5 text-blue-600" />
+              <span>Comisarías ({filteredMapLocations.length})</span>
+            </h2>
+          </div>
+
+          <div className="divide-y divide-gray-200">
+            {isLoading ? (
+              <div className="flex items-center justify-center py-12">
+                <LoadingSpinner />
+              </div>
+            ) : filteredMapLocations.length === 0 ? (
+              <div className="text-center py-12">
+                <BuildingOfficeIcon className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                <p className="text-gray-500 text-sm">
+                  No hay comisarías con los filtros seleccionados
+                </p>
+              </div>
+            ) : (
+              filteredMapLocations.map((location) => {
+                const comisaria = location.comisaria as Comisaria;
+                const isSelected = selectedMapLocation?.id === location.id;
+
+                return (
+                  <div
+                    key={location.id}
+                    onClick={() => {
+                      setSelectedMapLocation(location);
+                      if (mapInstance) {
+                        mapInstance.setCenter(location.coordinates);
+                        mapInstance.setZoom(16);
+                      }
+                    }}
+                    className={`p-4 cursor-pointer transition-colors ${
+                      isSelected ? 'bg-blue-50 border-l-4 border-l-blue-500' : 'hover:bg-gray-50'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center space-x-2 mb-1">
+                          <h3 className="font-medium text-gray-900 text-sm truncate">
+                            {location.name}
+                          </h3>
+                          <span className={`px-2 py-0.5 text-xs rounded-full border ${getEstadoBadge(comisaria.estado)}`}>
+                            {comisaria.estado.replace('_', ' ')}
+                          </span>
+                        </div>
+                        <div className="text-xs text-gray-600 mb-1">
+                          {location.distrito}, {location.provincia}
+                        </div>
+                        <div className="text-xs text-gray-500 mb-2">
+                          {location.departamento}
+                        </div>
+                        <div className="text-xs font-medium text-gray-700">
+                          S/ {comisaria.presupuesto_total.toLocaleString('es-PE', { minimumFractionDigits: 2 })}
+                        </div>
+                      </div>
+                      <div className="flex flex-col space-y-1">
+                        <Button
+                          variant="ghost"
+                          size="xs"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleView(comisaria);
+                          }}
+                          leftIcon={<EyeIcon className="w-3 h-3" />}
+                        >
+                          Ver
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="xs"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEdit(comisaria);
+                          }}
+                          leftIcon={<PencilIcon className="w-3 h-3" />}
+                        >
+                          Editar
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </div>
+
+        {/* Mapa */}
+        <div className="flex-1 relative">
+          <div id="national-map" className="w-full h-full" />
+
+          {isLoading && (
+            <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center">
+              <div className="text-center">
+                <LoadingSpinner size="lg" />
+                <div className="mt-2 text-gray-600">Cargando mapa nacional...</div>
+              </div>
+            </div>
+          )}
+
+          {/* Info de comisaría seleccionada */}
+          {selectedMapLocation && (
+            <div className="absolute top-4 right-4 bg-white rounded-lg shadow-lg border border-gray-200 p-4 max-w-sm">
+              <div className="flex items-center space-x-2 mb-2">
+                <MapPinIconSolid className="w-5 h-5 text-blue-600" />
+                <h3 className="font-semibold text-gray-900">{selectedMapLocation.name}</h3>
+              </div>
+              <div className="space-y-1 text-sm text-gray-600">
+                <div>{selectedMapLocation.address}</div>
+                <div>{selectedMapLocation.distrito}, {selectedMapLocation.provincia}</div>
+                <div className="font-medium">{selectedMapLocation.departamento}</div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Modal */}
+      {modalMode && selectedComisaria && (
+        <ComisariaModal
+          isOpen={true}
+          onClose={closeModal}
+          mode={modalMode}
+          comisaria={selectedComisaria}
+        />
+      )}
+    </div>
+  );
+};
+
+export default MapaNacional;

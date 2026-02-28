@@ -1,0 +1,117 @@
+# ===================================
+# NEMAEC ERP - .gitignore
+# ===================================
+
+# Ignorar TODO fuera del directorio del proyecto
+/**/../../*
+/**/../*
+
+# ========== PYTHON / BACKEND ==========
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+backend/venv/
+backend/env/
+backend/ENV/
+backend/.venv/
+backend/.env
+venv/
+env/
+ENV/
+.venv/
+.env
+
+# Environment variables
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+/tmp/nemaec_*.json
+
+# ========== NODE.JS / FRONTEND ==========
+# Dependencies
+frontend/node_modules/
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Production builds
+frontend/dist/
+frontend/build/
+dist/
+build/
+
+# ========== ARCHIVOS TEMPORALES ==========
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.cache
+
+# ========== ARCHIVOS SENSIBLES ==========
+# Archivos de configuración con datos sensibles
+config/secrets.json
+*.key
+*.pem
+*.p12
+
+# ========== IDE ==========
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.claude/
+.claude.json*
+
+# ========== LOGS ==========
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ========== ARCHIVOS ESPECÍFICOS DEL PROYECTO ==========
+# Archivos Excel de prueba
+*.xlsx
+*.xls
+
+# Archivos de debug
+analyze_excel.py
+debug_*.py
+simple_app.py

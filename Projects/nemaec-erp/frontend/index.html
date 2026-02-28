@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/nemaec-logo.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Metadatos para NEMAEC -->
+    <title>NEMAEC ERP - Núcleo Ejecutor de Mantenimiento, Acondicionamiento y Equipamiento de Comisarías</title>
+    <meta name="description" content="Sistema ERP Nacional para el mantenimiento y equipamiento de 132 comisarías PNP en todo el Perú" />
+    <meta name="keywords" content="NEMAEC, ERP, comisarías, PNP, Policía Nacional, mantenimiento, equipamiento, Perú" />
+    <meta name="author" content="NEMAEC - Ministerio del Interior" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://erp.nemaec.gob.pe/" />
+    <meta property="og:title" content="NEMAEC ERP - Sistema Nacional de Comisarías" />
+    <meta property="og:description" content="Monitoreo en tiempo real del proyecto de mejora de 132 comisarías PNP" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:title" content="NEMAEC ERP - Sistema Nacional" />
+    <meta property="twitter:description" content="Dashboard ejecutivo para el seguimiento de comisarías PNP" />
+
+    <!-- Seguridad -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://maps.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://maps.gstatic.com https://maps.googleapis.com; connect-src 'self' http://localhost:8000 http://localhost:8001 http://localhost:8002 https://maps.googleapis.com;" />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="X-Frame-Options" content="DENY" />
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+
+    <!-- PWA Support -->
+    <meta name="theme-color" content="#1B5E20" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="NEMAEC ERP" />
+
+    <!-- Preload critical fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+    <!-- Critical CSS inlined for better performance -->
+    <style>
+      /* Critical CSS para evitar FOUC */
+      html, body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Inter', system-ui, sans-serif;
+        background: linear-gradient(135deg, #263238 0%, #000000 100%);
+        color: white;
+        overflow-x: hidden;
+      }
+
+      /* Loading spinner */
+      .loading-spinner {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 9999;
+      }
+
+      .spinner {
+        width: 50px;
+        height: 50px;
+        border: 3px solid #455A64;
+        border-top: 3px solid #4CAF50;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+      /* NEMAEC Logo en loading */
+      .nemaec-logo {
+        width: 80px;
+        height: 80px;
+        background: #FFC107;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        margin: 0 auto 20px;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.05); opacity: 0.9; }
+      }
+
+      .loading-text {
+        text-align: center;
+        color: #ECEFF1;
+        font-size: 1.125rem;
+        font-weight: 600;
+        margin-top: 16px;
+      }
+
+      .loading-subtext {
+        text-align: center;
+        color: #90A4AE;
+        font-size: 0.875rem;
+        margin-top: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Loading Screen -->
+    <div id="initial-loading" class="loading-spinner">
+      <div class="nemaec-logo">🏛️</div>
+      <div class="spinner"></div>
+      <div class="loading-text">NEMAEC ERP</div>
+      <div class="loading-subtext">Cargando Sistema Nacional...</div>
+    </div>
+
+    <!-- React App Root -->
+    <div id="root"></div>
+
+    <!-- Scripts -->
+    <script type="module" src="/src/main.tsx"></script>
+
+    <!-- Remove loading screen once React loads -->
+    <script>
+      window.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+          const loading = document.getElementById('initial-loading');
+          if (loading) {
+            loading.style.opacity = '0';
+            loading.style.transition = 'opacity 0.5s ease-out';
+            setTimeout(() => {
+              loading.remove();
+            }, 500);
+          }
+        }, 1500); // Mínimo 1.5s de loading para mostrar identidad
+      });
+
+      // Service Worker para PWA (futuro)
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          // navigator.serviceWorker.register('/sw.js');
+        });
+      }
+
+      // Error tracking básico
+      window.addEventListener('error', (e) => {
+        console.error('NEMAEC ERP Error:', e.error);
+        // En producción: enviar a sistema de monitoring
+      });
+
+      // Performance monitoring
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          const perfData = performance.getEntriesByType('navigation')[0];
+          console.log('NEMAEC ERP Load Time:', perfData.loadEventEnd - perfData.fetchStart, 'ms');
+        }, 0);
+      });
+    </script>
+  </body>
+</html>

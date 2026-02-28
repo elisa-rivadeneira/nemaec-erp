@@ -102,26 +102,26 @@ async def root():
             return {"message": "NEMAEC ERP API", "docs": "/docs"}
 
 
-# 🎯 Catch-all DISABLED temporarily to test health endpoint
-# @app.get("/{path:path}", include_in_schema=False)
-# async def catch_all(path: str):
-#     """
-#     Manejar rutas del frontend React (SPA routing)
-#     Devolver index.html para cualquier ruta que no sea API
-#     """
-#     # Excluir rutas de API - usar == para rutas exactas health y metrics
-#     if (path.startswith("api/") or path.startswith("docs") or path.startswith("redoc") or
-#         path == "health" or path == "metrics" or path.startswith("openapi")):
-#         from fastapi import HTTPException
-#         raise HTTPException(status_code=404, detail="Not found")
-#
-#     static_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "static")
-#     index_path = os.path.join(static_dir, "index.html")
-#
-#     if os.path.exists(index_path):
-#         return FileResponse(index_path)
-#     else:
-#         return {"error": "Frontend not found"}
+# 🎯 Catch-all para SPA routing (React Router) - REACTIVATED
+@app.get("/{path:path}", include_in_schema=False)
+async def catch_all(path: str):
+    """
+    Manejar rutas del frontend React (SPA routing)
+    Devolver index.html para cualquier ruta que no sea API
+    """
+    # Excluir rutas de API - usar == para rutas exactas health y metrics
+    if (path.startswith("api/") or path.startswith("docs") or path.startswith("redoc") or
+        path == "health" or path == "metrics" or path.startswith("openapi")):
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail="Not found")
+
+    static_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "static")
+    index_path = os.path.join(static_dir, "index.html")
+
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
+    else:
+        return {"error": "Frontend not found", "static_dir": static_dir}
 
 
 # 🩺 Health check

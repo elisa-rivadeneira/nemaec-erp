@@ -84,7 +84,13 @@ from fastapi.responses import FileResponse
 # Montar archivos estáticos del frontend React
 static_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "static")
 if os.path.exists(static_dir):
+    # Montar tanto /static como /assets para compatibilidad con Vite
     app.mount("/static", StaticFiles(directory=static_dir), name="static")
+
+    # Montar assets específicamente para archivos JS/CSS de Vite
+    assets_dir = os.path.join(static_dir, "assets")
+    if os.path.exists(assets_dir):
+        app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
 
 
 # 🏠 Ruta raíz - Servir index.html del frontend
@@ -121,8 +127,9 @@ async def catch_all(path: str):
     Manejar rutas del frontend React (SPA routing)
     Devolver index.html para cualquier ruta que no sea API
     """
-    # Excluir rutas de API - usar == para rutas exactas health y metrics
+    # Excluir rutas de API y assets estáticos
     if (path.startswith("api/") or path.startswith("docs") or path.startswith("redoc") or
+        path.startswith("assets/") or path.startswith("static/") or
         path == "health" or path == "metrics" or path.startswith("openapi")):
         from fastapi import HTTPException
         raise HTTPException(status_code=404, detail="Not found")

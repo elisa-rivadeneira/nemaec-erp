@@ -24,9 +24,13 @@ async def lifespan(app: FastAPI):
     print(f"🚀 Iniciando {settings.PROJECT_NAME} v{settings.VERSION}")
     print(f"🌍 Entorno: {settings.ENVIRONMENT}")
 
-    # Activar base de datos SQLite
-    await init_db()
-    print("🗄️ Base de datos SQLite inicializada")
+    # Intentar activar base de datos SQLite
+    try:
+        await init_db()
+        print("🗄️ Base de datos SQLite inicializada")
+    except Exception as e:
+        print(f"⚠️ Error inicializando base de datos (continuando sin BD): {e}")
+        # Continuar sin base de datos - mejor que fallar completamente
 
     yield
 

@@ -171,8 +171,8 @@ class Settings(BaseSettings):
             return self.DATABASE_URL
 
         # Si no hay DATABASE_URL específica, usar SQLite como fallback seguro
-        # Esto es útil para deployments simples sin base de datos externa
-        return "sqlite+aiosqlite:///./nemaec_erp.db"
+        # Usar /tmp/ que siempre tiene permisos de escritura en contenedores
+        return "sqlite+aiosqlite:////tmp/nemaec_erp.db"
 
         # Código comentado - PostgreSQL requiere servidor dedicado
         # return (

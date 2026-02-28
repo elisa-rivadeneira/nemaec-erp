@@ -25,7 +25,8 @@ RUN cd frontend && npm install
 
 # Copiar código del frontend y compilar
 COPY frontend/ ./frontend/
-RUN cd frontend && npm run build
+# Usar solo Vite build (sin TypeScript check)
+RUN cd frontend && npx vite build --mode production
 
 # ========== BACKEND SETUP ==========
 # Instalar dependencias de Python

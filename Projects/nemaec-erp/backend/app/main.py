@@ -107,7 +107,15 @@ async def root():
     print(f"📂 DEBUG - index_path: {index_path}")
     print(f"📂 DEBUG - static_dir exists: {os.path.exists(static_dir)}")
     if os.path.exists(static_dir):
-        print(f"📂 DEBUG - static_dir contents: {os.listdir(static_dir)}")
+        static_contents = os.listdir(static_dir)
+        print(f"📂 DEBUG - static_dir contents: {static_contents}")
+
+        # Check if assets directory exists
+        assets_dir = os.path.join(static_dir, "assets")
+        print(f"📂 DEBUG - assets_dir: {assets_dir}")
+        print(f"📂 DEBUG - assets_dir exists: {os.path.exists(assets_dir)}")
+        if os.path.exists(assets_dir):
+            print(f"📂 DEBUG - assets contents: {os.listdir(assets_dir)}")
     print(f"📂 DEBUG - index.html exists: {os.path.exists(index_path)}")
 
     if os.path.exists(index_path):

@@ -96,6 +96,15 @@ async def root():
     static_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "static")
     index_path = os.path.join(static_dir, "index.html")
 
+    # Debug - listar contenido del directorio static
+    import os
+    print(f"📂 DEBUG - static_dir: {static_dir}")
+    print(f"📂 DEBUG - index_path: {index_path}")
+    print(f"📂 DEBUG - static_dir exists: {os.path.exists(static_dir)}")
+    if os.path.exists(static_dir):
+        print(f"📂 DEBUG - static_dir contents: {os.listdir(static_dir)}")
+    print(f"📂 DEBUG - index.html exists: {os.path.exists(index_path)}")
+
     if os.path.exists(index_path):
         return FileResponse(index_path)
     else:
@@ -103,7 +112,7 @@ async def root():
         if settings.DEBUG:
             return RedirectResponse(url="/docs")
         else:
-            return {"message": "NEMAEC ERP API", "docs": "/docs"}
+            return {"error": "Frontend not found", "static_dir": static_dir, "debug": True}
 
 
 # 🎯 Catch-all para SPA routing (React Router) - REACTIVATED

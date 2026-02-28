@@ -73,20 +73,53 @@ app.add_middleware(
 #     return response
 
 
-# 📁 Servir archivos estáticos (uploads) - Temporalmente deshabilitado
-# app.mount("/uploads", StaticFiles(directory=settings.UPLOAD_DIR), name="uploads")
+# 📁 Servir archivos estáticos del frontend
+import os
+from fastapi.responses import FileResponse
+
+# Montar archivos estáticos del frontend React
+static_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "static")
+if os.path.exists(static_dir):
+    app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 
-# 🏠 Ruta raíz
+# 🏠 Ruta raíz - Servir index.html del frontend
 @app.get("/", include_in_schema=False)
 async def root():
     """
-    Redirigir a documentación o dashboard según entorno.
+    Servir la aplicación React desde index.html
     """
-    if settings.DEBUG:
-        return RedirectResponse(url="/docs")
+    static_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "static")
+    index_path = os.path.join(static_dir, "index.html")
+
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
     else:
-        return RedirectResponse(url="/dashboard")
+        # Fallback a documentación si no existe el frontend
+        if settings.DEBUG:
+            return RedirectResponse(url="/docs")
+        else:
+            return {"message": "NEMAEC ERP API", "docs": "/docs"}
+
+
+# 🎯 Catch-all para SPA routing (React Router)
+@app.get("/{path:path}", include_in_schema=False)
+async def catch_all(path: str):
+    """
+    Manejar rutas del frontend React (SPA routing)
+    Devolver index.html para cualquier ruta que no sea API
+    """
+    # Excluir rutas de API
+    if path.startswith("api/") or path.startswith("docs") or path.startswith("redoc") or path.startswith("health") or path.startswith("metrics"):
+        return {"error": "Not found"}
+
+    static_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "static")
+    index_path = os.path.join(static_dir, "index.html")
+
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
+    else:
+        return {"error": "Frontend not found"}
 
 
 # 🩺 Health check

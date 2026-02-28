@@ -165,14 +165,20 @@ class Settings(BaseSettings):
     def database_url(self) -> str:
         """
         Construye la URL de base de datos si no se proporciona una completa.
+        En producción sin DATABASE_URL, usa SQLite como fallback.
         """
         if self.DATABASE_URL:
             return self.DATABASE_URL
 
-        return (
-            f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASSWORD}"
-            f"@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
-        )
+        # Si no hay DATABASE_URL específica, usar SQLite como fallback seguro
+        # Esto es útil para deployments simples sin base de datos externa
+        return "sqlite+aiosqlite:///./nemaec_erp.db"
+
+        # Código comentado - PostgreSQL requiere servidor dedicado
+        # return (
+        #     f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASSWORD}"
+        #     f"@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+        # )
 
     @property
     def is_production(self) -> bool:

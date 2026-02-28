@@ -97,7 +97,6 @@ async def root():
     index_path = os.path.join(static_dir, "index.html")
 
     # Debug - listar contenido del directorio static
-    import os
     print(f"📂 DEBUG - static_dir: {static_dir}")
     print(f"📂 DEBUG - index_path: {index_path}")
     print(f"📂 DEBUG - static_dir exists: {os.path.exists(static_dir)}")

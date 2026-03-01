@@ -290,6 +290,20 @@ export const cronogramaService = {
     }
   },
 
+  // Obtener cronograma por ID específico (CON partidas)
+  async getCronogramaById(cronogramaId: number): Promise<CronogramaValorizado | null> {
+    console.log(`🔗 Consultando API: GET /cronogramas/${cronogramaId}`);
+    try {
+      return await apiCall<CronogramaValorizado>(`/cronogramas/${cronogramaId}`);
+    } catch (error: any) {
+      if (error.message.includes('404')) {
+        return null;
+      }
+      console.error(`❌ Error al obtener cronograma ${cronogramaId}:`, error);
+      throw error;
+    }
+  },
+
   // Eliminar cronograma
   async deleteCronograma(cronogramaId: number): Promise<void> {
     console.log(`🔗 Consultando API: DELETE /cronogramas/${cronogramaId}`);

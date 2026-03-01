@@ -14,7 +14,7 @@ import {
 } from '@heroicons/react/24/outline';
 
 import { useCreateComisaria, useUpdateComisaria } from '@/hooks/useComisarias';
-import { useCronogramaByComisaria } from '@/hooks/useCronograma';
+import { useCronogramaByComisaria, useCronogramaById } from '@/hooks/useCronograma';
 import { googleMapsService } from '@/services/comisariasService';
 import Button from '@/components/ui/Button';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
@@ -64,9 +64,19 @@ const ComisariaModal: React.FC<ComisariaModalProps> = ({
   const createMutation = useCreateComisaria();
   const updateMutation = useUpdateComisaria();
 
-  // Hook para cronograma (solo si la comisaría ya existe)
-  const { data: cronograma, refetch: refetchCronograma } = useCronogramaByComisaria(
+  // Hooks para cronograma (estrategia de 2 pasos)
+  // 1. Obtener lista de cronogramas de la comisaría (SIN partidas, solo para ID)
+  const { data: cronogramasList } = useCronogramaByComisaria(
     comisaria?.id || 0
+  );
+
+  // 2. Si existe cronograma, obtener el completo CON partidas
+  const cronogramaId = Array.isArray(cronogramasList) && cronogramasList.length > 0
+    ? cronogramasList[0].id
+    : null;
+
+  const { data: cronograma, refetch: refetchCronograma } = useCronogramaById(
+    cronogramaId || 0
   );
 
   const isLoading = createMutation.isPending || updateMutation.isPending;

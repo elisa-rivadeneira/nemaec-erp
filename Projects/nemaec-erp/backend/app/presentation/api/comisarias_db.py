@@ -106,40 +106,16 @@ async def get_next_codigo(db: AsyncSession) -> str:
 
 # Endpoints
 
-@router.get("/", response_model=List[ComisariaResponse])
-async def get_all_comisarias(db: AsyncSession = Depends(get_db)):
+@router.get("/")
+async def get_all_comisarias():
     """
-    Obtener todas las comisarías
+    Obtener todas las comisarías - SIMPLIFIED VERSION FOR DEBUG
 
     Returns:
-        List[ComisariaResponse]: Lista de comisarías
+        Simple test response
     """
-    try:
-        print("🔍 GET /comisarias - Ejecutando query SELECT")
-        stmt = select(ComisariaModel).order_by(ComisariaModel.created_at.desc())
-        result = await db.execute(stmt)
-        comisarias = result.scalars().all()
-
-        print(f"📊 Encontradas {len(comisarias)} comisarías en la base de datos")
-
-        if len(comisarias) == 0:
-            print("⚠️ Base de datos vacía - retornando lista vacía")
-            return []
-
-        response_list = []
-        for comisaria in comisarias:
-            print(f"🏛️ Procesando comisaría ID: {comisaria.id}, nombre: {comisaria.nombre}")
-            response_item = model_to_response(comisaria)
-            response_list.append(response_item)
-
-        print(f"✅ Retornando {len(response_list)} comisarías")
-        return response_list
-
-    except Exception as e:
-        print(f"❌ Error en GET /comisarias: {e}")
-        import traceback
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail=f"Error interno: {str(e)}")
+    print("🔍 DEBUG: GET /comisarias endpoint EJECUTANDOSE")
+    return {"status": "debug", "message": "GET endpoint working", "timestamp": datetime.now().isoformat()}
 
 @router.get("/{comisaria_id}", response_model=ComisariaResponse)
 async def get_comisaria_by_id(comisaria_id: int, db: AsyncSession = Depends(get_db)):

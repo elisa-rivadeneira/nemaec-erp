@@ -69,3 +69,39 @@ class CronogramaModel(Base):
 
     def __repr__(self):
         return f"<CronogramaModel(id={self.id}, comisaria_id={self.comisaria_id}, nombre='{self.nombre}')>"
+
+
+class PartidaModel(Base):
+    """
+    Modelo SQLAlchemy para Partidas de Cronogramas.
+    Representa una partida individual dentro de un cronograma valorizado.
+    """
+    __tablename__ = "partidas"
+
+    id = Column(Integer, primary_key=True, index=True)
+    cronograma_id = Column(Integer, nullable=False, index=True)
+    codigo_interno = Column(String(50), nullable=False, index=True)
+    comisaria_id = Column(Integer, nullable=False, index=True)
+    codigo_partida = Column(String(50), nullable=False, index=True)
+    descripcion = Column(Text, nullable=False)
+    unidad = Column(String(20), nullable=False)
+
+    # Valores monetarios
+    metrado = Column(Float, default=0.0)
+    precio_unitario = Column(Float, default=0.0)
+    precio_total = Column(Float, default=0.0)
+
+    # Fechas opcionales (pueden ser null para presupuestos sin cronograma)
+    fecha_inicio = Column(DateTime, nullable=True)
+    fecha_fin = Column(DateTime, nullable=True)
+
+    # Jerarquía de partidas
+    nivel_jerarquia = Column(Integer, default=1)
+    partida_padre = Column(String(50), nullable=True)
+
+    # Timestamps
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+    def __repr__(self):
+        return f"<PartidaModel(id={self.id}, codigo_partida='{self.codigo_partida}', descripcion='{self.descripcion[:30]}...')>"

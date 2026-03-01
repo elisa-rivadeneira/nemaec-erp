@@ -15,8 +15,10 @@ router = APIRouter(
     responses={404: {"description": "Not found"}}
 )
 
-# Archivo de persistencia
-COMISARIAS_FILE = "/tmp/nemaec_comisarias.json"
+# Archivo de persistencia - usar directorio del proyecto para persistencia
+import os
+PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+COMISARIAS_FILE = os.path.join(PROJECT_DIR, "data", "nemaec_comisarias.json")
 
 # Modelos Pydantic
 
@@ -65,10 +67,15 @@ class ComisariaResponse(BaseModel):
 
 def load_comisarias() -> List[Dict]:
     """Cargar comisarías del archivo JSON"""
+    # Asegurar que el directorio data existe
+    os.makedirs(os.path.dirname(COMISARIAS_FILE), exist_ok=True)
+
     if os.path.exists(COMISARIAS_FILE):
         try:
             with open(COMISARIAS_FILE, 'r', encoding='utf-8') as f:
-                return json.load(f)
+                data = json.load(f)
+                # Verificar que data es una lista válida
+                return data if isinstance(data, list) else get_default_comisarias()
         except Exception as e:
             print(f"Error loading comisarias: {e}")
     return get_default_comisarias()
@@ -76,10 +83,13 @@ def load_comisarias() -> List[Dict]:
 def save_comisarias(comisarias: List[Dict]):
     """Guardar comisarías al archivo JSON"""
     try:
+        # Asegurar que el directorio existe
+        os.makedirs(os.path.dirname(COMISARIAS_FILE), exist_ok=True)
         with open(COMISARIAS_FILE, 'w', encoding='utf-8') as f:
             json.dump(comisarias, f, ensure_ascii=False, indent=2)
+        print(f"✅ Comisarías guardadas en: {COMISARIAS_FILE}")
     except Exception as e:
-        print(f"Error saving comisarias: {e}")
+        print(f"❌ Error saving comisarias: {e}")
 
 def get_default_comisarias() -> List[Dict]:
     """Datos por defecto de comisarías"""

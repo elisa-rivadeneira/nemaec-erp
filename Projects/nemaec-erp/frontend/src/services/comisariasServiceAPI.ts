@@ -73,9 +73,9 @@ export const comisariasService = {
     console.log('🔗 Consultando API: POST /comisarias');
     try {
       // Transformar datos del frontend al formato esperado por el backend
+      // Nota: El código se genera automáticamente en el backend
       const backendData = {
         nombre: data.nombre,
-        codigo: `COM-${Date.now().toString().slice(-6)}`, // Código temporal
         tipo: data.tipo,
         ubicacion: {
           direccion: data.direccion,

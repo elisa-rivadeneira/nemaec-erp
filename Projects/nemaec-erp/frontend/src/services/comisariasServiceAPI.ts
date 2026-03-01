@@ -58,7 +58,7 @@ export const comisariasService = {
   async getComisariaById(id: number): Promise<Comisaria | null> {
     console.log(`🔗 Consultando API: GET /comisarias/${id}`);
     try {
-      return await apiCall<Comisaria>(`/comisarias/${id}/`);
+      return await apiCall<Comisaria>(`/comisarias/${id}`);
     } catch (error: any) {
       if (error.message.includes('404')) {
         return null;
@@ -104,7 +104,7 @@ export const comisariasService = {
   async updateComisaria(id: number, data: Partial<ComisariaFormData>): Promise<Comisaria> {
     console.log(`🔗 Consultando API: PUT /comisarias/${id}`);
     try {
-      return await apiCall<Comisaria>(`/comisarias/${id}/`, {
+      return await apiCall<Comisaria>(`/comisarias/${id}`, {
         method: 'PUT',
         body: JSON.stringify(data)
       });
@@ -118,7 +118,7 @@ export const comisariasService = {
   async deleteComisaria(id: number): Promise<void> {
     console.log(`🔗 Consultando API: DELETE /comisarias/${id}`);
     try {
-      await apiCall<void>(`/comisarias/${id}/`, {
+      await apiCall<void>(`/comisarias/${id}`, {
         method: 'DELETE'
       });
     } catch (error) {

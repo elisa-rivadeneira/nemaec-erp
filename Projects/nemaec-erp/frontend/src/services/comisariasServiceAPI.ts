@@ -154,12 +154,37 @@ const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
 
 export const googleMapsService = {
   async searchPlaces(query: string): Promise<GoogleMapsResult[]> {
-    console.log('🔍 Buscando lugares en backend:', query);
+    console.log('🔍 Buscando lugares con Google Maps API via backend:', query);
 
     try {
       // Llamar al backend que hace proxy a Google Maps API
-      // Nota: El backend simple no tiene este endpoint, usar fallback
-      return await this.searchPlacesMock(query);
+      const response = await fetch(`${API_BASE_URL}/google-maps/search`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ query })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.warn(`⚠️ Backend error ${response.status}:`, errorData.detail || response.statusText);
+
+        // Si el backend no funciona, usar fallback
+        return await this.searchPlacesMock(query);
+      }
+
+      const results = await response.json();
+      console.log(`✅ Backend encontró ${results.length} lugares para "${query}"`);
+
+      return results.map((place: any) => ({
+        place_id: place.place_id,
+        formatted_address: place.formatted_address,
+        name: place.name,
+        geometry: place.geometry,
+        address_components: place.address_components || []
+      }));
+
     } catch (error) {
       console.error('❌ Error conectando al backend:', error);
       console.log('🔄 Usando fallback a datos mock');

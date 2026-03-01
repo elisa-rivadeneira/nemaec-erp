@@ -172,9 +172,12 @@ async def get_all_comisarias():
     Returns:
         List[ComisariaResponse]: Lista de comisarías
     """
+    # Recargar datos desde archivo para asegurar consistencia
+    current_data = load_comisarias()
+
     # Ordenar por fecha de creación descendente
     sorted_comisarias = sorted(
-        comisarias_data,
+        current_data,
         key=lambda x: x.get("created_at", ""),
         reverse=True
     )
@@ -191,7 +194,9 @@ async def get_comisaria_by_id(comisaria_id: int):
     Returns:
         ComisariaResponse: Datos de la comisaría
     """
-    comisaria = next((c for c in comisarias_data if c["id"] == comisaria_id), None)
+    # Recargar datos desde archivo para asegurar consistencia
+    current_data = load_comisarias()
+    comisaria = next((c for c in current_data if c["id"] == comisaria_id), None)
     if not comisaria:
         raise HTTPException(status_code=404, detail="Comisaría no encontrada")
     return comisaria
@@ -301,10 +306,12 @@ async def search_comisarias(
     Returns:
         List[ComisariaResponse]: Comisarías encontradas
     """
+    # Recargar datos desde archivo para asegurar consistencia
+    current_data = load_comisarias()
     search_term = q.lower()
     results = []
 
-    for comisaria in comisarias_data:
+    for comisaria in current_data:
         # Buscar en nombre, código, distrito, provincia, departamento
         searchable_text = " ".join([
             comisaria.get("nombre", ""),

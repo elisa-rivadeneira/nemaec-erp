@@ -17,8 +17,10 @@ router = APIRouter(
     responses={404: {"description": "Not found"}}
 )
 
-# Archivo de persistencia
-CRONOGRAMAS_FILE = "/tmp/nemaec_cronogramas.json"
+# Archivo de persistencia - usar directorio del proyecto para persistencia
+import os
+PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+CRONOGRAMAS_FILE = os.path.join(PROJECT_DIR, "data", "nemaec_cronogramas.json")
 
 # Modelos Pydantic
 
@@ -85,6 +87,9 @@ class ExcelValidationResult(BaseModel):
 
 def load_cronogramas() -> List[Dict]:
     """Cargar cronogramas del archivo JSON"""
+    # Asegurar que el directorio data existe
+    os.makedirs(os.path.dirname(CRONOGRAMAS_FILE), exist_ok=True)
+
     if os.path.exists(CRONOGRAMAS_FILE):
         try:
             with open(CRONOGRAMAS_FILE, 'r', encoding='utf-8') as f:
@@ -96,10 +101,13 @@ def load_cronogramas() -> List[Dict]:
 def save_cronogramas(cronogramas: List[Dict]):
     """Guardar cronogramas al archivo JSON"""
     try:
+        # Asegurar que el directorio data existe
+        os.makedirs(os.path.dirname(CRONOGRAMAS_FILE), exist_ok=True)
         with open(CRONOGRAMAS_FILE, 'w', encoding='utf-8') as f:
             json.dump(cronogramas, f, ensure_ascii=False, indent=2)
+        print(f"✅ Cronogramas guardados en: {CRONOGRAMAS_FILE}")
     except Exception as e:
-        print(f"Error saving cronogramas: {e}")
+        print(f"❌ Error saving cronogramas: {e}")
 
 def get_partida_padre(codigo_partida: str) -> Optional[str]:
     """Obtener código de partida padre"""

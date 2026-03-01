@@ -110,7 +110,10 @@ export const useSearchComisarias = (query: string) => {
 
 // Hook para estadísticas de comisarías
 export const useComisariasStats = () => {
-  const { data: comisarias = [] } = useComisarias();
+  const { data, isLoading, error } = useComisarias();
+
+  // Asegurar que comisarias sea siempre un array válido
+  const comisarias = Array.isArray(data) ? data : [];
 
   const stats = {
     total: comisarias.length,
@@ -123,7 +126,7 @@ export const useComisariasStats = () => {
       : 0,
     presupuesto_total: comisarias.reduce((sum, c) => sum + (c.presupuesto_total || 0), 0),
     por_departamento: comisarias.reduce((acc, c) => {
-      const dept = c.ubicacion.departamento;
+      const dept = c.ubicacion?.departamento || 'Sin especificar';
       acc[dept] = (acc[dept] || 0) + 1;
       return acc;
     }, {} as Record<string, number>),

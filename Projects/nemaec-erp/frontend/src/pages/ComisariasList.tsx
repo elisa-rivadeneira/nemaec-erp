@@ -34,9 +34,12 @@ const ComisariasList: React.FC = () => {
   const [modalMode, setModalMode] = useState<'create' | 'edit' | 'view' | null>(null);
   const [showMap, setShowMap] = useState(false);
 
-  const { data: comisarias = [], isLoading, error, refetch } = useComisarias();
+  const { data, isLoading, error, refetch } = useComisarias();
   const deleteComisaria = useDeleteComisaria();
   const stats = useComisariasStats();
+
+  // Asegurar que comisarias sea siempre un array válido
+  const comisarias = Array.isArray(data) ? data : [];
 
   // Filtrar comisarías
   const filteredComisarias = comisarias.filter(comisaria => {

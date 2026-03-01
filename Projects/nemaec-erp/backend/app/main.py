@@ -135,12 +135,12 @@ async def catch_all(path: str):
     Manejar rutas del frontend React (SPA routing)
     Devolver index.html para cualquier ruta que no sea API
     """
-    # Excluir rutas de API y assets estáticos
+    # Excluir rutas de API y assets estáticos - permitir que FastAPI las maneje
     if (path.startswith("api/") or path.startswith("docs") or path.startswith("redoc") or
         path.startswith("assets/") or path.startswith("static/") or
         path == "health" or path == "metrics" or path.startswith("openapi")):
-        from fastapi import HTTPException
-        raise HTTPException(status_code=404, detail="Not found")
+        # No manejar estas rutas aquí - dejar que FastAPI las procese normalmente
+        return
 
     static_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "static")
     index_path = os.path.join(static_dir, "index.html")

@@ -171,8 +171,13 @@ class Settings(BaseSettings):
             return self.DATABASE_URL
 
         # Si no hay DATABASE_URL específica, usar SQLite como fallback seguro
-        # Usar /tmp/ que siempre tiene permisos de escritura en contenedores
-        return "sqlite+aiosqlite:////tmp/nemaec_erp.db"
+        # Usar directorio data del proyecto para persistencia a través de deployments
+        import os
+        project_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        data_dir = os.path.join(project_dir, "data")
+        os.makedirs(data_dir, exist_ok=True)
+        db_path = os.path.join(data_dir, "nemaec_erp.db")
+        return f"sqlite+aiosqlite:///{db_path}"
 
         # Código comentado - PostgreSQL requiere servidor dedicado
         # return (

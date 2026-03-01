@@ -66,10 +66,25 @@ class ComisariaResponse(BaseModel):
 
 def model_to_response(db_model: ComisariaModel) -> ComisariaResponse:
     """Convert SQLAlchemy model to Pydantic response model"""
+    # Convert JSON ubicacion to Ubicacion model
+    ubicacion_data = db_model.ubicacion
+    coordenadas = Coordenadas(
+        lat=ubicacion_data["coordenadas"]["lat"],
+        lng=ubicacion_data["coordenadas"]["lng"]
+    )
+    ubicacion = Ubicacion(
+        direccion=ubicacion_data["direccion"],
+        distrito=ubicacion_data["distrito"],
+        provincia=ubicacion_data["provincia"],
+        departamento=ubicacion_data["departamento"],
+        coordenadas=coordenadas,
+        google_place_id=ubicacion_data.get("google_place_id")
+    )
+
     return ComisariaResponse(
         id=db_model.id,
         nombre=db_model.nombre,
-        ubicacion=Ubicacion(**db_model.ubicacion),
+        ubicacion=ubicacion,
         codigo=db_model.codigo,
         tipo=db_model.tipo,
         estado=db_model.estado,
@@ -99,11 +114,32 @@ async def get_all_comisarias(db: AsyncSession = Depends(get_db)):
     Returns:
         List[ComisariaResponse]: Lista de comisarías
     """
-    stmt = select(ComisariaModel).order_by(ComisariaModel.created_at.desc())
-    result = await db.execute(stmt)
-    comisarias = result.scalars().all()
+    try:
+        print("🔍 GET /comisarias - Ejecutando query SELECT")
+        stmt = select(ComisariaModel).order_by(ComisariaModel.created_at.desc())
+        result = await db.execute(stmt)
+        comisarias = result.scalars().all()
 
-    return [model_to_response(comisaria) for comisaria in comisarias]
+        print(f"📊 Encontradas {len(comisarias)} comisarías en la base de datos")
+
+        if len(comisarias) == 0:
+            print("⚠️ Base de datos vacía - retornando lista vacía")
+            return []
+
+        response_list = []
+        for comisaria in comisarias:
+            print(f"🏛️ Procesando comisaría ID: {comisaria.id}, nombre: {comisaria.nombre}")
+            response_item = model_to_response(comisaria)
+            response_list.append(response_item)
+
+        print(f"✅ Retornando {len(response_list)} comisarías")
+        return response_list
+
+    except Exception as e:
+        print(f"❌ Error en GET /comisarias: {e}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Error interno: {str(e)}")
 
 @router.get("/{comisaria_id}", response_model=ComisariaResponse)
 async def get_comisaria_by_id(comisaria_id: int, db: AsyncSession = Depends(get_db)):

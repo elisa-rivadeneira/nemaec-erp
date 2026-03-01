@@ -195,7 +195,7 @@ async def metrics():
 
 # 🔧 Include routers
 from app.presentation.api.google_maps import router as google_maps_router
-from app.presentation.api.comisarias import router as comisarias_router
+from app.presentation.api.comisarias_db import router as comisarias_router  # 🗄️ Using database version
 from app.presentation.api.cronogramas import router as cronogramas_router
 from app.presentation.api.cronograma_versiones import router as cronograma_versiones_router
 

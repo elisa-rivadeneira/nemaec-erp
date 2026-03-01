@@ -174,7 +174,7 @@ async def metrics():
 
 
 # 🗄️ DEBUG: Información de la base de datos (TEMPORAL)
-@app.get("/debug/database", tags=["system"])
+@app.get("/api/v1/debug/database", tags=["system"])
 async def debug_database():
     """
     DEBUG: Información de la base de datos SQLite.

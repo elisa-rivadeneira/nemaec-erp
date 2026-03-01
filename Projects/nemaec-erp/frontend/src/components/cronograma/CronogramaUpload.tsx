@@ -5,8 +5,8 @@
 
 import React, { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useImportCronograma } from '@/hooks/useCronograma';
 import { cronogramaService } from '@/services/cronogramaService';
-import { comisariasService } from '@/services/comisariasService';
 import Button from '@/components/ui/Button';
 import Modal from '@/components/ui/Modal';
 import Input from '@/components/ui/Input';
@@ -57,23 +57,29 @@ export const CronogramaUpload: React.FC<CronogramaUploadProps> = ({
     }
   });
 
-  // Mutación para subir cronograma
-  const uploadMutation = useMutation({
-    mutationFn: (data: CronogramaUploadData) => cronogramaService.importCronograma(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cronogramas'] });
-      setStep('success');
-      // Cerrar automáticamente después de 3 segundos
-      setTimeout(() => {
-        handleClose();
-      }, 3000);
-    },
-    onError: (error) => {
-      console.error('Error importando cronograma:', error);
-      alert(`Error al importar cronograma: ${error}`);
-      setStep('select');
+  // Usar el hook que maneja correctamente las query keys
+  const baseUploadMutation = useImportCronograma();
+
+  // Extender el hook con nuestra lógica de UI
+  const uploadMutation = {
+    ...baseUploadMutation,
+    mutate: (data: CronogramaUploadData) => {
+      baseUploadMutation.mutate(data, {
+        onSuccess: () => {
+          setStep('success');
+          // Cerrar automáticamente después de 3 segundos
+          setTimeout(() => {
+            handleClose();
+          }, 3000);
+        },
+        onError: (error) => {
+          console.error('Error importando cronograma:', error);
+          alert(`Error al importar cronograma: ${error}`);
+          setStep('select');
+        }
+      });
     }
-  });
+  };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

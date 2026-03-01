@@ -25,7 +25,7 @@ export const CronogramaUpload: React.FC<CronogramaUploadProps> = ({
   onClose,
   preselectedComisariaId
 }) => {
-  const [step, setStep] = useState<'select' | 'validate' | 'confirm' | 'uploading'>('select');
+  const [step, setStep] = useState<'select' | 'validate' | 'confirm' | 'uploading' | 'success'>('select');
   const [formData, setFormData] = useState<{
     comisaria_id: number | null;
     archivo: File | null;
@@ -62,8 +62,11 @@ export const CronogramaUpload: React.FC<CronogramaUploadProps> = ({
     mutationFn: (data: CronogramaUploadData) => cronogramaService.importCronograma(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cronogramas'] });
-      alert('¡Cronograma importado exitosamente!');
-      handleClose();
+      setStep('success');
+      // Cerrar automáticamente después de 3 segundos
+      setTimeout(() => {
+        handleClose();
+      }, 3000);
     },
     onError: (error) => {
       console.error('Error importando cronograma:', error);
@@ -331,6 +334,24 @@ export const CronogramaUpload: React.FC<CronogramaUploadProps> = ({
           </div>
         );
 
+      case 'success':
+        return (
+          <div className="space-y-6">
+            <div className="text-center py-8">
+              <div className="text-6xl mb-4">✅</div>
+              <h3 className="text-lg font-semibold text-green-800 mb-4">
+                ¡Cronograma Importado Exitosamente!
+              </h3>
+              <p className="text-gray-600 mb-4">
+                Se procesaron {validation?.stats.partidas_validas} partidas correctamente.
+              </p>
+              <div className="text-sm text-gray-500">
+                El modal se cerrará automáticamente en unos segundos...
+              </div>
+            </div>
+          </div>
+        );
+
       default:
         return null;
     }
@@ -382,6 +403,13 @@ export const CronogramaUpload: React.FC<CronogramaUploadProps> = ({
         return (
           <Button variant="secondary" disabled>
             Procesando...
+          </Button>
+        );
+
+      case 'success':
+        return (
+          <Button variant="primary" onClick={handleClose}>
+            Continuar
           </Button>
         );
 

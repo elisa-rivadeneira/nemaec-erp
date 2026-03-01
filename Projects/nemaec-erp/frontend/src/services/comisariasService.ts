@@ -4,6 +4,9 @@
  */
 import { Comisaria, ComisariaFormData, GoogleMapsResult } from '@/types/comisarias';
 
+// Configuración de API base URL
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
+
 // Función para cargar datos del localStorage
 const loadComisarias = (): Comisaria[] => {
   try {
@@ -215,8 +218,8 @@ export const googleMapsService = {
     console.log('🔍 Buscando lugares con Google Maps API via backend:', query);
 
     try {
-      // Llamar al backend que hace proxy a Google Maps API (puerto 8002)
-      const response = await fetch('http://localhost:8002/api/v1/google-maps/search', {
+      // Llamar al backend que hace proxy a Google Maps API
+      const response = await fetch(`${API_BASE_URL}/google-maps/search`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

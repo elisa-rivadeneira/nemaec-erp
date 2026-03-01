@@ -115,3 +115,16 @@ export interface ExcelValidationResult {
     total_presupuesto: number;
   };
 }
+
+// Para respuesta de importación del backend
+export interface ImportStats {
+  total_rows: number;
+  valid_partidas: number;
+  invalid_rows: number;
+  cronograma_id: number;
+  stats: {
+    nombre_cronograma: string;
+    comisaria_id: number;
+    archivo: string;
+  };
+}

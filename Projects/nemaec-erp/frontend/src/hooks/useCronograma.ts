@@ -4,7 +4,7 @@
  */
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { cronogramaService } from '@/services/cronogramaService';
+import { cronogramaService } from '@/services/cronogramaServiceAPI';
 import {
   CronogramaValorizado,
   CronogramaUploadData,

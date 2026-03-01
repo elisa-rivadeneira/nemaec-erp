@@ -11,7 +11,8 @@ import {
   ExcelValidationResult,
   CronogramaResumen,
   CronogramaFilters,
-  CronogramaStats
+  CronogramaStats,
+  ImportStats
 } from '@/types/cronograma';
 
 // API Base URL - Use proxy in development
@@ -151,7 +152,14 @@ export const cronogramaService = {
       }
       formData.append('file', uploadData.archivo);
 
-      return await uploadFile<CronogramaValorizado>('/cronogramas/import', formData);
+      // Primero importar el cronograma
+      const importResult = await uploadFile<ImportStats>('/cronogramas/import', formData);
+      console.log('✅ Cronograma importado:', importResult);
+
+      // Luego obtener el cronograma completo con sus partidas
+      const cronograma = await apiCall<CronogramaValorizado>(`/cronogramas/${importResult.cronograma_id}`);
+
+      return cronograma;
     } catch (error) {
       console.error('❌ Error al importar cronograma:', error);
       throw error;

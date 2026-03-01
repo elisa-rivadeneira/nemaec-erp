@@ -106,16 +106,24 @@ async def get_next_codigo(db: AsyncSession) -> str:
 
 # Endpoints
 
-@router.get("/")
-async def get_all_comisarias():
+@router.get("/", response_model=List[ComisariaResponse])
+async def get_all_comisarias(db: AsyncSession = Depends(get_db)):
     """
-    Obtener todas las comisarías - SIMPLIFIED VERSION FOR DEBUG
+    Obtener todas las comisarías
 
     Returns:
-        Simple test response
+        List[ComisariaResponse]: Lista de comisarías desde la base de datos
     """
-    print("🔍 DEBUG: GET /comisarias endpoint EJECUTANDOSE")
-    return {"status": "debug", "message": "GET endpoint working", "timestamp": datetime.now().isoformat()}
+    print("🔍 DEBUG: GET /comisarias - Consultando base de datos SQLite")
+
+    stmt = select(ComisariaModel).order_by(ComisariaModel.created_at.desc())
+    result = await db.execute(stmt)
+    comisarias = result.scalars().all()
+
+    print(f"🗄️ Encontradas {len(comisarias)} comisarías en la base de datos")
+
+    response_list = [model_to_response(comisaria) for comisaria in comisarias]
+    return response_list
 
 @router.get("/{comisaria_id}", response_model=ComisariaResponse)
 async def get_comisaria_by_id(comisaria_id: int, db: AsyncSession = Depends(get_db)):

@@ -128,27 +128,7 @@ async def root():
             return {"error": "Frontend not found", "static_dir": static_dir, "debug": True}
 
 
-# 🎯 Catch-all para SPA routing (React Router) - REACTIVATED
-@app.get("/{path:path}", include_in_schema=False)
-async def catch_all(path: str):
-    """
-    Manejar rutas del frontend React (SPA routing)
-    Devolver index.html para cualquier ruta que no sea API
-    """
-    # Excluir rutas de API y assets estáticos - permitir que FastAPI las maneje
-    if (path.startswith("api/") or path.startswith("docs") or path.startswith("redoc") or
-        path.startswith("assets/") or path.startswith("static/") or
-        path == "health" or path == "metrics" or path.startswith("openapi")):
-        # No manejar estas rutas aquí - dejar que FastAPI las procese normalmente
-        return
-
-    static_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "static")
-    index_path = os.path.join(static_dir, "index.html")
-
-    if os.path.exists(index_path):
-        return FileResponse(index_path)
-    else:
-        return {"error": "Frontend not found", "static_dir": static_dir}
+# 🎯 Catch-all will be defined AFTER router includes to avoid conflicts
 
 
 # 🩺 Health check
@@ -214,6 +194,28 @@ app.include_router(cronograma_versiones_router, prefix=settings.API_PREFIX)
 # app.include_router(contracts_router, prefix=settings.API_PREFIX)
 # app.include_router(obras_router, prefix=settings.API_PREFIX)
 # app.include_router(dashboard_router, prefix=settings.API_PREFIX)
+
+# 🎯 Catch-all para SPA routing (React Router) - NOW PLACED AFTER ROUTERS
+@app.get("/{path:path}", include_in_schema=False)
+async def catch_all(path: str):
+    """
+    Manejar rutas del frontend React (SPA routing)
+    Devolver index.html para cualquier ruta que no sea API
+    """
+    # Excluir rutas de API y assets estáticos - permitir que FastAPI las maneje
+    if (path.startswith("api/") or path.startswith("docs") or path.startswith("redoc") or
+        path.startswith("assets/") or path.startswith("static/") or
+        path == "health" or path == "metrics" or path.startswith("openapi")):
+        # No manejar estas rutas aquí - dejar que FastAPI las procese normalmente
+        return
+
+    static_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "static")
+    index_path = os.path.join(static_dir, "index.html")
+
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
+    else:
+        return {"error": "Frontend not found", "static_dir": static_dir}
 
 
 if __name__ == "__main__":

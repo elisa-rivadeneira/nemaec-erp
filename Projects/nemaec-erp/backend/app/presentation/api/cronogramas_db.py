@@ -156,9 +156,6 @@ async def get_cronogramas_by_comisaria(comisaria_id: int, db: AsyncSession = Dep
     result = await db.execute(stmt)
     cronogramas = result.scalars().all()
 
-    if not cronogramas:
-        raise HTTPException(status_code=404, detail="Cronograma no encontrado")
-
     print(f"🗄️ Encontrados {len(cronogramas)} cronogramas para comisaría {comisaria_id}")
     return [cronograma_model_to_response(cronograma) for cronograma in cronogramas]
 

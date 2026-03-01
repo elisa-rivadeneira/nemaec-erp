@@ -21,7 +21,7 @@ async def lifespan(app: FastAPI):
     Setup y cleanup de recursos.
     """
     # 🚀 Startup
-    print(f"🚀 Iniciando {settings.PROJECT_NAME} v{settings.VERSION}")
+    print(f"🚀 Iniciando {settings.PROJECT_NAME} v{settings.VERSION} - DB Persistence Test")
     print(f"🌍 Entorno: {settings.ENVIRONMENT}")
 
     # Intentar activar base de datos SQLite

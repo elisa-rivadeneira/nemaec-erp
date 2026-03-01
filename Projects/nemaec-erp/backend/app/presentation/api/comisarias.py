@@ -160,7 +160,11 @@ def get_default_comisarias() -> List[Dict]:
 
 # Variables globales
 comisarias_data = load_comisarias()
-next_id = max([c["id"] for c in comisarias_data], default=0) + 1
+
+def get_next_id():
+    """Calcular próximo ID dinámicamente basado en datos actuales"""
+    current_data = load_comisarias()
+    return max([c["id"] for c in current_data], default=0) + 1
 
 # Endpoints
 
@@ -212,13 +216,15 @@ async def create_comisaria(comisaria: ComisariaCreate):
     Returns:
         ComisariaResponse: Comisaría creada
     """
-    global next_id
+    # Recargar datos actuales y calcular nuevo ID dinámicamente
+    current_data = load_comisarias()
+    new_id = get_next_id()
 
     new_comisaria = {
-        "id": next_id,
+        "id": new_id,
         "nombre": comisaria.nombre,
         "ubicacion": comisaria.ubicacion.dict(),
-        "codigo": f"COM-{str(next_id).zfill(3)}",
+        "codigo": f"COM-{str(new_id).zfill(3)}",
         "tipo": comisaria.tipo,
         "estado": "pendiente",
         "presupuesto_total": comisaria.presupuesto_total or 0,
@@ -227,9 +233,8 @@ async def create_comisaria(comisaria: ComisariaCreate):
         "created_at": datetime.now().isoformat()
     }
 
-    comisarias_data.append(new_comisaria)
-    save_comisarias(comisarias_data)
-    next_id += 1
+    current_data.append(new_comisaria)
+    save_comisarias(current_data)
 
     print(f"✅ Comisaría creada: {comisaria.nombre} (ID: {new_comisaria['id']})")
     return new_comisaria
@@ -246,8 +251,10 @@ async def update_comisaria(comisaria_id: int, updates: ComisariaUpdate):
     Returns:
         ComisariaResponse: Comisaría actualizada
     """
+    # Recargar datos actuales
+    current_data = load_comisarias()
     comisaria_index = next(
-        (i for i, c in enumerate(comisarias_data) if c["id"] == comisaria_id),
+        (i for i, c in enumerate(current_data) if c["id"] == comisaria_id),
         None
     )
 
@@ -255,7 +262,7 @@ async def update_comisaria(comisaria_id: int, updates: ComisariaUpdate):
         raise HTTPException(status_code=404, detail="Comisaría no encontrada")
 
     # Actualizar campos
-    comisaria = comisarias_data[comisaria_index]
+    comisaria = current_data[comisaria_index]
     update_data = updates.dict(exclude_unset=True)
 
     for field, value in update_data.items():
@@ -266,8 +273,8 @@ async def update_comisaria(comisaria_id: int, updates: ComisariaUpdate):
 
     comisaria["updated_at"] = datetime.now().isoformat()
 
-    comisarias_data[comisaria_index] = comisaria
-    save_comisarias(comisarias_data)
+    current_data[comisaria_index] = comisaria
+    save_comisarias(current_data)
 
     print(f"✅ Comisaría actualizada: ID {comisaria_id}")
     return comisaria
@@ -280,16 +287,18 @@ async def delete_comisaria(comisaria_id: int):
     Args:
         comisaria_id: ID de la comisaría
     """
+    # Recargar datos actuales
+    current_data = load_comisarias()
     comisaria_index = next(
-        (i for i, c in enumerate(comisarias_data) if c["id"] == comisaria_id),
+        (i for i, c in enumerate(current_data) if c["id"] == comisaria_id),
         None
     )
 
     if comisaria_index is None:
         raise HTTPException(status_code=404, detail="Comisaría no encontrada")
 
-    removed = comisarias_data.pop(comisaria_index)
-    save_comisarias(comisarias_data)
+    removed = current_data.pop(comisaria_index)
+    save_comisarias(current_data)
 
     print(f"✅ Comisaría eliminada: {removed['nombre']} (ID: {comisaria_id})")
 

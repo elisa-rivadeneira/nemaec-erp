@@ -317,6 +317,40 @@ export const cronogramaService = {
     }
   },
 
+  // Obtener todas las versiones de una comisaría (ordenadas por fecha)
+  async getAllVersionsByComisaria(comisariaId: number): Promise<CronogramaValorizado[]> {
+    console.log(`🔗 Consultando API: GET /cronogramas/comisaria/${comisariaId} (historial)`);
+    try {
+      const cronogramas = await apiCall<CronogramaResumen[]>(`/cronogramas/comisaria/${comisariaId}`);
+
+      // Convertir CronogramaResumen a CronogramaValorizado para compatibilidad
+      // y ordenar por fecha de creación (más reciente primero)
+      const cronogramasConvertidos: CronogramaValorizado[] = cronogramas.map(cronograma => ({
+        id: cronograma.id,
+        comisaria_id: cronograma.comisaria_id,
+        nombre_cronograma: cronograma.nombre || '',
+        archivo_original: 'imported.xlsx',
+        fecha_importacion: cronograma.created_at,
+        total_presupuesto: 0, // Se calculará al obtener detalles
+        total_partidas: 0,    // Se calculará al obtener detalles
+        fecha_inicio_obra: cronograma.fecha_inicio || '',
+        fecha_fin_obra: cronograma.fecha_fin || '',
+        estado: cronograma.estado as 'activo' | 'archivado',
+        partidas: [], // Vacío para historial, se cargan bajo demanda
+        created_at: cronograma.created_at,
+        updated_at: cronograma.updated_at
+      }));
+
+      // Ordenar por fecha de creación (más reciente primero)
+      return cronogramasConvertidos.sort((a, b) =>
+        new Date(b.fecha_importacion).getTime() - new Date(a.fecha_importacion).getTime()
+      );
+    } catch (error) {
+      console.error(`❌ Error al obtener versiones para comisaría ${comisariaId}:`, error);
+      throw error;
+    }
+  },
+
   // Utilidad para obtener partida padre
   getPartidaPadre(codigoPartida: string): string | undefined {
     const partes = codigoPartida.split('.');

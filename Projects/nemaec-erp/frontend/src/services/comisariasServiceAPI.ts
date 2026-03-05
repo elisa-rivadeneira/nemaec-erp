@@ -104,9 +104,26 @@ export const comisariasService = {
   async updateComisaria(id: number, data: Partial<ComisariaFormData>): Promise<Comisaria> {
     console.log(`🔗 Consultando API: PUT /comisarias/${id}`);
     try {
+      const backendData: Record<string, any> = {};
+      if (data.nombre !== undefined) backendData.nombre = data.nombre;
+      if (data.tipo !== undefined) backendData.tipo = data.tipo;
+      if (data.presupuesto_total !== undefined) backendData.presupuesto_total = data.presupuesto_total;
+      if (data.direccion !== undefined || data.distrito !== undefined || data.provincia !== undefined || data.departamento !== undefined || data.coordenadas !== undefined) {
+        backendData.ubicacion = {
+          direccion: data.direccion ?? '',
+          distrito: data.distrito ?? '',
+          provincia: data.provincia ?? '',
+          departamento: data.departamento ?? '',
+          coordenadas: data.coordenadas || { lat: 0, lng: 0 },
+          google_place_id: data.google_place_id
+        };
+      }
+
+      console.log('📤 Datos enviados al backend (update):', backendData);
+
       return await apiCall<Comisaria>(`/comisarias/${id}`, {
         method: 'PUT',
-        body: JSON.stringify(data)
+        body: JSON.stringify(backendData)
       });
     } catch (error) {
       console.error(`❌ Error al actualizar comisaría ${id}:`, error);

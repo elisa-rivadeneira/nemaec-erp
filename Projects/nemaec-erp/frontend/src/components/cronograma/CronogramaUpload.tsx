@@ -132,11 +132,52 @@ export const CronogramaUpload: React.FC<CronogramaUploadProps> = ({
         return (
           <div className="space-y-6">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 mb-1">
                 📊 Subir Cronograma Valorizado
               </h3>
-              <p className="text-gray-600 mb-6">
+              <p className="text-gray-600">
                 Selecciona la comisaría y el archivo Excel con el cronograma valorizado.
+              </p>
+            </div>
+
+            {/* Formato requerido del Excel */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <h4 className="text-sm font-semibold text-blue-900 mb-3">
+                📋 Formato requerido del Excel
+              </h4>
+              <p className="text-xs text-blue-700 mb-3">
+                La fila 1 debe ser el encabezado. Los datos empiezan desde la fila 2.
+                Las columnas deben estar en este orden exacto:
+              </p>
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-blue-100">
+                      <th className="border border-blue-300 px-2 py-1 text-left text-blue-800">Columna</th>
+                      <th className="border border-blue-300 px-2 py-1 text-left text-blue-800">Nombre sugerido</th>
+                      <th className="border border-blue-300 px-2 py-1 text-left text-blue-800">Descripción</th>
+                      <th className="border border-blue-300 px-2 py-1 text-left text-blue-800">Obligatorio</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white">
+                    <tr><td className="border border-blue-200 px-2 py-1 font-mono font-bold">A</td><td className="border border-blue-200 px-2 py-1">N°</td><td className="border border-blue-200 px-2 py-1 text-gray-600">Número de fila (no se usa)</td><td className="border border-blue-200 px-2 py-1 text-gray-400">—</td></tr>
+                    <tr className="bg-blue-50"><td className="border border-blue-200 px-2 py-1 font-mono font-bold">B</td><td className="border border-blue-200 px-2 py-1">COD_INTERNO</td><td className="border border-blue-200 px-2 py-1 text-gray-600">Código interno de la partida</td><td className="border border-blue-200 px-2 py-1 text-gray-400">—</td></tr>
+                    <tr><td className="border border-blue-200 px-2 py-1 font-mono font-bold">C</td><td className="border border-blue-200 px-2 py-1">—</td><td className="border border-blue-200 px-2 py-1 text-gray-600">Columna ignorada (puede estar vacía)</td><td className="border border-blue-200 px-2 py-1 text-gray-400">—</td></tr>
+                    <tr className="bg-yellow-50"><td className="border border-blue-200 px-2 py-1 font-mono font-bold">D</td><td className="border border-blue-200 px-2 py-1">COD_PARTIDA</td><td className="border border-blue-200 px-2 py-1 font-medium">Código de partida (ej: 01, 01.01, 01.01.01)</td><td className="border border-blue-200 px-2 py-1 text-red-600 font-bold">Sí</td></tr>
+                    <tr className="bg-yellow-50"><td className="border border-blue-200 px-2 py-1 font-mono font-bold">E</td><td className="border border-blue-200 px-2 py-1">DESCRIPCION</td><td className="border border-blue-200 px-2 py-1 font-medium">Descripción de la partida</td><td className="border border-blue-200 px-2 py-1 text-red-600 font-bold">Sí</td></tr>
+                    <tr><td className="border border-blue-200 px-2 py-1 font-mono font-bold">F</td><td className="border border-blue-200 px-2 py-1">—</td><td className="border border-blue-200 px-2 py-1 text-gray-600">Columna ignorada (puede estar vacía)</td><td className="border border-blue-200 px-2 py-1 text-gray-400">—</td></tr>
+                    <tr className="bg-blue-50"><td className="border border-blue-200 px-2 py-1 font-mono font-bold">G</td><td className="border border-blue-200 px-2 py-1">METRADO</td><td className="border border-blue-200 px-2 py-1 text-gray-600">Cantidad / metrado (número)</td><td className="border border-blue-200 px-2 py-1 text-gray-400">—</td></tr>
+                    <tr className="bg-blue-50"><td className="border border-blue-200 px-2 py-1 font-mono font-bold">H</td><td className="border border-blue-200 px-2 py-1">PRECIO_UNIT</td><td className="border border-blue-200 px-2 py-1 text-gray-600">Precio unitario (número)</td><td className="border border-blue-200 px-2 py-1 text-gray-400">—</td></tr>
+                    <tr className="bg-blue-50"><td className="border border-blue-200 px-2 py-1 font-mono font-bold">I</td><td className="border border-blue-200 px-2 py-1">PRECIO_TOTAL</td><td className="border border-blue-200 px-2 py-1 text-gray-600">Precio total (número)</td><td className="border border-blue-200 px-2 py-1 text-gray-400">—</td></tr>
+                    <tr><td className="border border-blue-200 px-2 py-1 font-mono font-bold">J</td><td className="border border-blue-200 px-2 py-1">UNIDAD</td><td className="border border-blue-200 px-2 py-1 text-gray-600">Unidad de medida (m², ml, glb, etc.)</td><td className="border border-blue-200 px-2 py-1 text-gray-400">—</td></tr>
+                    <tr className="bg-blue-50"><td className="border border-blue-200 px-2 py-1 font-mono font-bold">K</td><td className="border border-blue-200 px-2 py-1">FECHA_INICIO</td><td className="border border-blue-200 px-2 py-1 text-gray-600">Fecha de inicio (YYYY-MM-DD, opcional)</td><td className="border border-blue-200 px-2 py-1 text-gray-400">—</td></tr>
+                    <tr className="bg-blue-50"><td className="border border-blue-200 px-2 py-1 font-mono font-bold">L</td><td className="border border-blue-200 px-2 py-1">FECHA_FIN</td><td className="border border-blue-200 px-2 py-1 text-gray-600">Fecha de fin (YYYY-MM-DD, opcional)</td><td className="border border-blue-200 px-2 py-1 text-gray-400">—</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <p className="text-xs text-blue-700 mt-2">
+                ⚠️ Solo son obligatorias las columnas <strong>D (COD_PARTIDA)</strong> y <strong>E (DESCRIPCION)</strong>.
+                Las filas sin esos datos serán ignoradas. El archivo debe tener al menos 9 columnas (A–I).
               </p>
             </div>
 

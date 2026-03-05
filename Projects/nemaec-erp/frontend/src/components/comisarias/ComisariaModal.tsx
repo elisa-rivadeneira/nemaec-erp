@@ -60,6 +60,7 @@ const ComisariaModal: React.FC<ComisariaModalProps> = ({
   // Estado para tabs y cronograma
   const [activeTab, setActiveTab] = useState<'info' | 'cronograma'>('info');
   const [showCronogramaUpload, setShowCronogramaUpload] = useState(false);
+  const [presupuestoRaw, setPresupuestoRaw] = useState('');
 
   const createMutation = useCreateComisaria();
   const updateMutation = useUpdateComisaria();
@@ -95,6 +96,7 @@ const ComisariaModal: React.FC<ComisariaModalProps> = ({
         coordenadas: comisaria.ubicacion.coordenadas,
         google_place_id: comisaria.ubicacion.google_place_id
       });
+      setPresupuestoRaw(comisaria.presupuesto_total ? comisaria.presupuesto_total.toString() : '');
     }
   }, [comisaria, mode]);
 
@@ -676,15 +678,26 @@ const ComisariaModal: React.FC<ComisariaModalProps> = ({
               <input
                 type="text"
                 disabled={isReadOnly}
-                value={formData.presupuesto_total ? formData.presupuesto_total.toLocaleString('es-PE', {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2
-                }) : ''}
+                value={presupuestoRaw}
                 onChange={(e) => {
-                  // Limpiar el valor y convertir a número
-                  const cleanValue = e.target.value.replace(/[^\d.]/g, '');
+                  const raw = e.target.value;
+                  setPresupuestoRaw(raw);
+                  const cleanValue = raw.replace(/[^\d.]/g, '');
                   const numValue = cleanValue === '' ? 0 : Number(cleanValue);
-                  handleInputChange('presupuesto_total', numValue);
+                  if (!isNaN(numValue)) {
+                    handleInputChange('presupuesto_total', numValue);
+                  }
+                }}
+                onFocus={() => {
+                  setPresupuestoRaw(formData.presupuesto_total ? formData.presupuesto_total.toString() : '');
+                }}
+                onBlur={() => {
+                  if (formData.presupuesto_total) {
+                    setPresupuestoRaw(formData.presupuesto_total.toLocaleString('es-PE', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2
+                    }));
+                  }
                 }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-nemaec-green-500 focus:border-transparent disabled:bg-gray-100 text-gray-900"
                 placeholder="0.00"
@@ -720,21 +733,73 @@ const ComisariaModal: React.FC<ComisariaModalProps> = ({
                   onUploadNew={() => setShowCronogramaUpload(true)}
                 />
               ) : (
-                <div className="text-center py-12">
-                  <div className="text-6xl mb-4">📊</div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
-                    No hay cronograma valorizado
-                  </h3>
-                  <p className="text-gray-500 mb-6">
-                    Esta comisaría aún no tiene un cronograma valorizado cargado.
-                  </p>
-                  <Button
-                    variant="primary"
-                    onClick={() => setShowCronogramaUpload(true)}
-                  >
-                    <DocumentTextIcon className="w-4 h-4 mr-2" />
-                    Subir cronograma
-                  </Button>
+                <div className="space-y-6">
+                  <div className="text-center pt-6">
+                    <div className="text-6xl mb-4">📊</div>
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                      No hay cronograma valorizado
+                    </h3>
+                    <p className="text-gray-500 mb-4">
+                      Esta comisaría aún no tiene un cronograma valorizado cargado.
+                    </p>
+                    <Button
+                      variant="primary"
+                      onClick={() => setShowCronogramaUpload(true)}
+                    >
+                      <DocumentTextIcon className="w-4 h-4 mr-2" />
+                      Subir cronograma
+                    </Button>
+                  </div>
+
+                  {/* Formato requerido del Excel */}
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-left">
+                    <h4 className="text-sm font-semibold text-blue-900 mb-2">
+                      📋 Formato requerido del Excel (.xlsx)
+                    </h4>
+                    <p className="text-xs text-blue-700 mb-3">
+                      La fila 1 es el encabezado (se omite). Los datos empiezan en la fila 2. Las columnas deben estar en este orden exacto:
+                    </p>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-xs border-collapse">
+                        <thead>
+                          <tr className="bg-blue-100">
+                            <th className="border border-blue-300 px-2 py-1 text-left text-blue-800">Col</th>
+                            <th className="border border-blue-300 px-2 py-1 text-left text-blue-800">Nombre</th>
+                            <th className="border border-blue-300 px-2 py-1 text-left text-blue-800">Descripción</th>
+                            <th className="border border-blue-300 px-2 py-1 text-center text-blue-800">Requerido</th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white">
+                          {[
+                            { col: 'A', name: '—', desc: 'Número / campo ignorado', req: false },
+                            { col: 'B', name: 'COD_INTERNO', desc: 'Código interno de la partida', req: false },
+                            { col: 'C', name: '—', desc: 'Campo ignorado (puede ir vacío)', req: false },
+                            { col: 'D', name: 'COD_PARTIDA', desc: 'Código de partida (ej: 01, 01.01, 01.01.01)', req: true },
+                            { col: 'E', name: 'DESCRIPCION', desc: 'Descripción de la partida', req: true },
+                            { col: 'F', name: '—', desc: 'Campo ignorado (puede ir vacío)', req: false },
+                            { col: 'G', name: 'METRADO', desc: 'Cantidad / metrado (número)', req: false },
+                            { col: 'H', name: 'PRECIO_UNIT', desc: 'Precio unitario (número)', req: false },
+                            { col: 'I', name: 'PRECIO_TOTAL', desc: 'Precio total (número)', req: false },
+                            { col: 'J', name: 'UNIDAD', desc: 'Unidad de medida (m², ml, glb…)', req: false },
+                            { col: 'K', name: 'FECHA_INICIO', desc: 'Fecha inicio — formato YYYY-MM-DD (opcional)', req: false },
+                            { col: 'L', name: 'FECHA_FIN', desc: 'Fecha fin — formato YYYY-MM-DD (opcional)', req: false },
+                          ].map(({ col, name, desc, req }) => (
+                            <tr key={col} className={req ? 'bg-yellow-50' : ''}>
+                              <td className="border border-blue-200 px-2 py-1 font-mono font-bold">{col}</td>
+                              <td className="border border-blue-200 px-2 py-1 font-medium">{name}</td>
+                              <td className="border border-blue-200 px-2 py-1 text-gray-600">{desc}</td>
+                              <td className="border border-blue-200 px-2 py-1 text-center">
+                                {req ? <span className="text-red-600 font-bold">Sí</span> : <span className="text-gray-400">—</span>}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    <p className="text-xs text-blue-700 mt-2">
+                      ⚠️ Solo son obligatorias <strong>D</strong> y <strong>E</strong>. El archivo debe tener mínimo 9 columnas (A–I). Las filas sin código o descripción se ignoran.
+                    </p>
+                  </div>
                 </div>
               )}
             </div>

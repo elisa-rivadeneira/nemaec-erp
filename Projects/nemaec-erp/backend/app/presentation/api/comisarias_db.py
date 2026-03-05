@@ -206,9 +206,10 @@ async def update_comisaria(
     # Prepare update data
     update_data = updates.dict(exclude_unset=True)
 
-    # Convert ubicacion to dict if present
+    # Convert ubicacion to dict if present (may already be a dict after .dict() call)
     if "ubicacion" in update_data and update_data["ubicacion"]:
-        update_data["ubicacion"] = update_data["ubicacion"].dict()
+        if not isinstance(update_data["ubicacion"], dict):
+            update_data["ubicacion"] = update_data["ubicacion"].dict()
 
     # Add updated_at timestamp
     update_data["updated_at"] = datetime.now()

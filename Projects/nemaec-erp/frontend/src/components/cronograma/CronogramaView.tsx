@@ -4,6 +4,7 @@
  */
 
 import React, { useState } from 'react';
+import * as XLSX from 'xlsx';
 import { CronogramaValorizado, Partida } from '@/types/cronograma';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
@@ -29,6 +30,41 @@ export const CronogramaView: React.FC<CronogramaViewProps> = ({
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 1000; // Mostrar todo en una página para el árbol
+
+  const handleExport = () => {
+    // Fila 1: encabezados (el backend los ignora, empieza a leer desde fila 2)
+    const headers = ['N°', 'COD_INTERNO', 'REFERENCIA', 'COD_PARTIDA', 'DESCRIPCION', 'REF2', 'METRADO', 'PRECIO_UNIT', 'PRECIO_TOTAL', 'UNIDAD', 'FECHA_INICIO', 'FECHA_FIN'];
+
+    const rows = cronograma.partidas.map((p, i) => [
+      i + 1,                          // A: N°
+      p.codigo_partida || '',          // B: COD_INTERNO
+      '',                              // C: ignorado
+      p.codigo_partida || '',          // D: COD_PARTIDA (requerido)
+      p.descripcion || '',             // E: DESCRIPCION (requerido)
+      '',                              // F: ignorado
+      p.metrado ?? '',                 // G: METRADO
+      p.precio_unitario ?? '',         // H: PRECIO_UNIT
+      p.precio_total ?? '',            // I: PRECIO_TOTAL
+      p.unidad || '',                  // J: UNIDAD
+      p.fecha_inicio ? p.fecha_inicio.slice(0, 10) : '',  // K: FECHA_INICIO
+      p.fecha_fin    ? p.fecha_fin.slice(0, 10)    : '',  // L: FECHA_FIN
+    ]);
+
+    const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+
+    // Anchos de columna
+    ws['!cols'] = [
+      { wch: 5 }, { wch: 12 }, { wch: 10 }, { wch: 12 }, { wch: 50 },
+      { wch: 8 }, { wch: 12 }, { wch: 12 }, { wch: 14 }, { wch: 8 },
+      { wch: 14 }, { wch: 14 },
+    ];
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'CRONOGRAMA');
+
+    const nombreArchivo = `cronograma_${cronograma.nombre?.replace(/\s+/g, '_') || 'export'}_${new Date().toISOString().slice(0, 10)}.xlsx`;
+    XLSX.writeFile(wb, nombreArchivo);
+  };
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('es-PE', {
@@ -266,7 +302,7 @@ export const CronogramaView: React.FC<CronogramaViewProps> = ({
             </Button>
           </div>
 
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={handleExport}>
             <Download className="h-4 w-4 mr-2" />
             Exportar
           </Button>

@@ -5,6 +5,7 @@
 
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Button from '@/components/ui/Button';
 import { Badge } from '@/components/ui/badge';
@@ -18,9 +19,10 @@ import {
   GitCompare,
   History,
   Clock,
-  Zap
+  Zap,
+  Trash2
 } from 'lucide-react';
-import { useVersionsByComisaria, useCompareVersions } from '@/hooks/useCronograma';
+import { useVersionsByComisaria, useCompareVersions, useDeleteCronograma } from '@/hooks/useCronograma';
 
 export default function CronogramaHistorialPage() {
   const { comisariaId } = useParams<{ comisariaId: string }>();
@@ -36,6 +38,8 @@ export default function CronogramaHistorialPage() {
   } = useVersionsByComisaria(numericComisariaId);
 
   const compareVersionsMutation = useCompareVersions();
+  const deleteVersionMutation = useDeleteCronograma();
+  const queryClient = useQueryClient();
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('es-PE', {
@@ -86,6 +90,15 @@ export default function CronogramaHistorialPage() {
 
   const viewCronograma = (cronogramaId: number) => {
     navigate(`/cronograma/comisaria/${numericComisariaId}`);
+  };
+
+  const handleDelete = (cronogramaId: number, nombre: string) => {
+    if (!window.confirm(`¿Eliminar el cronograma "${nombre}"?\n\nEsta acción no se puede deshacer.`)) return;
+    deleteVersionMutation.mutate(cronogramaId, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['cronograma', 'versions', 'comisaria', numericComisariaId] });
+      }
+    });
   };
 
   return (
@@ -241,6 +254,17 @@ export default function CronogramaHistorialPage() {
                               {compareVersionsMutation.isPending ? 'Comparando...' : 'Ver Cambios vs Original'}
                             </Button>
                           )}
+
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleDelete(version.id!, version.nombre_cronograma)}
+                            disabled={deleteVersionMutation.isPending}
+                            className="text-red-600 border-red-300 hover:bg-red-50"
+                          >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Eliminar
+                          </Button>
                         </div>
                       </div>
                     </div>

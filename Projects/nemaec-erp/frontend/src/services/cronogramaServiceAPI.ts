@@ -308,9 +308,14 @@ export const cronogramaService = {
   async deleteCronograma(cronogramaId: number): Promise<void> {
     console.log(`🔗 Consultando API: DELETE /cronogramas/${cronogramaId}`);
     try {
-      await apiCall<void>(`/cronogramas/${cronogramaId}`, {
+      const response = await fetch(`${API_BASE_URL}/cronogramas/${cronogramaId}`, {
         method: 'DELETE'
       });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({ detail: 'Error desconocido' }));
+        throw new Error(error.detail || `HTTP ${response.status}`);
+      }
+      // 204 No Content — éxito, sin body que parsear
     } catch (error) {
       console.error(`❌ Error al eliminar cronograma ${cronogramaId}:`, error);
       throw error;

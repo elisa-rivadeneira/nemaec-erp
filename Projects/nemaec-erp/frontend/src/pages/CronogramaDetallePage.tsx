@@ -107,65 +107,33 @@ export default function CronogramaDetallePage() {
     );
   };
 
-  // Función para calcular el total de una partida padre sumando SOLO las partidas finales (hojas del árbol)
-  const calcularTotalPadre = (codigoPadre: string, todasLasPartidas: any[]) => {
-    // Buscar todas las partidas que empiecen con el código padre
-    const partidasDescendientes = todasLasPartidas.filter(partida =>
-      partida.codigo_partida.startsWith(codigoPadre + '.') || // 01.01, 01.02, etc.
-      (partida.codigo_partida.startsWith(codigoPadre) &&
-       partida.codigo_partida !== codigoPadre &&
-       partida.codigo_partida.length > codigoPadre.length)
-    );
-
-    // Solo sumar las partidas que tienen precio_total > 0 y son las más específicas (hojas)
-    return partidasDescendientes
-      .filter(partida => {
-        // Verificar que tenga precio total
-        if (partida.precio_total <= 0) return false;
-
-        // Verificar que no tenga partidas más específicas (hijas)
-        const tieneHijas = partidasDescendientes.some(otra =>
-          otra.codigo_partida !== partida.codigo_partida &&
-          otra.codigo_partida.startsWith(partida.codigo_partida + '.')
-        );
-
-        return !tieneHijas;
-      })
-      .reduce((total, partida) => total + partida.precio_total, 0);
+  // Precio efectivo de una partida hoja: usa precio_total si > 0, sino metrado × precio_unitario
+  const getPrecioEfectivo = (partida: any): number => {
+    if (partida.precio_total > 0) return partida.precio_total;
+    if (partida.metrado > 0 && partida.precio_unitario > 0)
+      return Math.round(partida.metrado * partida.precio_unitario * 100) / 100;
+    return 0;
   };
 
-  // Enriquecer partidas con totales calculados para niveles superiores
+  // Sumar precio de todas las hojas descendientes de un padre
+  const calcularTotalPadre = (codigoPadre: string, todasLasPartidas: any[]) => {
+    const descendientes = todasLasPartidas.filter(p =>
+      p.codigo_partida.startsWith(codigoPadre + '.') && p.codigo_partida !== codigoPadre
+    );
+    return descendientes
+      .filter(p => !descendientes.some(o => o.codigo_partida.startsWith(p.codigo_partida + '.')))
+      .reduce((sum, p) => sum + getPrecioEfectivo(p), 0);
+  };
+
+  // Enriquecer partidas con totales calculados
   const enrichedPartidas = cronograma?.partidas?.map(partida => {
-    // Para niveles 1 y 2, calcular el total sumando las partidas hijas
-    if (partida.nivel_jerarquia <= 2) {
-      const totalCalculado = calcularTotalPadre(partida.codigo_partida, cronograma.partidas);
-
-      // Debug log para varias partidas principales
-      if (partida.codigo_partida === '01' || partida.codigo_partida === '02') {
-        const partidasHijas = cronograma.partidas.filter(p =>
-          p.codigo_partida.startsWith(partida.codigo_partida) && p.codigo_partida !== partida.codigo_partida
-        );
-
-        console.log(`🔍 Calculando total para ${partida.codigo_partida}:`, {
-          totalOriginal: partida.precio_total,
-          totalCalculado: totalCalculado,
-          cantidadHijas: partidasHijas.length,
-          partidasHijas: partidasHijas.map(p => ({
-            codigo: p.codigo_partida,
-            nivel: p.nivel_jerarquia,
-            precio: p.precio_total,
-            metrado: p.metrado,
-            precio_unitario: p.precio_unitario
-          }))
-        });
-      }
-
-      return {
-        ...partida,
-        precio_total: totalCalculado > 0 ? totalCalculado : partida.precio_total
-      };
+    const tieneHijos = cronograma.partidas.some((p: any) =>
+      p.codigo_partida.startsWith(partida.codigo_partida + '.')
+    );
+    if (tieneHijos) {
+      return { ...partida, precio_total: calcularTotalPadre(partida.codigo_partida, cronograma.partidas) };
     }
-    return partida;
+    return { ...partida, precio_total: getPrecioEfectivo(partida) };
   }) || [];
 
   // Filtrar partidas por búsqueda y visibilidad

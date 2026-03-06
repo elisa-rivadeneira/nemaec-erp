@@ -76,97 +76,145 @@ export const cronogramaService = {
       reader.onload = async (e) => {
         try {
           const data = e.target?.result;
-          const workbook = XLSX.read(data, { type: 'binary' });
+          const workbook = XLSX.read(data, { type: 'binary', cellDates: true });
           const sheetName = workbook.SheetNames[0];
           const worksheet = workbook.Sheets[sheetName];
 
-          // Convertir a JSON
-          const jsonData: ExcelPartidaRow[] = XLSX.utils.sheet_to_json(worksheet);
+          // Convertir a JSON con cabeceras
+          const jsonData: ExcelPartidaRow[] = XLSX.utils.sheet_to_json(worksheet, { raw: false, dateNF: 'yyyy-mm-dd' });
+          // También leer con raw:true para obtener números reales (no strings)
+          const jsonDataRaw: ExcelPartidaRow[] = XLSX.utils.sheet_to_json(worksheet, { raw: true });
+
+          if (jsonData.length === 0) {
+            resolve({ isValid: false, errors: ['El archivo está vacío o no tiene datos'], warnings: [], preview: [], stats: { total_filas: 0, partidas_validas: 0, total_presupuesto: 0 } });
+            return;
+          }
+
+          const headers = Object.keys(jsonData[0] || {});
+          console.log('🔍 XLSX Debug - Headers detectados:', headers);
+          console.log('🔍 XLSX Debug - Primera fila raw:', jsonDataRaw[0]);
+
+          // Detectar formato:
+          // Formato A (nuevo): ITEM, DESCRIPCION, UND, CANT, PU, PARCIAL, FECHA INICIO, FECHA FIN
+          // Formato B (viejo): __EMPTY_1, __EMPTY_3, __EMPTY_4, ...
+          const isFormatoA = headers.some(h => h.toUpperCase() === 'ITEM') &&
+                             headers.some(h => h.toUpperCase() === 'DESCRIPCION');
+
+          // Normalizar código de partida igual que el backend
+          const normalizarCodigo = (val: any): string => {
+            if (val === null || val === undefined) return '';
+            if (typeof val === 'string') {
+              const s = val.trim();
+              if (!s || s === 'nan' || s === 'None') return '';
+              return s.split('.').map(p => {
+                const t = p.trim();
+                return /^\d+$/.test(t) ? t.padStart(2, '0') : t;
+              }).join('.');
+            }
+            if (typeof val === 'number') {
+              if (isNaN(val) || !isFinite(val)) return '';
+              const s = String(val);
+              if (!s.includes('.')) return s.padStart(2, '0');
+              const [intPart, decPart] = s.split('.');
+              if (decPart === '0') return intPart.padStart(2, '0');
+              // 1 dígito decimal → Excel truncó el cero final (2.1 era 2.10)
+              if (decPart.length === 1) return intPart.padStart(2, '0') + '.' + decPart + '0';
+              return intPart.padStart(2, '0') + '.' + decPart.padStart(2, '0');
+            }
+            return normalizarCodigo(String(val));
+          };
+
+          const parseFecha = (val: any): string | null => {
+            if (!val) return null;
+            if (val instanceof Date) return isNaN(val.getTime()) ? null : val.toISOString();
+            if (typeof val === 'string') {
+              const d = new Date(val);
+              return isNaN(d.getTime()) ? null : d.toISOString();
+            }
+            return null;
+          };
+
+          const parseFloat2 = (val: any): number => {
+            if (val === null || val === undefined || val === '') return 0;
+            const n = parseFloat(String(val).replace(',', '.'));
+            return isNaN(n) ? 0 : n;
+          };
 
           const errors: string[] = [];
           const warnings: string[] = [];
           const validPartidas: Partida[] = [];
           let totalPresupuesto = 0;
 
-          // DEBUG: Log de las primeras filas
-          console.log('🔍 XLSX Debug - Primeras 3 filas:', jsonData.slice(0, 3));
-          console.log('🔍 XLSX Debug - Columnas disponibles:', Object.keys(jsonData[0] || {}));
+          jsonDataRaw.forEach((rowRaw, index) => {
+            const rowFmt = jsonData[index];
+            const rowNumber = index + 2;
 
-          // Validar cada fila
-          jsonData.forEach((row, index) => {
-            const rowNumber = index + 2; // +2 porque Excel empieza en 1 y hay header
+            let codigoRaw: any, descripcion: any, unidad: any, metrado: any,
+                precioUnitario: any, precioTotal: any, fechaInicioRaw: any, fechaFinRaw: any;
 
-            // Mapeo corregido basado en la estructura real del Excel COLLIQUE
-            const codigoInterno = row['__EMPTY_1'];           // Columna B
-            const codigoPartida = row['__EMPTY_3'];           // Columna D
-            const descripcion = row['__EMPTY_4'];             // Columna E
-            const unidad = row['__EMPTY_5'] || 'UND';         // Columna F (corregido de __EMPTY_6 a __EMPTY_5)
-            const metrado = row['__EMPTY_6'] || 0;            // Columna G (corregido de __EMPTY_7 a __EMPTY_6)
-            const precioUnitario = row['__EMPTY_7'] || 0;     // Columna H (corregido)
-            // Calcular precio_total como metrado × precio_unitario en lugar de leer columna fija
-            const precioTotal = (metrado || 0) * (precioUnitario || 0);
-            const fechaInicio = row['FECHA\nINICIO'];         // Columna K
-            const fechaFin = row['FECHA\nFIN'];               // Columna L
+            if (isFormatoA) {
+              // Buscar keys case-insensitive
+              const key = (name: string) => {
+                const found = Object.keys(rowRaw).find(k => k.trim().toUpperCase() === name.toUpperCase());
+                return found ? rowRaw[found] : undefined;
+              };
+              const keyFmt = (name: string) => {
+                const found = Object.keys(rowFmt).find(k => k.trim().toUpperCase() === name.toUpperCase());
+                return found ? rowFmt[found] : undefined;
+              };
+              codigoRaw      = key('ITEM');
+              descripcion    = key('DESCRIPCION');
+              unidad         = key('UND');
+              metrado        = key('CANT');
+              precioUnitario = key('PU');
+              precioTotal    = key('PARCIAL');
+              fechaInicioRaw = keyFmt('FECHA INICIO');
+              fechaFinRaw    = keyFmt('FECHA FIN');
+            } else {
+              // Formato viejo (Collique)
+              codigoRaw      = rowRaw['__EMPTY_1'];
+              descripcion    = rowRaw['__EMPTY_4'];
+              unidad         = rowRaw['__EMPTY_5'];
+              metrado        = rowRaw['__EMPTY_6'];
+              precioUnitario = rowRaw['__EMPTY_7'];
+              precioTotal    = rowRaw['__EMPTY_8'];
+              fechaInicioRaw = rowFmt?.['FECHA\nINICIO'];
+              fechaFinRaw    = rowFmt?.['FECHA\nFIN'];
+            }
 
-            // Debug para verificar los valores correctos
+            const codigoPartida = normalizarCodigo(codigoRaw);
+            const desc = descripcion ? String(descripcion).trim() : '';
+
             if (index <= 2) {
-              console.log(`🔍 CORRECTED - Fila ${rowNumber}:`, {
-                unidad: unidad,
-                metrado: metrado,
-                precioUnitario: precioUnitario,
-                precioTotal_calculado: precioTotal,
-                codigoInterno: codigoInterno,
-                codigoPartida: codigoPartida
-              });
+              console.log(`🔍 Fila ${rowNumber}:`, { codigoRaw, codigoPartida, desc, unidad, metrado, precioTotal, fechaInicioRaw, fechaFinRaw });
             }
 
-
-            // Validaciones obligatorias
-            if (codigoInterno === null || codigoInterno === undefined || codigoInterno === '') {
-              errors.push(`Fila ${rowNumber}: Código interno es obligatorio`);
-            }
-
-            if (!codigoPartida || codigoPartida.toString().trim() === '') {
+            // Solo son obligatorios codigo y descripcion
+            if (!codigoPartida) {
               errors.push(`Fila ${rowNumber}: Código de partida es obligatorio`);
             }
-
-            if (!descripcion || descripcion.toString().trim() === '') {
+            if (!desc) {
               errors.push(`Fila ${rowNumber}: Descripción es obligatoria`);
             }
 
-            if (!unidad) {
-              warnings.push(`Fila ${rowNumber}: Unidad no especificada`);
-            }
+            if (codigoPartida && desc) {
+              const fechaInicio = parseFecha(fechaInicioRaw);
+              const fechaFin    = parseFecha(fechaFinRaw);
+              const precio      = parseFloat2(precioTotal) || parseFloat2(metrado) * parseFloat2(precioUnitario);
 
-            if (precioTotal === null || precioTotal === undefined || isNaN(precioTotal) || precioTotal < 0) {
-              errors.push(`Fila ${rowNumber}: Precio total inválido (${precioTotal})`);
-            }
-
-            if (!fechaInicio || fechaInicio === null || fechaInicio === undefined) {
-              errors.push(`Fila ${rowNumber}: Fecha de inicio es obligatoria`);
-            }
-
-            if (!fechaFin || fechaFin === null || fechaFin === undefined) {
-              errors.push(`Fila ${rowNumber}: Fecha de fin es obligatoria`);
-            }
-
-            // Si las validaciones básicas pasan, crear partida
-            if ((codigoInterno !== null && codigoInterno !== undefined && codigoInterno !== '') &&
-                (codigoPartida && codigoPartida.toString().trim() !== '') &&
-                (descripcion && descripcion.toString().trim() !== '')) {
               const partida: Partida = {
-                codigo_interno: codigoInterno.toString(),
-                comisaria_id: 0, // Se asignará al crear
-                codigo_partida: codigoPartida.toString(),
-                descripcion: descripcion.toString(),
-                unidad: unidad?.toString() || 'UND',
-                metrado: metrado || 0,
-                precio_unitario: precioUnitario || 0,
-                precio_total: precioTotal || 0,
-                fecha_inicio: fechaInicio ? new Date(fechaInicio).toISOString() : '',
-                fecha_fin: fechaFin ? new Date(fechaFin).toISOString() : '',
-                nivel_jerarquia: codigoPartida.toString().split('.').length,
-                partida_padre: this.getPartidaPadre(codigoPartida.toString())
+                codigo_interno: codigoPartida,
+                comisaria_id: 0,
+                codigo_partida: codigoPartida,
+                descripcion: desc,
+                unidad: unidad ? String(unidad).trim() : 'UND',
+                metrado: parseFloat2(metrado),
+                precio_unitario: parseFloat2(precioUnitario),
+                precio_total: precio,
+                fecha_inicio: fechaInicio || '',
+                fecha_fin: fechaFin || '',
+                nivel_jerarquia: codigoPartida.split('.').length,
+                partida_padre: this.getPartidaPadre(codigoPartida)
               };
 
               validPartidas.push(partida);
@@ -178,7 +226,7 @@ export const cronogramaService = {
             isValid: errors.length === 0,
             errors,
             warnings,
-            preview: validPartidas.slice(0, 10), // Solo primeras 10 para preview
+            preview: validPartidas.slice(0, 10),
             stats: {
               total_filas: jsonData.length,
               partidas_validas: validPartidas.length,

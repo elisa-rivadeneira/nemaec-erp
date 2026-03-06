@@ -36,64 +36,99 @@ async def validar_partidas_antes_avance(
     try:
         # 2. Leer Excel de avances
         content = await archivo.read()
-
-        # Leer partidas del Excel
         partidas_excel = extraer_partidas_del_excel(content)
-
-        # DEBUG: Log de las primeras partidas leídas
-        print(f"🔍 DEBUG - Partidas extraídas del Excel (primeras 3):")
-        for i, p in enumerate(partidas_excel[:3]):
-            print(f"  {i+1}. Código: '{p.codigo}' | Desc: '{p.descripcion}'")
+        print(f"📋 {len(partidas_excel)} partidas leídas del Excel de avances")
 
         # 3. Obtener partidas de BD para esta comisaría
         partidas_db = await obtener_partidas_db(comisaria_id)
+        print(f"🗄️ {len(partidas_db)} partidas en BD para comisaría {comisaria_id}")
 
-        # DEBUG: Log de las primeras partidas de BD
-        print(f"🗄️  DEBUG - Partidas de BD (primeras 3):")
-        for i, p in enumerate(partidas_db[:3]):
-            print(f"  {i+1}. Código: '{p.codigo}' | Desc: '{p.descripcion}'")
-
-        # 4. VALIDACIÓN ESTRICTA
-        es_valido, diferencias_detalle = ValidadorPartidas.validar_partidas_excel_vs_db(
-            partidas_excel=partidas_excel,
-            partidas_db=partidas_db,
-            comisaria_id=comisaria_id
-        )
-
-        # Generar reporte textual también
-        reporte_textual = ValidadorPartidas.generar_reporte_diferencias(diferencias_detalle)
-
-        if not es_valido:
-            # ❌ BLOQUEAR - Partidas no coinciden
-            # Convertir diferencias a formato JSON amigable
-            diferencias_json = []
-            for diff in diferencias_detalle:
-                diferencias_json.append({
-                    "codigo": diff.codigo,
-                    "tipo_diferencia": diff.tipo_diferencia,
-                    "descripcion_excel": diff.descripcion_excel,
-                    "descripcion_db": diff.descripcion_db,
-                    "mensaje": diff.sugerencia,
-                    "estado": diff.tipo_diferencia
-                })
-
+        if not partidas_db:
             return JSONResponse(
-                status_code=422,  # Unprocessable Entity
+                status_code=422,
                 content={
-                    "error": "PARTIDAS_NO_COINCIDEN",
-                    "message": f"Se encontraron {len(diferencias_detalle)} diferencias entre las partidas del Excel y la base de datos",
-                    "reporte_diferencias": reporte_textual,
-                    "diferencias": diferencias_json,
-                    "total_diferencias": len(diferencias_detalle),
-                    "accion_requerida": "Actualizar cronograma antes de subir avances",
+                    "error": "SIN_CRONOGRAMA",
+                    "message": f"No hay cronograma importado para la comisaría {comisaria_id}. Importe un cronograma valorizado primero.",
                     "permitir_avance": False
                 }
             )
 
-        # ✅ PERMITIR - Partidas coinciden perfectamente
+        # 4. VALIDACIÓN: código + descripción deben coincidir con BD
+        # Partidas en BD que no están en Excel son normales (no todas tienen avance registrado)
+        import unicodedata as _ud
+        from collections import defaultdict
+
+        def normalizar_desc(s: str) -> str:
+            s = s.strip().upper()
+            s = ' '.join(s.split())
+            s = _ud.normalize('NFKD', s)
+            s = ''.join(c for c in s if not _ud.combining(c))
+            return s
+
+        # Multimap: código normalizado → lista de descripciones normalizadas
+        # (maneja duplicados en BD correctamente)
+        db_multimap: dict = defaultdict(list)
+        db_multimap_orig: dict = defaultdict(list)  # descripciones originales para mostrar
+        for p in partidas_db:
+            cod = ValidadorPartidas.normalizar_codigo_partida(p.codigo)
+            db_multimap[cod].append(normalizar_desc(p.descripcion))
+            db_multimap_orig[cod].append(p.descripcion)
+
+        diferencias = []
+
+        for p in partidas_excel:
+            cod_norm = ValidadorPartidas.normalizar_codigo_partida(p.codigo)
+
+            if cod_norm not in db_multimap:
+                diferencias.append({
+                    "codigo": p.codigo,
+                    "tipo_diferencia": "no_existe",
+                    "descripcion_excel": p.descripcion,
+                    "descripcion_db": None,
+                    "mensaje": f"Código '{p.codigo}' no existe en el cronograma de BD",
+                    "estado": "no_existe"
+                })
+                continue
+
+            desc_excel_norm = normalizar_desc(p.descripcion)
+            descs_db_norm = db_multimap[cod_norm]
+            descs_db_orig = db_multimap_orig[cod_norm]
+
+            # Pasa si coincide con CUALQUIERA de las entradas en BD para ese código
+            if desc_excel_norm not in descs_db_norm:
+                diferencias.append({
+                    "codigo": p.codigo,
+                    "tipo_diferencia": "descripcion_cambio",
+                    "descripcion_excel": p.descripcion,
+                    "descripcion_db": descs_db_orig[0] if descs_db_orig else None,
+                    "mensaje": f"Descripción diferente para '{p.codigo}':\n  Excel: {p.descripcion}\n  BD:    {descs_db_orig}",
+                    "estado": "descripcion_cambio"
+                })
+
+        print(f"{'✅' if not diferencias else '❌'} Diferencias encontradas: {len(diferencias)}")
+
+        if diferencias:
+            reporte = "\n".join([
+                f"[{d['tipo_diferencia'].upper()}] Código {d['codigo']}:\n"
+                f"  Excel: {d['descripcion_excel']}\n"
+                f"  BD:    {d['descripcion_db'] or '[NO EXISTE]'}"
+                for d in diferencias[:20]
+            ])
+            return JSONResponse(
+                status_code=422,
+                content={
+                    "error": "PARTIDAS_NO_COINCIDEN",
+                    "message": f"Se encontraron {len(diferencias)} diferencias entre el Excel y el cronograma en BD",
+                    "reporte_diferencias": reporte,
+                    "diferencias": diferencias,
+                    "total_diferencias": len(diferencias),
+                    "permitir_avance": False
+                }
+            )
+
         return {
             "success": True,
-            "message": "Partidas validadas correctamente",
+            "message": f"Partidas validadas correctamente: {len(partidas_excel)} códigos y descripciones coinciden",
             "partidas_validadas": len(partidas_excel),
             "permitir_avance": True,
             "siguiente_paso": "Puede proceder a subir avances físicos"
@@ -361,48 +396,46 @@ def extraer_partidas_del_excel(content: bytes) -> List[PartidaExcel]:
             ]
 
 async def obtener_partidas_db(comisaria_id: int) -> List[PartidaDB]:
-    """Obtiene partidas de la BD para una comisaría"""
+    """Obtiene partidas de la BD SQLite para una comisaría (cronograma activo más reciente)"""
+    import aiosqlite
+    import os
 
-    # En producción esto vendría de la BD real
-    # Por ahora simular con las partidas reales de COLLIQUE que están en el Excel
+    db_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'data', 'nemaec_erp.db')
+    db_path = os.path.abspath(db_path)
 
-    # Leer las partidas reales desde el Excel existente para simular la BD
-    try:
-        df = pd.read_excel('/home/oem/Downloads/COLLIQUE_cronograma_progresivo.xlsx', sheet_name='COLLIQUE')
-        partidas_bd = []
+    print(f"🗄️ Conectando a BD: {db_path}")
 
-        for _, row in df.iterrows():
-            codigo_partida = str(row.iloc[3]).strip() if pd.notna(row.iloc[3]) else ""
-            descripcion = str(row.iloc[4]).strip() if pd.notna(row.iloc[4]) else ""
+    async with aiosqlite.connect(db_path) as db:
+        # Obtener el cronograma más reciente de la comisaría
+        async with db.execute(
+            "SELECT id FROM cronogramas WHERE comisaria_id = ? ORDER BY created_at DESC LIMIT 1",
+            (comisaria_id,)
+        ) as cursor:
+            row = await cursor.fetchone()
 
-            if codigo_partida and codigo_partida != "nan" and len(codigo_partida) > 0:
-                # Simular precio desde columna 8 o usar 0
-                precio_total = 0.0
-                try:
-                    precio_total = float(row.iloc[8]) if len(row) > 8 and pd.notna(row.iloc[8]) else 0.0
-                except:
-                    precio_total = 0.0
+        if not row:
+            print(f"⚠️ No hay cronograma para comisaría {comisaria_id}")
+            return []
 
-                partidas_bd.append(PartidaDB(
-                    codigo=codigo_partida,
-                    descripcion=descripcion,
-                    precio_total=precio_total,
-                    descripcion_hash=ValidadorPartidas.generar_hash_descripcion(descripcion),
-                    fecha_modificacion=datetime.now()
-                ))
+        cronograma_id = row[0]
+        print(f"🎯 Usando cronograma ID={cronograma_id} para comisaría {comisaria_id}")
 
-        print(f"📊 BD simulada: {len(partidas_bd)} partidas cargadas desde Excel COLLIQUE")
-        return partidas_bd
+        # Obtener todas las partidas de ese cronograma
+        async with db.execute(
+            "SELECT codigo_partida, descripcion, precio_total FROM partidas WHERE cronograma_id = ?",
+            (cronograma_id,)
+        ) as cursor:
+            rows = await cursor.fetchall()
 
-    except Exception as e:
-        print(f"❌ Error al cargar BD desde Excel: {e}")
-        # Fallback a datos mínimos
-        return [
-            PartidaDB(
-                codigo="01",
-                descripcion="OBRAS PROVISIONALES, TRABAJOS",
-                precio_total=0.0,
-                descripcion_hash=ValidadorPartidas.generar_hash_descripcion("OBRAS PROVISIONALES, TRABAJOS"),
-                fecha_modificacion=datetime.now()
-            )
-        ]
+    partidas_bd = [
+        PartidaDB(
+            codigo=r[0],
+            descripcion=r[1] or "",
+            precio_total=r[2] or 0.0,
+            descripcion_hash=ValidadorPartidas.generar_hash_descripcion(r[1] or ""),
+            fecha_modificacion=datetime.now()
+        )
+        for r in rows
+    ]
+    print(f"📊 BD: {len(partidas_bd)} partidas cargadas para comisaría {comisaria_id}")
+    return partidas_bd

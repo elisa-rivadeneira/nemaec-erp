@@ -37,17 +37,9 @@ export const useImportCronograma = () => {
     mutationFn: (data: CronogramaUploadData) =>
       cronogramaService.importCronograma(data),
     onSuccess: (result) => {
-      // Invalidar queries relacionadas
+      // Invalidar todas las queries de cronograma (historial, versiones, detalle)
+      queryClient.invalidateQueries({ queryKey: ['cronograma'] });
       queryClient.invalidateQueries({ queryKey: ['cronogramas'] });
-      queryClient.invalidateQueries({
-        queryKey: ['cronograma', 'comisaria', result.comisaria_id]
-      });
-
-      // Actualizar cache directamente para respuesta inmediata
-      queryClient.setQueryData(
-        ['cronograma', 'comisaria', result.comisaria_id],
-        result
-      );
     }
   });
 };
@@ -78,7 +70,9 @@ export const useDeleteCronograma = () => {
     mutationFn: (cronogramaId: number) =>
       cronogramaService.deleteCronograma(cronogramaId),
     onSuccess: () => {
+      // Invalidar todas las queries de cronograma para limpiar el cache completamente
       queryClient.invalidateQueries({ queryKey: ['cronogramas'] });
+      queryClient.invalidateQueries({ queryKey: ['cronograma'] });
     }
   });
 };

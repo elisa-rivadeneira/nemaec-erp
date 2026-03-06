@@ -185,45 +185,57 @@ export const CronogramaView: React.FC<CronogramaViewProps> = ({
     );
   };
 
-  // Función para calcular el total de una partida padre sumando SOLO las partidas finales (hojas del árbol)
-  const calcularTotalPadre = (codigoPadre: string, todasLasPartidas: any[]) => {
-    // Buscar todas las partidas que empiecen con el código padre
-    const partidasDescendientes = todasLasPartidas.filter(partida =>
-      partida.codigo_partida.startsWith(codigoPadre + '.') || // 01.01, 01.02, etc.
-      (partida.codigo_partida.startsWith(codigoPadre) &&
-       partida.codigo_partida !== codigoPadre &&
-       partida.codigo_partida.length > codigoPadre.length)
-    );
-
-    // Solo sumar las partidas que tienen precio_total > 0 y son las más específicas (hojas)
-    return partidasDescendientes
-      .filter(partida => {
-        // Verificar que tenga precio total
-        if (partida.precio_total <= 0) return false;
-
-        // Verificar que no tenga partidas más específicas (hijas)
-        const tieneHijas = partidasDescendientes.some(otra =>
-          otra.codigo_partida !== partida.codigo_partida &&
-          otra.codigo_partida.startsWith(partida.codigo_partida + '.')
-        );
-
-        return !tieneHijas;
-      })
-      .reduce((total, partida) => total + partida.precio_total, 0);
+  // Precio efectivo de una partida hoja: usa precio_total si > 0, sino metrado × precio_unitario
+  const getPrecioEfectivo = (partida: any): number => {
+    if (partida.precio_total > 0) return partida.precio_total;
+    if (partida.metrado > 0 && partida.precio_unitario > 0)
+      return Math.round(partida.metrado * partida.precio_unitario * 100) / 100;
+    return 0;
   };
 
-  // Enriquecer partidas con totales calculados para niveles superiores
-  const enrichedPartidas = cronograma?.partidas?.map(partida => {
-    // Para niveles 1 y 2, calcular el total sumando las partidas hijas
-    if (partida.nivel_jerarquia <= 2) {
-      const totalCalculado = calcularTotalPadre(partida.codigo_partida, cronograma.partidas);
+  // Sumar precio de todas las hojas descendientes de un padre
+  const calcularTotalPadre = (codigoPadre: string, todasLasPartidas: any[]) => {
+    const descendientes = todasLasPartidas.filter(p =>
+      p.codigo_partida.startsWith(codigoPadre + '.') && p.codigo_partida !== codigoPadre
+    );
+    // Solo hojas (sin hijos dentro del subárbol)
+    return descendientes
+      .filter(p => !descendientes.some(o => o.codigo_partida.startsWith(p.codigo_partida + '.')))
+      .reduce((sum, p) => sum + getPrecioEfectivo(p), 0);
+  };
 
+  // Obtener fechas min/max de las hojas descendientes de un padre
+  const calcularFechasPadre = (codigoPadre: string, todasLasPartidas: any[]) => {
+    const descendientes = todasLasPartidas.filter(p =>
+      p.codigo_partida.startsWith(codigoPadre + '.') && p.codigo_partida !== codigoPadre
+    );
+    const hojas = descendientes.filter(p =>
+      !descendientes.some(o => o.codigo_partida.startsWith(p.codigo_partida + '.'))
+    );
+    const fechasIni = hojas.map(p => p.fecha_inicio).filter(Boolean);
+    const fechasFin = hojas.map(p => p.fecha_fin).filter(Boolean);
+    return {
+      fecha_inicio: fechasIni.length > 0 ? fechasIni.reduce((a, b) => a < b ? a : b) : null,
+      fecha_fin: fechasFin.length > 0 ? fechasFin.reduce((a, b) => a > b ? a : b) : null,
+    };
+  };
+
+  // Enriquecer partidas con totales y fechas calculados
+  const enrichedPartidas = cronograma?.partidas?.map(partida => {
+    const tieneHijos = cronograma.partidas.some((p: any) =>
+      p.codigo_partida.startsWith(partida.codigo_partida + '.')
+    );
+    if (tieneHijos) {
+      const fechas = (!partida.fecha_inicio || !partida.fecha_fin)
+        ? calcularFechasPadre(partida.codigo_partida, cronograma.partidas)
+        : {};
       return {
         ...partida,
-        precio_total: totalCalculado > 0 ? totalCalculado : partida.precio_total
+        precio_total: calcularTotalPadre(partida.codigo_partida, cronograma.partidas),
+        ...fechas,
       };
     }
-    return partida;
+    return { ...partida, precio_total: getPrecioEfectivo(partida) };
   }) || [];
 
   // Filtrar partidas por búsqueda y visibilidad

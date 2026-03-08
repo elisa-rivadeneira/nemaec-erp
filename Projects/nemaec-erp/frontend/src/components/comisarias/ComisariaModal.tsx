@@ -3,6 +3,7 @@
  * Modal para crear/editar/ver comisarías con integración Google Maps.
  */
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   XMarkIcon,
   MapPinIcon,
@@ -62,22 +63,13 @@ const ComisariaModal: React.FC<ComisariaModalProps> = ({
   const [showCronogramaUpload, setShowCronogramaUpload] = useState(false);
   const [presupuestoRaw, setPresupuestoRaw] = useState('');
 
+  const navigate = useNavigate();
   const createMutation = useCreateComisaria();
   const updateMutation = useUpdateComisaria();
 
-  // Hooks para cronograma (estrategia de 2 pasos)
-  // 1. Obtener lista de cronogramas de la comisaría (SIN partidas, solo para ID)
-  const { data: cronogramasList } = useCronogramaByComisaria(
+  // Hook para cronograma - obtiene directamente el cronograma CON partidas
+  const { data: cronograma, refetch: refetchCronograma } = useCronogramaByComisaria(
     comisaria?.id || 0
-  );
-
-  // 2. Si existe cronograma, obtener el completo CON partidas
-  const cronogramaId = Array.isArray(cronogramasList) && cronogramasList.length > 0
-    ? cronogramasList[0].id
-    : null;
-
-  const { data: cronograma, refetch: refetchCronograma } = useCronogramaById(
-    cronogramaId || 0
   );
 
   const isLoading = createMutation.isPending || updateMutation.isPending;
@@ -731,6 +723,7 @@ const ComisariaModal: React.FC<ComisariaModalProps> = ({
                 <CronogramaView
                   cronograma={cronograma}
                   onUploadNew={() => setShowCronogramaUpload(true)}
+                  onViewFullProgress={() => navigate(`/cronograma/comisaria/${comisaria?.id}`)}
                 />
               ) : (
                 <div className="space-y-6">

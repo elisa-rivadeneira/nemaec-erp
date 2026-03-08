@@ -10,7 +10,8 @@ const API_BASE_URL = '/api/v1';
 const apiCall = async <T>(endpoint: string, options?: RequestInit): Promise<T> => {
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     headers: {
-      'Content-Type': 'application/json',
+      // Only set Content-Type for non-FormData requests
+      ...(options?.body instanceof FormData ? {} : { 'Content-Type': 'application/json' }),
       ...options?.headers
     },
     ...options
@@ -114,11 +115,15 @@ export class SeguimientoService {
   async importarAvances(
     comisaria_id: number,
     archivo: File,
+    fecha_reporte: string,
+    descripcion_reporte: string = "",
     validacion_previa: boolean = false
   ): Promise<ImportAvancesResult> {
     const formData = new FormData();
     formData.append('comisaria_id', comisaria_id.toString());
     formData.append('archivo', archivo);
+    formData.append('fecha_reporte', fecha_reporte);
+    formData.append('descripcion_reporte', descripcion_reporte);
     formData.append('validacion_previa', validacion_previa.toString());
 
     return apiCall<ImportAvancesResult>(`/${this.baseUrl}/import-avances`, {
@@ -153,29 +158,37 @@ export class SeguimientoService {
   /**
    * 📊 Obtener avances físicos de una comisaría
    */
-  async getAvancesFisicos(comisaria_id: number): Promise<AvanceFisico[]> {
-    return apiCall<AvanceFisico[]>(`/${this.baseUrl}/avances-fisicos/${comisaria_id}`);
+  async getAvancesFisicos(comisaria_id: number) {
+    return apiCall(`/${this.baseUrl}/avances/${comisaria_id}`);
   }
 
   /**
    * 📈 Obtener detalle de avances por partida
    */
-  async getDetalleAvancesPartidas(avance_fisico_id: number): Promise<DetalleAvancePartida[]> {
-    return apiCall<DetalleAvancePartida[]>(`/${this.baseUrl}/detalle-avances/${avance_fisico_id}`);
+  async getDetalleAvancesPartidas(comisaria_id: number, avance_id: number) {
+    return apiCall(`/${this.baseUrl}/avances/${comisaria_id}/detalle/${avance_id}`);
   }
 
   /**
    * 🎯 Obtener último avance físico de una comisaría
    */
-  async getUltimoAvance(comisaria_id: number): Promise<AvanceFisico | null> {
+  async getUltimoAvance(comisaria_id: number) {
     try {
-      return await apiCall<AvanceFisico>(`/${this.baseUrl}/ultimo-avance/${comisaria_id}`);
+      return await apiCall(`/${this.baseUrl}/avances/${comisaria_id}/ultimo`);
     } catch (error: any) {
       if (error.message.includes('404')) {
         return null; // No hay avances aún
       }
       throw error;
     }
+  }
+
+  /**
+   * 📅 Calcular avance programado basado en fechas y pesos
+   */
+  async getAvanceProgramado(comisaria_id: number, fecha_corte?: string) {
+    const params = fecha_corte ? `?fecha_corte=${fecha_corte}` : '';
+    return apiCall(`/${this.baseUrl}/avances/${comisaria_id}/programado${params}`);
   }
 
   /**
@@ -205,6 +218,13 @@ export class SeguimientoService {
       body: formData,
       headers: {} // Don't set Content-Type for FormData, let browser set it
     });
+  }
+
+  /**
+   * 📈 Obtener evolución histórica de avances
+   */
+  async getEvolucionHistorica(comisaria_id: number) {
+    return apiCall(`/${this.baseUrl}/evolucion-historica/${comisaria_id}`);
   }
 }
 

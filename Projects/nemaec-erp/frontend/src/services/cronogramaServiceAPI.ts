@@ -168,9 +168,9 @@ export const cronogramaService = {
 
   // Obtener cronograma por comisaría
   async getCronogramaByComisaria(comisariaId: number): Promise<CronogramaValorizado | null> {
-    console.log(`🔗 Consultando API: GET /cronogramas/comisaria/${comisariaId}`);
+    console.log(`🔗 Consultando API: GET /cronogramas/comisaria/${comisariaId}/detalle`);
     try {
-      return await apiCall<CronogramaValorizado>(`/cronogramas/comisaria/${comisariaId}`);
+      return await apiCall<CronogramaValorizado>(`/cronogramas/comisaria/${comisariaId}/detalle`);
     } catch (error: any) {
       if (error.message.includes('404')) {
         return null;

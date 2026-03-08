@@ -93,8 +93,8 @@ export const SeguimientoUpload: React.FC<SeguimientoUploadProps> = ({
 
   // Mutación para importar avances físicos
   const importMutation = useMutation({
-    mutationFn: async ({ comisaria_id, archivo }: { comisaria_id: number; archivo: File }) => {
-      return seguimientoService.importarAvances(comisaria_id, archivo, true); // validacion_previa = true
+    mutationFn: async ({ comisaria_id, archivo, fecha_reporte }: { comisaria_id: number; archivo: File; fecha_reporte: string }) => {
+      return seguimientoService.importarAvances(comisaria_id, archivo, fecha_reporte, `Avances físicos importados el ${fecha_reporte}`, true); // validacion_previa = true
     },
     onSuccess: () => {
       setStep('success');
@@ -155,15 +155,16 @@ export const SeguimientoUpload: React.FC<SeguimientoUploadProps> = ({
   };
 
   const handleImport = () => {
-    if (!formData.comisaria_id || !formData.archivo) {
-      alert('Por favor completa todos los campos');
+    if (!formData.comisaria_id || !formData.archivo || !formData.fecha_corte) {
+      alert('Por favor completa todos los campos incluyendo la fecha de corte');
       return;
     }
 
     setStep('uploading');
     importMutation.mutate({
       comisaria_id: formData.comisaria_id,
-      archivo: formData.archivo
+      archivo: formData.archivo,
+      fecha_reporte: formData.fecha_corte
     });
   };
 
@@ -218,7 +219,7 @@ export const SeguimientoUpload: React.FC<SeguimientoUploadProps> = ({
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Fecha de corte
+                  Fecha de corte *
                 </label>
                 <Input
                   type="date"
@@ -468,9 +469,8 @@ export const SeguimientoUpload: React.FC<SeguimientoUploadProps> = ({
 
             {comparison && (
               <div className="space-y-6">
-                {/* ALERTA CRÍTICA si hay inconsistencias */}
-                {(comparison.resumen?.solo_en_cronograma > 0 ||
-                  comparison.resumen?.solo_en_excel > 0 ||
+                {/* ALERTA CRÍTICA si hay inconsistencias REALES */}
+                {(comparison.resumen?.solo_en_excel > 0 ||
                   comparison.resumen?.descripciones_diferentes > 0) && (
                   <div className="bg-red-50 border-2 border-red-300 rounded-lg p-6 shadow-lg">
                     <div className="flex items-start space-x-3">
@@ -511,9 +511,8 @@ export const SeguimientoUpload: React.FC<SeguimientoUploadProps> = ({
                   </div>
                 )}
 
-                {/* Mensaje de éxito si todo coincide */}
-                {comparison.resumen?.solo_en_cronograma === 0 &&
-                 comparison.resumen?.solo_en_excel === 0 &&
+                {/* Mensaje de éxito si no hay problemas REALES */}
+                {comparison.resumen?.solo_en_excel === 0 &&
                  comparison.resumen?.descripciones_diferentes === 0 && (
                   <div className="bg-green-50 border-2 border-green-300 rounded-lg p-6 shadow-lg">
                     <div className="flex items-start space-x-3">
@@ -524,6 +523,24 @@ export const SeguimientoUpload: React.FC<SeguimientoUploadProps> = ({
                         </h3>
                         <p className="text-green-700 font-medium">
                           Todas las partidas coinciden entre el cronograma y el archivo Excel. Puedes proceder a subir los avances físicos con confianza.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Mensaje informativo sobre partidas faltantes */}
+                {comparison.resumen?.solo_en_cronograma > 0 && (
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                    <div className="flex items-start space-x-3">
+                      <div className="text-yellow-400 text-xl">ℹ️</div>
+                      <div className="flex-1">
+                        <h4 className="font-medium text-yellow-800 mb-2">
+                          Información: {comparison.resumen.solo_en_cronograma} partidas sin avance reportado
+                        </h4>
+                        <p className="text-sm text-yellow-700">
+                          Es normal que el Excel de avances contenga menos partidas que el cronograma completo.
+                          Solo se reportan partidas con avance físico ejecutado. Las partidas sin avance (0%) no necesitan incluirse.
                         </p>
                       </div>
                     </div>
@@ -740,7 +757,10 @@ export const SeguimientoUpload: React.FC<SeguimientoUploadProps> = ({
 
       case 'comparison':
         const tieneInconsistencias = comparison && (
-          comparison.resumen?.solo_en_cronograma > 0 ||
+          // Solo consideramos inconsistencias REALES:
+          // - Partidas en Excel que no están en cronograma (ERROR)
+          // - Descripciones diferentes (ERROR)
+          // - NO consideramos problema que falten partidas en Excel (normal en avances)
           comparison.resumen?.solo_en_excel > 0 ||
           comparison.resumen?.descripciones_diferentes > 0
         );

@@ -41,19 +41,28 @@ class ValidadorPartidas:
     @staticmethod
     def normalizar_codigo_partida(codigo: str) -> str:
         """
-        Normaliza códigos de partida para comparación.
-        Misma lógica que cronogramas_db.normalizar_codigo para consistencia.
+        Normaliza códigos de partida para comparación MATEMÁTICAMENTE CORRECTA.
 
-        Ejemplos:
+        CRÍTICO: "2.1" = "2.10" matemáticamente, NO "2.01"
+
+        Reglas:
+        - Parte principal (antes del primer punto): siempre 2 dígitos
+        - Partes decimales (después del punto):
+          * Si es 1 dígito → multiplicar por 10 (ej: .1 = .10)
+          * Si es 2+ dígitos → mantener como está
+
+        Ejemplos CORRECTOS:
         - "1"      -> "01"
         - "1.01"   -> "01.01"
-        - "2.1"    -> "02.10"  (dígito único no-primero = zero truncado a la derecha)
+        - "2.1"    -> "02.10"  ✅ (matemáticamente correcto)
+        - "2.10"   -> "02.10"
+        - "5.1"    -> "05.10"  ✅ (matemáticamente correcto)
         - "01.01"  -> "01.01"
         """
         if not codigo or codigo.strip() == "":
             return ""
 
-        codigo = codigo.strip()
+        codigo = codigo.strip().upper()
         partes = codigo.split('.')
         partes_normalizadas = []
 
@@ -61,8 +70,22 @@ class ValidadorPartidas:
             t = parte.strip()
             try:
                 numero = int(t)
-                partes_normalizadas.append(f"{numero:02d}")
+                if i == 0:
+                    # Primera parte: siempre 2 dígitos
+                    if numero < 10:
+                        partes_normalizadas.append(f"0{numero}")
+                    else:
+                        partes_normalizadas.append(str(numero))
+                else:
+                    # Partes después del punto: matemáticamente correctas
+                    if numero < 10 and len(t) == 1:
+                        # Un solo dígito: 1 = 10, 2 = 20, etc.
+                        partes_normalizadas.append(f"{numero}0")
+                    else:
+                        # Ya tiene 2+ dígitos o es 0X: mantener como está
+                        partes_normalizadas.append(f"{numero:02d}")
             except ValueError:
+                # No es número, mantener como está
                 partes_normalizadas.append(t)
 
         return '.'.join(partes_normalizadas)

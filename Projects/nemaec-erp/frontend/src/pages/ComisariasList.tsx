@@ -14,7 +14,9 @@ import {
   EyeIcon,
   FunnelIcon,
   ArrowPathIcon,
-  ClockIcon
+  ClockIcon,
+  ChartBarIcon,
+  ArrowTrendingUpIcon
 } from '@heroicons/react/24/outline';
 import {
   BuildingOfficeIcon as BuildingOfficeIconSolid
@@ -315,11 +317,29 @@ const ComisariasList: React.FC = () => {
                       <Button
                         variant="ghost"
                         size="sm"
+                        onClick={() => navigate(`/cronograma/comisaria/${comisaria.id}`)}
+                        leftIcon={<ChartBarIcon className="w-4 h-4" />}
+                        className="text-green-600 hover:text-green-700 hover:bg-green-50"
+                      >
+                        Avances
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         onClick={() => navigate(`/cronograma/historial/${comisaria.id}`)}
                         leftIcon={<ClockIcon className="w-4 h-4" />}
                         className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                       >
                         Historial
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => navigate(`/seguimiento/evolucion/${comisaria.id}`)}
+                        leftIcon={<ArrowTrendingUpIcon className="w-4 h-4" />}
+                        className="text-purple-600 hover:text-purple-700 hover:bg-purple-50"
+                      >
+                        Evolución
                       </Button>
                       <Button
                         variant="ghost"

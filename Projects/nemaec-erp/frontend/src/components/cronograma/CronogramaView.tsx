@@ -20,11 +20,13 @@ import {
 interface CronogramaViewProps {
   cronograma: CronogramaValorizado;
   onUploadNew?: () => void;
+  onViewFullProgress?: () => void;
 }
 
 export const CronogramaView: React.FC<CronogramaViewProps> = ({
   cronograma,
-  onUploadNew
+  onUploadNew,
+  onViewFullProgress
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
@@ -279,11 +281,18 @@ export const CronogramaView: React.FC<CronogramaViewProps> = ({
             </div>
           </div>
 
-          {onUploadNew && (
-            <Button variant="primary" size="sm" onClick={onUploadNew}>
-              📤 Subir nuevo
-            </Button>
-          )}
+          <div className="flex items-center space-x-2">
+            {onViewFullProgress && (
+              <Button variant="outline" size="sm" onClick={onViewFullProgress}>
+                📊 Ver Avances Completos
+              </Button>
+            )}
+            {onUploadNew && (
+              <Button variant="primary" size="sm" onClick={onUploadNew}>
+                📤 Subir nuevo
+              </Button>
+            )}
+          </div>
         </div>
       </div>
 

@@ -3,10 +3,10 @@
 SQLAlchemy models para el módulo de seguimiento de avances físicos
 """
 
-from sqlalchemy import Column, Integer, String, Decimal, Date, DateTime, Text, ForeignKey, UniqueConstraint
+from sqlalchemy import Column, Integer, String, Date, DateTime, Text, ForeignKey, UniqueConstraint, Numeric
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-from app.infrastructure.database.base import Base
+from app.core.database import Base
 
 class AvanceFisico(Base):
     """
@@ -29,9 +29,9 @@ class AvanceFisico(Base):
                                comment="Días desde inicio de obra")
 
     # Avances globales
-    avance_programado_acum = Column(Decimal(5, 4), nullable=True,
+    avance_programado_acum = Column(Numeric(5, 4), nullable=True,
                                    comment="Avance programado acumulado (0.0-1.0)")
-    avance_ejecutado_acum = Column(Decimal(5, 4), nullable=False,
+    avance_ejecutado_acum = Column(Numeric(5, 4), nullable=False,
                                   comment="Avance real ejecutado acumulado (0.0-1.0)")
 
     # Información del reporte
@@ -45,7 +45,7 @@ class AvanceFisico(Base):
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
 
     # Relaciones
-    comisaria = relationship("Comisaria", back_populates="avances_fisicos")
+    comisaria = relationship("ComisariaModel", back_populates="avances_fisicos")
     detalles_avances = relationship("DetalleAvancePartida",
                                    back_populates="avance_fisico",
                                    cascade="all, delete-orphan")
@@ -79,9 +79,9 @@ class DetalleAvancePartida(Base):
                            comment="Código de partida (ej: 01.01.02)")
 
     # Avance de la partida
-    porcentaje_avance = Column(Decimal(5, 4), nullable=False,
+    porcentaje_avance = Column(Numeric(5, 4), nullable=False,
                               comment="Porcentaje de avance (0.0-1.0)")
-    monto_ejecutado = Column(Decimal(12, 2), nullable=True,
+    monto_ejecutado = Column(Numeric(12, 2), nullable=True,
                             comment="Monto ejecutado calculado automáticamente")
 
     # Información adicional
@@ -132,7 +132,7 @@ class AlertaAvance(Base):
     # Información contextual
     dias_retraso = Column(Integer, nullable=True,
                          comment="Días de retraso detectados (si aplica)")
-    porcentaje_diferencia = Column(Decimal(5, 4), nullable=True,
+    porcentaje_diferencia = Column(Numeric(5, 4), nullable=True,
                                   comment="Diferencia % vs programado")
 
     # Auditoría
@@ -140,7 +140,7 @@ class AlertaAvance(Base):
     resuelta_at = Column(DateTime, nullable=True)
 
     # Relaciones
-    comisaria = relationship("Comisaria")
+    comisaria = relationship("ComisariaModel")
     avance_fisico = relationship("AvanceFisico")
 
     def __repr__(self):
@@ -153,11 +153,11 @@ def extend_comisaria_model():
     Extiende el modelo Comisaria existente con relaciones de seguimiento
     """
     try:
-        from app.infrastructure.database.models import Comisaria
+        from app.infrastructure.database.models import ComisariaModel
 
         # Agregar relación de avances físicos
-        if not hasattr(Comisaria, 'avances_fisicos'):
-            Comisaria.avances_fisicos = relationship("AvanceFisico",
+        if not hasattr(ComisariaModel, 'avances_fisicos'):
+            ComisariaModel.avances_fisicos = relationship("AvanceFisico",
                                                     back_populates="comisaria",
                                                     cascade="all, delete-orphan")
 

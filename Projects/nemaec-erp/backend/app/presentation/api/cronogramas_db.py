@@ -513,3 +513,46 @@ async def delete_cronograma(cronograma_id: int, db: AsyncSession = Depends(get_d
     await db.commit()
 
     print(f"✅ Cronograma eliminado: {cronograma_name} (ID: {cronograma_id})")
+
+@router.get("/comisaria/{comisaria_id}/detalle", response_model=CronogramaWithPartidas)
+async def get_cronograma_detalle_by_comisaria(comisaria_id: int, db: AsyncSession = Depends(get_db)):
+    """
+    Obtener cronograma más reciente de una comisaría CON sus partidas
+
+    Args:
+        comisaria_id: ID de la comisaría
+
+    Returns:
+        CronogramaWithPartidas: Cronograma completo con todas las partidas
+    """
+    print(f"🔍 DEBUG: GET /cronogramas/comisaria/{comisaria_id}/detalle")
+
+    # Obtener el cronograma más reciente de la comisaría
+    stmt = select(CronogramaModel).where(
+        CronogramaModel.comisaria_id == comisaria_id
+    ).order_by(CronogramaModel.created_at.desc()).limit(1)
+
+    result = await db.execute(stmt)
+    cronograma = result.scalars().first()
+
+    if not cronograma:
+        raise HTTPException(status_code=404, detail="No se encontró cronograma para esta comisaría")
+
+    # Obtener todas las partidas del cronograma
+    stmt_partidas = select(PartidaModel).where(
+        PartidaModel.cronograma_id == cronograma.id
+    ).order_by(PartidaModel.codigo_partida)
+
+    result_partidas = await db.execute(stmt_partidas)
+    partidas = result_partidas.scalars().all()
+
+    print(f"📊 Encontrado cronograma {cronograma.nombre} con {len(partidas)} partidas")
+
+    # Convertir a modelos de respuesta
+    cronograma_response = cronograma_model_to_response(cronograma)
+    partidas_response = [partida_model_to_response(partida) for partida in partidas]
+
+    return CronogramaWithPartidas(
+        **cronograma_response.model_dump(),
+        partidas=partidas_response
+    )

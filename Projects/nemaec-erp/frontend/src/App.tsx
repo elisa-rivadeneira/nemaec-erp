@@ -13,6 +13,7 @@ import CronogramaVersionesPage from '@/pages/CronogramaVersionesPage';
 import CronogramaHistorialPage from '@/pages/CronogramaHistorialPage';
 import CronogramaDetallePage from '@/pages/CronogramaDetallePage';
 import AvancesImportExcel from '@/pages/AvancesImportExcel';
+import SeguimientoEvolucionPage from '@/pages/SeguimientoEvolucionPage';
 
 // React Query Devtools (solo en desarrollo)
 const ReactQueryDevtools = process.env.NODE_ENV === 'development'
@@ -70,6 +71,9 @@ const App: React.FC = () => {
           <Route path="/cronograma/versiones/:comisariaId" element={<CronogramaVersionesPage />} />
           <Route path="/cronograma/historial/:comisariaId" element={<CronogramaHistorialPage />} />
           <Route path="/cronograma/comisaria/:comisariaId" element={<CronogramaDetallePage />} />
+
+          {/* Seguimiento Routes */}
+          <Route path="/seguimiento/evolucion/:comisariaId" element={<SeguimientoEvolucionPage />} />
 
           {/* Other Routes */}
           <Route path="/reportes" element={<div className="p-6 text-gray-800">Reportes (Próximamente)</div>} />

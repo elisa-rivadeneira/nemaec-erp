@@ -102,12 +102,18 @@ export const useCronogramaById = (cronogramaId: number) => {
   });
 };
 
-// Hook para comparar dos versiones
-export const useCompareVersions = () => {
+// Hook para actualizar fechas de partida
+export const useUpdatePartidaFechas = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
-    mutationFn: ({ versionAnteriorId, versionNuevaId }: {
-      versionAnteriorId: number;
-      versionNuevaId: number
-    }) => cronogramaService.compareVersions(versionAnteriorId, versionNuevaId)
+    mutationFn: ({ partidaId, fechas }: {
+      partidaId: number;
+      fechas: { fecha_inicio?: string; fecha_fin?: string }
+    }) => cronogramaService.updatePartidaFechas(partidaId, fechas),
+    onSuccess: () => {
+      // Invalidar queries de cronograma para refrescar los datos
+      queryClient.invalidateQueries({ queryKey: ['cronograma'] });
+    }
   });
 };

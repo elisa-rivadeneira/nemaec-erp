@@ -356,6 +356,20 @@ export const cronogramaService = {
     }
   },
 
+  // Actualizar fechas de una partida específica
+  async updatePartidaFechas(partidaId: number, fechas: {fecha_inicio?: string; fecha_fin?: string}): Promise<Partida> {
+    console.log(`🔗 Actualizando fechas de partida ${partidaId}`);
+    try {
+      return await apiCall<Partida>(`/cronogramas/partidas/${partidaId}/fechas`, {
+        method: 'PUT',
+        body: JSON.stringify(fechas)
+      });
+    } catch (error) {
+      console.error(`❌ Error al actualizar fechas de partida ${partidaId}:`, error);
+      throw error;
+    }
+  },
+
   // Utilidad para obtener partida padre
   getPartidaPadre(codigoPartida: string): string | undefined {
     const partes = codigoPartida.split('.');

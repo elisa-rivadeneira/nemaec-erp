@@ -6,6 +6,7 @@
 import React, { useState } from 'react';
 import * as XLSX from 'xlsx';
 import { CronogramaValorizado, Partida } from '@/types/cronograma';
+import { useUpdatePartidaFechas } from '@/hooks/useCronograma';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import { Badge } from '@/components/ui/badge';
@@ -14,7 +15,10 @@ import {
   ChevronRight,
   Search,
   Filter,
-  Download
+  Download,
+  Edit3,
+  Check,
+  X
 } from 'lucide-react';
 
 interface CronogramaViewProps {
@@ -31,7 +35,11 @@ export const CronogramaView: React.FC<CronogramaViewProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const [currentPage, setCurrentPage] = useState(1);
+  const [editingPartida, setEditingPartida] = useState<number | null>(null);
+  const [editFechas, setEditFechas] = useState<{fecha_inicio: string; fecha_fin: string}>({ fecha_inicio: '', fecha_fin: '' });
   const itemsPerPage = 1000; // Mostrar todo en una página para el árbol
+
+  const updateFechasMutation = useUpdatePartidaFechas();
 
   const handleExport = () => {
     // Fila 1: encabezados (el backend los ignora, empieza a leer desde fila 2)
@@ -161,6 +169,43 @@ export const CronogramaView: React.FC<CronogramaViewProps> = ({
   // Función para colapsar todo
   const collapseAll = () => {
     setExpandedItems(new Set());
+  };
+
+  // Funciones para edición de fechas
+  const handleEditFechas = (partida: any) => {
+    setEditingPartida(partida.id);
+    setEditFechas({
+      fecha_inicio: partida.fecha_inicio ? partida.fecha_inicio.split('T')[0] : '',
+      fecha_fin: partida.fecha_fin ? partida.fecha_fin.split('T')[0] : ''
+    });
+  };
+
+  const handleSaveFechas = async (partidaId: number) => {
+    try {
+      const fechasToUpdate: { fecha_inicio?: string; fecha_fin?: string } = {};
+
+      if (editFechas.fecha_inicio) {
+        fechasToUpdate.fecha_inicio = editFechas.fecha_inicio + 'T00:00:00Z';
+      }
+      if (editFechas.fecha_fin) {
+        fechasToUpdate.fecha_fin = editFechas.fecha_fin + 'T00:00:00Z';
+      }
+
+      await updateFechasMutation.mutateAsync({
+        partidaId,
+        fechas: fechasToUpdate
+      });
+
+      setEditingPartida(null);
+    } catch (error) {
+      console.error('Error actualizando fechas:', error);
+      alert('Error al actualizar las fechas');
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingPartida(null);
+    setEditFechas({ fecha_inicio: '', fecha_fin: '' });
   };
 
   // Función para verificar si una partida debe ser visible
@@ -464,33 +509,87 @@ export const CronogramaView: React.FC<CronogramaViewProps> = ({
 
                 {/* Fecha de Inicio */}
                 <td className="p-3 text-center text-sm">
-                  {partida.fecha_inicio && partida.fecha_inicio !== '1970-01-01T00:00:00.000Z' ? (
-                    <div className="flex flex-col items-center">
-                      <span className="font-mono text-gray-700">
-                        {formatDateShort(partida.fecha_inicio)}
-                      </span>
-                      <span className="text-xs text-gray-500">
-                        {formatDate(partida.fecha_inicio).split(' ')[1]} {formatDate(partida.fecha_inicio).split(' ')[2]}
-                      </span>
+                  {editingPartida === partida.id ? (
+                    <div className="flex flex-col items-center space-y-1">
+                      <input
+                        type="date"
+                        value={editFechas.fecha_inicio}
+                        onChange={(e) => setEditFechas(prev => ({ ...prev, fecha_inicio: e.target.value }))}
+                        className="text-xs border border-gray-300 rounded px-2 py-1 w-28"
+                      />
                     </div>
                   ) : (
-                    <span className="text-gray-400 text-xs">Sin fecha</span>
+                    <div className="flex items-center justify-center space-x-1">
+                      <div className="flex flex-col items-center">
+                        {partida.fecha_inicio && partida.fecha_inicio !== '1970-01-01T00:00:00.000Z' ? (
+                          <>
+                            <span className="font-mono text-gray-700">
+                              {formatDateShort(partida.fecha_inicio)}
+                            </span>
+                            <span className="text-xs text-gray-500">
+                              {formatDate(partida.fecha_inicio).split(' ')[1]} {formatDate(partida.fecha_inicio).split(' ')[2]}
+                            </span>
+                          </>
+                        ) : (
+                          <span className="text-gray-400 text-xs">Sin fecha</span>
+                        )}
+                      </div>
+                      {partida.nivel_jerarquia >= 3 && (
+                        <button
+                          onClick={() => handleEditFechas(partida)}
+                          className="p-1 rounded text-gray-400 hover:text-blue-600 transition-colors"
+                          title="Editar fechas"
+                        >
+                          <Edit3 className="w-3 h-3" />
+                        </button>
+                      )}
+                    </div>
                   )}
                 </td>
 
                 {/* Fecha de Fin */}
                 <td className="p-3 text-center text-sm">
-                  {partida.fecha_fin && partida.fecha_fin !== '1970-01-01T00:00:00.000Z' ? (
-                    <div className="flex flex-col items-center">
-                      <span className="font-mono text-gray-700">
-                        {formatDateShort(partida.fecha_fin)}
-                      </span>
-                      <span className="text-xs text-gray-500">
-                        {formatDate(partida.fecha_fin).split(' ')[1]} {formatDate(partida.fecha_fin).split(' ')[2]}
-                      </span>
+                  {editingPartida === partida.id ? (
+                    <div className="flex flex-col items-center space-y-2">
+                      <input
+                        type="date"
+                        value={editFechas.fecha_fin}
+                        onChange={(e) => setEditFechas(prev => ({ ...prev, fecha_fin: e.target.value }))}
+                        className="text-xs border border-gray-300 rounded px-2 py-1 w-28"
+                      />
+                      <div className="flex space-x-1">
+                        <button
+                          onClick={() => handleSaveFechas(partida.id)}
+                          disabled={updateFechasMutation.isPending}
+                          className="p-1 rounded text-green-600 hover:bg-green-50 transition-colors disabled:opacity-50"
+                          title="Guardar"
+                        >
+                          <Check className="w-3 h-3" />
+                        </button>
+                        <button
+                          onClick={handleCancelEdit}
+                          className="p-1 rounded text-red-600 hover:bg-red-50 transition-colors"
+                          title="Cancelar"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
                     </div>
                   ) : (
-                    <span className="text-gray-400 text-xs">Sin fecha</span>
+                    <div className="flex flex-col items-center">
+                      {partida.fecha_fin && partida.fecha_fin !== '1970-01-01T00:00:00.000Z' ? (
+                        <>
+                          <span className="font-mono text-gray-700">
+                            {formatDateShort(partida.fecha_fin)}
+                          </span>
+                          <span className="text-xs text-gray-500">
+                            {formatDate(partida.fecha_fin).split(' ')[1]} {formatDate(partida.fecha_fin).split(' ')[2]}
+                          </span>
+                        </>
+                      ) : (
+                        <span className="text-gray-400 text-xs">Sin fecha</span>
+                      )}
+                    </div>
                   )}
                 </td>
 

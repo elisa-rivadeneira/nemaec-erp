@@ -46,6 +46,10 @@ class CronogramaCreate(BaseModel):
     comisaria_id: int
     nombre_cronograma: Optional[str] = None
 
+class PartidaFechasUpdate(BaseModel):
+    fecha_inicio: Optional[str] = None
+    fecha_fin: Optional[str] = None
+
 class CronogramaResponse(BaseModel):
     id: int
     comisaria_id: int
@@ -542,3 +546,93 @@ async def delete_cronograma(cronograma_id: int):
     save_cronogramas(cronogramas_data)
 
     print(f"✅ Cronograma eliminado: {removed['nombre_cronograma']} (ID: {cronograma_id})")
+
+@router.put("/partidas/{partida_id}/fechas", response_model=PartidaResponse)
+async def update_partida_fechas(partida_id: int, fechas_data: PartidaFechasUpdate):
+    """
+    Actualizar fechas de una partida específica
+
+    Args:
+        partida_id: ID de la partida
+        fechas_data: Nuevas fechas de inicio y fin
+
+    Returns:
+        PartidaResponse: Partida actualizada
+    """
+    # Buscar la partida en todos los cronogramas
+    cronograma_encontrado = None
+    partida_encontrada = None
+
+    for cronograma in cronogramas_data:
+        for partida in cronograma.get("partidas", []):
+            if partida.get("id") == partida_id:
+                cronograma_encontrado = cronograma
+                partida_encontrada = partida
+                break
+        if partida_encontrada:
+            break
+
+    if not partida_encontrada:
+        raise HTTPException(status_code=404, detail="Partida no encontrada")
+
+    # Actualizar fechas
+    if fechas_data.fecha_inicio is not None:
+        partida_encontrada["fecha_inicio"] = fechas_data.fecha_inicio
+    if fechas_data.fecha_fin is not None:
+        partida_encontrada["fecha_fin"] = fechas_data.fecha_fin
+
+    # Recalcular fechas del cronograma si es necesario
+    if cronograma_encontrado:
+        fechas_inicio_validas = [p["fecha_inicio"] for p in cronograma_encontrado["partidas"] if p.get("fecha_inicio")]
+        fechas_fin_validas = [p["fecha_fin"] for p in cronograma_encontrado["partidas"] if p.get("fecha_fin")]
+
+        if fechas_inicio_validas:
+            cronograma_encontrado["fecha_inicio_obra"] = min(fechas_inicio_validas)
+        if fechas_fin_validas:
+            cronograma_encontrado["fecha_fin_obra"] = max(fechas_fin_validas)
+
+    # Guardar cambios
+    save_cronogramas(cronogramas_data)
+
+    print(f"✅ Fechas actualizadas para partida {partida_id}: inicio={fechas_data.fecha_inicio}, fin={fechas_data.fecha_fin}")
+
+    return partida_encontrada
+
+@router.get("/{cronograma_id}", response_model=CronogramaResponse)
+async def get_cronograma_by_id(cronograma_id: int):
+    """
+    Obtener cronograma por ID específico (CON partidas)
+
+    Args:
+        cronograma_id: ID del cronograma
+
+    Returns:
+        CronogramaResponse: Cronograma completo con partidas
+    """
+    cronograma = next((c for c in cronogramas_data if c["id"] == cronograma_id), None)
+
+    if not cronograma:
+        raise HTTPException(status_code=404, detail="Cronograma no encontrado")
+
+    return cronograma
+
+@router.get("/comisaria/{comisaria_id}/detalle", response_model=CronogramaResponse)
+async def get_cronograma_detalle_by_comisaria(comisaria_id: int):
+    """
+    Obtener cronograma completo (CON partidas) por comisaría
+
+    Args:
+        comisaria_id: ID de la comisaría
+
+    Returns:
+        CronogramaResponse: Cronograma completo con partidas
+    """
+    # Obtener el cronograma más reciente para esta comisaría
+    cronogramas_comisaria = [c for c in cronogramas_data if c["comisaria_id"] == comisaria_id]
+    if not cronogramas_comisaria:
+        raise HTTPException(status_code=404, detail="Cronograma no encontrado")
+
+    # Ordenar por fecha de importación (más reciente primero)
+    cronograma = sorted(cronogramas_comisaria, key=lambda x: x["fecha_importacion"], reverse=True)[0]
+
+    return cronograma

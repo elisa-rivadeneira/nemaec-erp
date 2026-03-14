@@ -15,6 +15,8 @@ export interface MapLocation {
   distrito: string;
   provincia: string;
   departamento: string;
+  estado?: string;
+  comisaria?: any;
 }
 
 // Mock de ubicaciones de comisarías peruanas

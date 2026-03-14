@@ -4,10 +4,9 @@
 Endpoints para búsqueda local sin dependencia de Google Maps API.
 """
 
-from fastapi import APIRouter, HTTPException, Depends
-from typing import List, Optional, Dict, Any
+from fastapi import APIRouter
+from typing import List, Dict, Any
 from pydantic import BaseModel
-from app.core.config import get_settings, Settings
 
 # Esquemas de Pydantic para Google Maps API
 class PlaceSearchRequest(BaseModel):
@@ -24,10 +23,7 @@ class PlaceSearchResponse(BaseModel):
 router = APIRouter(tags=["google-maps-fallback"])
 
 @router.post("/search", response_model=List[PlaceSearchResponse])
-async def search_places_fallback(
-    request: PlaceSearchRequest,
-    settings: Settings = Depends(get_settings)
-):
+async def search_places_fallback(request: PlaceSearchRequest):
     """
     🚨 FALLBACK: Buscar lugares usando base de datos local
 

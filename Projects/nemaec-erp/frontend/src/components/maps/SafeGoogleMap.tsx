@@ -89,9 +89,62 @@ const GoogleMapContainer = memo(({
             .gm-style div[style*="color: rgb(255, 255, 255)"] {
               display: none !important;
             }
+
+            /* Ocultar popup modal de error de Google Maps */
+            div[style*="position: relative"][style*="overflow: hidden"] {
+              display: none !important;
+            }
+
+            /* Ocultar diálogos modales de Google Maps */
+            [role="dialog"] {
+              display: none !important;
+            }
+
+            /* Ocultar cualquier popup de Google Maps */
+            .dismissButton {
+              display: none !important;
+            }
           `;
           document.head.appendChild(style);
           console.log('🧹 CSS aplicado para limpiar overlays de Google Maps');
+
+          // 🚫 HACK: Auto-cerrar popup modal de Google Maps sin API key
+          const autoClosePopup = () => {
+            // Buscar y cerrar cualquier diálogo modal
+            const dialogs = document.querySelectorAll('[role="dialog"]');
+            dialogs.forEach(dialog => {
+              const okButton = dialog.querySelector('button');
+              if (okButton && okButton.textContent?.includes('OK')) {
+                okButton.click();
+                console.log('🚫 Auto-cerrado popup de Google Maps');
+              }
+            });
+
+            // Buscar botones de cerrar
+            const dismissButtons = document.querySelectorAll('.dismissButton');
+            dismissButtons.forEach(button => button.click());
+
+            // Buscar por texto específico del mensaje
+            const allButtons = document.querySelectorAll('button');
+            allButtons.forEach(button => {
+              if (button.textContent === 'OK' || button.textContent === 'Aceptar') {
+                button.click();
+                console.log('🚫 Auto-cerrado popup por texto');
+              }
+            });
+          };
+
+          // Ejecutar inmediatamente y luego cada 500ms durante 5 segundos
+          autoClosePopup();
+          let attempts = 0;
+          const interval = setInterval(() => {
+            autoClosePopup();
+            attempts++;
+            if (attempts >= 10) {
+              clearInterval(interval);
+            }
+          }, 500);
+
         }, 1000);
 
       } catch (error) {

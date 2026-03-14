@@ -1,18 +1,13 @@
 /**
  * 🗺️ LEAFLET MAP - NEMAEC ERP
- * Mapa gratuito usando OpenStreetMap sin dependencias externas
+ * Mapa gratuito usando OpenStreetMap con Leaflet como dependencia npm
  */
 import React, { useEffect, useRef } from 'react';
-
-// Cargar Leaflet dinámicamente
-declare global {
-  interface Window {
-    L: any;
-  }
-}
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 
 interface MapLocation {
-  id: number;
+  id: string;
   name: string;
   coordinates: {
     lat: number;
@@ -31,6 +26,9 @@ interface LeafletMapProps {
   className?: string;
 }
 
+// Fix for default markers in Leaflet - using only custom icons
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+
 const LeafletMap: React.FC<LeafletMapProps> = ({
   locations,
   onLocationClick,
@@ -39,58 +37,16 @@ const LeafletMap: React.FC<LeafletMapProps> = ({
   className = "w-full h-96"
 }) => {
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<any>(null);
-  const markersRef = useRef<any[]>([]);
-  const isInitialized = useRef(false);
+  const mapInstanceRef = useRef<L.Map | null>(null);
+  const markersRef = useRef<L.Marker[]>([]);
 
-  // Cargar Leaflet CSS y JS dinámicamente
+  // Inicializar el mapa
   useEffect(() => {
-    if (isInitialized.current) return;
-
-    const loadLeaflet = async () => {
-      try {
-        // Cargar CSS
-        if (!document.querySelector('link[href*="leaflet.css"]')) {
-          const cssLink = document.createElement('link');
-          cssLink.rel = 'stylesheet';
-          cssLink.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-          cssLink.integrity = 'sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=';
-          cssLink.crossOrigin = '';
-          document.head.appendChild(cssLink);
-        }
-
-        // Cargar JavaScript
-        if (!window.L) {
-          const script = document.createElement('script');
-          script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-          script.integrity = 'sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=';
-          script.crossOrigin = '';
-
-          await new Promise((resolve, reject) => {
-            script.onload = resolve;
-            script.onerror = reject;
-            document.head.appendChild(script);
-          });
-        }
-
-        // Esperar un poco para que Leaflet esté completamente cargado
-        await new Promise(resolve => setTimeout(resolve, 100));
-
-        initializeMap();
-      } catch (error) {
-        console.error('Error cargando Leaflet:', error);
-      }
-    };
-
-    loadLeaflet();
-  }, []);
-
-  const initializeMap = () => {
-    if (!mapRef.current || isInitialized.current || !window.L) return;
+    if (!mapRef.current || mapInstanceRef.current) return;
 
     try {
       // Crear el mapa
-      const map = window.L.map(mapRef.current, {
+      const map = L.map(mapRef.current, {
         center: [center.lat, center.lng],
         zoom: zoom,
         scrollWheelZoom: true,
@@ -101,44 +57,53 @@ const LeafletMap: React.FC<LeafletMapProps> = ({
       });
 
       // Agregar capa de OpenStreetMap
-      window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
         maxZoom: 19,
       }).addTo(map);
 
       mapInstanceRef.current = map;
-      isInitialized.current = true;
-
       console.log('🗺️ Leaflet Map inicializado correctamente');
-
-      // Agregar marcadores iniciales
-      updateMarkers();
 
     } catch (error) {
       console.error('Error inicializando Leaflet map:', error);
     }
-  };
 
-  const updateMarkers = () => {
-    if (!mapInstanceRef.current || !window.L) return;
+    return () => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+      }
+    };
+  }, [center.lat, center.lng, zoom]);
+
+  // Actualizar marcadores cuando cambien las locations
+  useEffect(() => {
+    if (!mapInstanceRef.current) return;
+
+    const map = mapInstanceRef.current;
 
     // Limpiar marcadores existentes
     markersRef.current.forEach(marker => {
-      mapInstanceRef.current.removeLayer(marker);
+      map.removeLayer(marker);
     });
     markersRef.current = [];
 
     // Agregar nuevos marcadores
     locations.forEach(location => {
-      const marker = window.L.marker([
-        location.coordinates.lat,
-        location.coordinates.lng
-      ]);
+      // Crear icono personalizado basado en el estado
+      const getMarkerColor = (estado?: string) => {
+        switch (estado) {
+          case 'completada': return '#10B981'; // Verde
+          case 'en_proceso': return '#3B82F6'; // Azul
+          case 'pendiente': return '#F59E0B'; // Amarillo
+          default: return '#2563eb'; // Azul por defecto
+        }
+      };
 
-      // Icono personalizado para comisarías
-      const customIcon = window.L.divIcon({
+      const customIcon = L.divIcon({
         html: `<div style="
-          background: #2563eb;
+          background: ${getMarkerColor(location.estado)};
           width: 24px;
           height: 24px;
           border-radius: 50% 50% 50% 0;
@@ -161,11 +126,14 @@ const LeafletMap: React.FC<LeafletMapProps> = ({
         iconAnchor: [12, 24],
       });
 
-      marker.setIcon(customIcon);
+      const marker = L.marker([
+        location.coordinates.lat,
+        location.coordinates.lng
+      ], { icon: customIcon });
 
       // Popup con información de la comisaría
       const popupContent = `
-        <div style="min-width: 200px;">
+        <div style="min-width: 200px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
           <h3 style="margin: 0 0 8px 0; color: #1f2937; font-size: 14px; font-weight: 600;">
             ${location.name}
           </h3>
@@ -212,27 +180,20 @@ const LeafletMap: React.FC<LeafletMapProps> = ({
         });
       }
 
-      // Agregar al mapa
-      marker.addTo(mapInstanceRef.current);
+      // Agregar al mapa y guardar referencia
+      marker.addTo(map);
       markersRef.current.push(marker);
     });
 
     // Ajustar vista para mostrar todos los marcadores
-    if (locations.length > 0 && markersRef.current.length > 0) {
-      const group = new window.L.featureGroup(markersRef.current);
-      mapInstanceRef.current.fitBounds(group.getBounds(), {
+    if (locations.length > 0) {
+      const group = new L.FeatureGroup(markersRef.current);
+      map.fitBounds(group.getBounds(), {
         padding: [20, 20],
         maxZoom: 13
       });
     }
-  };
-
-  // Actualizar marcadores cuando cambien las locations
-  useEffect(() => {
-    if (isInitialized.current) {
-      updateMarkers();
-    }
-  }, [locations]);
+  }, [locations, onLocationClick]);
 
   return (
     <div

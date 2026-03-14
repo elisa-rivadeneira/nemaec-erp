@@ -60,6 +60,7 @@ const LeafletMap: React.FC<LeafletMapProps> = ({
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
         maxZoom: 19,
+        crossOrigin: true
       }).addTo(map);
 
       mapInstanceRef.current = map;

@@ -117,3 +117,22 @@ export const useUpdatePartidaFechas = () => {
     }
   });
 };
+
+// Hook para comparar dos versiones
+export const useCompareVersions = () => {
+  return useMutation({
+    mutationFn: ({ versionAnteriorId, versionNuevaId }: {
+      versionAnteriorId: number;
+      versionNuevaId: number
+    }) => {
+      // Implementación temporal para el historial
+      return Promise.resolve({
+        cambios: {
+          partidas_agregadas: [],
+          partidas_eliminadas: [],
+          partidas_modificadas: []
+        }
+      });
+    }
+  });
+};

@@ -226,7 +226,7 @@ async def debug_database():
 
 
 # 🔧 Include routers
-from app.presentation.api.google_maps import router as google_maps_router
+from app.presentation.api.google_maps_fallback import router as google_maps_router  # 🚨 Using fallback (no Google billing)
 from app.presentation.api.comisarias_db import router as comisarias_router  # 🗄️ Using database version
 from app.presentation.api.cronogramas_db import router as cronogramas_router  # 🗄️ Using database version
 from app.presentation.api.cronograma_versiones import router as cronograma_versiones_router

@@ -95,16 +95,11 @@ const ComisariaModal: React.FC<ComisariaModalProps> = ({
   const handleInputChange = (field: keyof ComisariaFormData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
 
-    // Si es el campo de NOMBRE y hay contenido, mostrar mapa automáticamente
+    // DESHABILITADO: Búsqueda automática de Google Maps
+    // Campo de nombre es ahora solo texto manual
     if (field === 'nombre') {
-      if (value && value.length > 2) {
-        setShowMap(true);
-        // Auto-buscar en el mapa basado en el nombre escrito
-        handleAutoSearch(value);
-      } else if (!value) {
-        setShowMap(false);
-        setSelectedMapLocation(null);
-      }
+      // Ya no se busca automáticamente en Google Maps
+      // El usuario deberá llenar todos los campos manualmente
     }
   };
 
@@ -552,7 +547,7 @@ const ComisariaModal: React.FC<ComisariaModalProps> = ({
                   placeholder="Ej: CPNP Ensenada, Comisaría Alfonso Ugarte, CPNP San Borja"
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  💡 Escribe el nombre para buscar automáticamente en el mapa
+                  📝 Escribe el nombre de la comisaría manualmente
                 </p>
 
                 {/* Mapa Dinámico - Justo debajo del campo nombre */}
@@ -613,7 +608,7 @@ const ComisariaModal: React.FC<ComisariaModalProps> = ({
                 placeholder="Escribe: CPNP Carabayllo, Comisaría Alfonso Ugarte, etc..."
               />
               <p className="text-xs text-gray-500 mt-1">
-                💡 La dirección se llenará automáticamente al encontrar la comisaría en el mapa
+                📍 Escribe la dirección completa de la comisaría
               </p>
             </div>
 
@@ -695,6 +690,34 @@ const ComisariaModal: React.FC<ComisariaModalProps> = ({
                 placeholder="0.00"
               />
             </div>
+
+            {/* Input manual de coordenadas */}
+            {!isReadOnly && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Coordenadas GPS (Opcional)
+                </label>
+                <input
+                  type="text"
+                  disabled={isReadOnly}
+                  placeholder="Ejemplo: -12.0464, -77.0428"
+                  onChange={(e) => {
+                    const coords = e.target.value.split(',');
+                    if (coords.length === 2) {
+                      const lat = parseFloat(coords[0].trim());
+                      const lng = parseFloat(coords[1].trim());
+                      if (!isNaN(lat) && !isNaN(lng)) {
+                        handleInputChange('coordenadas', { lat, lng });
+                      }
+                    }
+                  }}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-nemaec-green-500 focus:border-transparent disabled:bg-gray-100 text-gray-900"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  💡 Pega las coordenadas desde Google Maps: clic derecho → "¿Qué hay aquí?" → copiar coordenadas
+                </p>
+              </div>
+            )}
 
             {/* Coordenadas (solo mostrar si existen) */}
             {formData.coordenadas && (

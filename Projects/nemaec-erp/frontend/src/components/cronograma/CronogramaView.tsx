@@ -551,7 +551,7 @@ export const CronogramaView: React.FC<CronogramaViewProps> = ({
                 {/* Fecha de Fin */}
                 <td className="p-3 text-center text-sm">
                   {editingPartida === partida.id ? (
-                    <div className="flex flex-col items-center space-y-1">
+                    <div className="flex flex-col items-center space-y-2">
                       <label className="text-xs text-gray-600 font-medium">Fin</label>
                       <input
                         type="date"
@@ -559,6 +559,25 @@ export const CronogramaView: React.FC<CronogramaViewProps> = ({
                         onChange={(e) => setEditFechas(prev => ({ ...prev, fecha_fin: e.target.value }))}
                         className="text-xs border border-gray-300 rounded px-2 py-1 w-32"
                       />
+                      <div className="flex space-x-2 mt-2">
+                        <button
+                          onClick={() => handleSaveFechas(partida.id)}
+                          disabled={updateFechasMutation.isPending}
+                          className="px-3 py-1.5 rounded text-white bg-green-600 hover:bg-green-700 transition-colors disabled:opacity-50 flex items-center space-x-1"
+                          title="Guardar fechas"
+                        >
+                          <Check className="w-3 h-3" />
+                          <span className="text-xs">Guardar</span>
+                        </button>
+                        <button
+                          onClick={handleCancelEdit}
+                          className="px-3 py-1.5 rounded text-white bg-red-600 hover:bg-red-700 transition-colors flex items-center space-x-1"
+                          title="Cancelar edición"
+                        >
+                          <X className="w-3 h-3" />
+                          <span className="text-xs">Cancelar</span>
+                        </button>
+                      </div>
                     </div>
                   ) : (
                     <div className="flex flex-col items-center">
@@ -578,31 +597,10 @@ export const CronogramaView: React.FC<CronogramaViewProps> = ({
                   )}
                 </td>
 
-                {/* Duración / Acciones */}
+                {/* Duración */}
                 <td className="p-3 text-center text-sm">
                   {editingPartida === partida.id ? (
-                    <div className="flex flex-col items-center space-y-2">
-                      <span className="text-xs text-gray-600 font-medium">Acciones</span>
-                      <div className="flex space-x-2">
-                        <button
-                          onClick={() => handleSaveFechas(partida.id)}
-                          disabled={updateFechasMutation.isPending}
-                          className="px-2 py-1 rounded text-white bg-green-600 hover:bg-green-700 transition-colors disabled:opacity-50 flex items-center space-x-1"
-                          title="Guardar fechas"
-                        >
-                          <Check className="w-3 h-3" />
-                          <span className="text-xs">Guardar</span>
-                        </button>
-                        <button
-                          onClick={handleCancelEdit}
-                          className="px-2 py-1 rounded text-white bg-red-600 hover:bg-red-700 transition-colors flex items-center space-x-1"
-                          title="Cancelar edición"
-                        >
-                          <X className="w-3 h-3" />
-                          <span className="text-xs">Cancelar</span>
-                        </button>
-                      </div>
-                    </div>
+                    <span className="text-gray-400 text-xs italic">Editando...</span>
                   ) : (
                     partida.fecha_inicio && partida.fecha_fin &&
                     partida.fecha_inicio !== '1970-01-01T00:00:00.000Z' &&

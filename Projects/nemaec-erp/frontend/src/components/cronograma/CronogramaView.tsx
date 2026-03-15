@@ -36,6 +36,7 @@ export const CronogramaView: React.FC<CronogramaViewProps> = ({
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const [currentPage, setCurrentPage] = useState(1);
   const [editingPartida, setEditingPartida] = useState<number | null>(null);
+  const [editingField, setEditingField] = useState<'fecha_inicio' | 'fecha_fin' | null>(null);
   const [editFechas, setEditFechas] = useState<{fecha_inicio: string; fecha_fin: string}>({ fecha_inicio: '', fecha_fin: '' });
   const itemsPerPage = 1000; // Mostrar todo en una página para el árbol
 
@@ -172,8 +173,9 @@ export const CronogramaView: React.FC<CronogramaViewProps> = ({
   };
 
   // Funciones para edición de fechas
-  const handleEditFechas = (partida: any) => {
+  const handleEditFechas = (partida: any, field: 'fecha_inicio' | 'fecha_fin') => {
     setEditingPartida(partida.id);
+    setEditingField(field);
     setEditFechas({
       fecha_inicio: partida.fecha_inicio ? partida.fecha_inicio.split('T')[0] : '',
       fecha_fin: partida.fecha_fin ? partida.fecha_fin.split('T')[0] : ''
@@ -197,6 +199,7 @@ export const CronogramaView: React.FC<CronogramaViewProps> = ({
       });
 
       setEditingPartida(null);
+      setEditingField(null);
     } catch (error) {
       console.error('Error actualizando fechas:', error);
       alert('Error al actualizar las fechas');
@@ -205,6 +208,7 @@ export const CronogramaView: React.FC<CronogramaViewProps> = ({
 
   const handleCancelEdit = () => {
     setEditingPartida(null);
+    setEditingField(null);
     setEditFechas({ fecha_inicio: '', fecha_fin: '' });
   };
 
@@ -509,7 +513,33 @@ export const CronogramaView: React.FC<CronogramaViewProps> = ({
 
                 {/* Fecha de Inicio */}
                 <td className="p-3 text-center text-sm">
-                  {editingPartida === partida.id ? (
+                  {editingPartida === partida.id && editingField === 'fecha_inicio' ? (
+                    <div className="flex flex-col items-center space-y-1">
+                      <label className="text-xs text-gray-600 font-medium">Inicio</label>
+                      <input
+                        type="date"
+                        value={editFechas.fecha_inicio}
+                        onChange={(e) => setEditFechas(prev => ({ ...prev, fecha_inicio: e.target.value }))}
+                        className="text-xs border border-gray-300 rounded px-2 py-1 w-32"
+                      />
+                      <div className="flex items-center space-x-1 mt-1">
+                        <button
+                          onClick={() => handleSaveFechas(partida.id)}
+                          className="p-1 rounded text-green-600 hover:text-green-700 hover:bg-green-50 transition-colors"
+                          title="Guardar"
+                        >
+                          <Check className="w-3 h-3" />
+                        </button>
+                        <button
+                          onClick={handleCancelEdit}
+                          className="p-1 rounded text-red-500 hover:text-red-600 hover:bg-red-50 transition-colors"
+                          title="Cancelar"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    </div>
+                  ) : editingPartida === partida.id && editingField === 'fecha_fin' ? (
                     <div className="flex flex-col items-center space-y-1">
                       <label className="text-xs text-gray-600 font-medium">Inicio</label>
                       <input
@@ -537,9 +567,9 @@ export const CronogramaView: React.FC<CronogramaViewProps> = ({
                       </div>
                       {partida.nivel_jerarquia >= 3 && (
                         <button
-                          onClick={() => handleEditFechas(partida)}
+                          onClick={() => handleEditFechas(partida, 'fecha_inicio')}
                           className="p-1 rounded text-gray-400 hover:text-blue-600 transition-colors"
-                          title="Editar fechas"
+                          title="Editar fecha inicio"
                         >
                           <Edit3 className="w-3 h-3" />
                         </button>
@@ -550,8 +580,8 @@ export const CronogramaView: React.FC<CronogramaViewProps> = ({
 
                 {/* Fecha de Fin */}
                 <td className="p-3 text-center text-sm">
-                  {editingPartida === partida.id ? (
-                    <div className="flex flex-col items-center space-y-2">
+                  {editingPartida === partida.id && editingField === 'fecha_fin' ? (
+                    <div className="flex flex-col items-center space-y-1">
                       <label className="text-xs text-gray-600 font-medium">Fin</label>
                       <input
                         type="date"
@@ -559,39 +589,57 @@ export const CronogramaView: React.FC<CronogramaViewProps> = ({
                         onChange={(e) => setEditFechas(prev => ({ ...prev, fecha_fin: e.target.value }))}
                         className="text-xs border border-gray-300 rounded px-2 py-1 w-32"
                       />
-                      <div className="flex space-x-2 mt-2">
+                      <div className="flex items-center space-x-1 mt-1">
                         <button
                           onClick={() => handleSaveFechas(partida.id)}
-                          disabled={updateFechasMutation.isPending}
-                          className="px-3 py-1.5 rounded text-white bg-green-600 hover:bg-green-700 transition-colors disabled:opacity-50 flex items-center space-x-1"
-                          title="Guardar fechas"
+                          className="p-1 rounded text-green-600 hover:text-green-700 hover:bg-green-50 transition-colors"
+                          title="Guardar"
                         >
                           <Check className="w-3 h-3" />
-                          <span className="text-xs">Guardar</span>
                         </button>
                         <button
                           onClick={handleCancelEdit}
-                          className="px-3 py-1.5 rounded text-white bg-red-600 hover:bg-red-700 transition-colors flex items-center space-x-1"
-                          title="Cancelar edición"
+                          className="p-1 rounded text-red-500 hover:text-red-600 hover:bg-red-50 transition-colors"
+                          title="Cancelar"
                         >
                           <X className="w-3 h-3" />
-                          <span className="text-xs">Cancelar</span>
                         </button>
                       </div>
                     </div>
+                  ) : editingPartida === partida.id && editingField === 'fecha_inicio' ? (
+                    <div className="flex flex-col items-center space-y-1">
+                      <label className="text-xs text-gray-600 font-medium">Fin</label>
+                      <input
+                        type="date"
+                        value={editFechas.fecha_fin}
+                        onChange={(e) => setEditFechas(prev => ({ ...prev, fecha_fin: e.target.value }))}
+                        className="text-xs border border-gray-300 rounded px-2 py-1 w-32"
+                      />
+                    </div>
                   ) : (
-                    <div className="flex flex-col items-center">
-                      {partida.fecha_fin && partida.fecha_fin !== '1970-01-01T00:00:00.000Z' ? (
-                        <>
-                          <span className="font-mono text-gray-700">
-                            {formatDateShort(partida.fecha_fin)}
-                          </span>
-                          <span className="text-xs text-gray-500">
-                            {formatDate(partida.fecha_fin).split(' ')[1]} {formatDate(partida.fecha_fin).split(' ')[2]}
-                          </span>
-                        </>
-                      ) : (
-                        <span className="text-gray-400 text-xs">Sin fecha</span>
+                    <div className="flex items-center justify-center space-x-1">
+                      <div className="flex flex-col items-center">
+                        {partida.fecha_fin && partida.fecha_fin !== '1970-01-01T00:00:00.000Z' ? (
+                          <>
+                            <span className="font-mono text-gray-700">
+                              {formatDateShort(partida.fecha_fin)}
+                            </span>
+                            <span className="text-xs text-gray-500">
+                              {formatDate(partida.fecha_fin).split(' ')[1]} {formatDate(partida.fecha_fin).split(' ')[2]}
+                            </span>
+                          </>
+                        ) : (
+                          <span className="text-gray-400 text-xs">Sin fecha</span>
+                        )}
+                      </div>
+                      {partida.nivel_jerarquia >= 3 && (
+                        <button
+                          onClick={() => handleEditFechas(partida, 'fecha_fin')}
+                          className="p-1 rounded text-gray-400 hover:text-blue-600 transition-colors"
+                          title="Editar fecha fin"
+                        >
+                          <Edit3 className="w-3 h-3" />
+                        </button>
                       )}
                     </div>
                   )}

@@ -133,13 +133,16 @@ export const CronogramaView: React.FC<CronogramaViewProps> = ({
       const diffTime = Math.abs(fin.getTime() - inicio.getTime());
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-      if (diffDays === 0) return '1 día';
-      if (diffDays < 30) return `${diffDays} días`;
-      if (diffDays < 365) {
-        const meses = Math.round(diffDays / 30);
+      // En construcción se incluyen ambas fechas (inicio Y fin)
+      const diasInclusivos = diffDays + 1;
+
+      if (diasInclusivos === 1) return '1 día';
+      if (diasInclusivos < 30) return `${diasInclusivos} días`;
+      if (diasInclusivos < 365) {
+        const meses = Math.round(diasInclusivos / 30);
         return `${meses} mes${meses > 1 ? 'es' : ''}`;
       }
-      const años = Math.round(diffDays / 365);
+      const años = Math.round(diasInclusivos / 365);
       return `${años} año${años > 1 ? 's' : ''}`;
     } catch (error) {
       return <span className="text-gray-400 italic text-xs">Pendiente</span>;

@@ -46,6 +46,10 @@ class CronogramaCreate(BaseModel):
     comisaria_id: int
     nombre_cronograma: Optional[str] = None
 
+class PartidaFechasUpdate(BaseModel):
+    fecha_inicio: Optional[str] = None
+    fecha_fin: Optional[str] = None
+
 class CronogramaResponse(BaseModel):
     id: int
     comisaria_id: int
@@ -589,3 +593,74 @@ async def get_cronograma_detalle_by_comisaria(comisaria_id: int, db: AsyncSessio
         **cronograma_response.model_dump(),
         partidas=partidas_response
     )
+
+@router.put("/partidas/{partida_id}/fechas", response_model=PartidaResponse)
+async def update_partida_fechas(
+    partida_id: int,
+    fechas_data: PartidaFechasUpdate,
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Actualizar fechas de una partida específica
+
+    Args:
+        partida_id: ID de la partida
+        fechas_data: Nuevas fechas de inicio y fin
+        db: Sesión de base de datos
+
+    Returns:
+        PartidaResponse: Partida actualizada
+    """
+    print(f"🔗 PUT /cronogramas/partidas/{partida_id}/fechas")
+
+    # Buscar la partida
+    stmt = select(PartidaModel).where(PartidaModel.id == partida_id)
+    result = await db.execute(stmt)
+    partida = result.scalar_one_or_none()
+
+    if not partida:
+        raise HTTPException(status_code=404, detail="Partida no encontrada")
+
+    # Actualizar fechas
+    if fechas_data.fecha_inicio is not None:
+        if fechas_data.fecha_inicio.strip():
+            partida.fecha_inicio = datetime.fromisoformat(fechas_data.fecha_inicio.replace('Z', '+00:00'))
+        else:
+            partida.fecha_inicio = None
+
+    if fechas_data.fecha_fin is not None:
+        if fechas_data.fecha_fin.strip():
+            partida.fecha_fin = datetime.fromisoformat(fechas_data.fecha_fin.replace('Z', '+00:00'))
+        else:
+            partida.fecha_fin = None
+
+    await db.commit()
+
+    # Recalcular fechas del cronograma padre si es necesario
+    cronograma_id = partida.cronograma_id
+
+    # Obtener todas las partidas del cronograma para recalcular fechas
+    stmt_cronograma = select(CronogramaModel).where(CronogramaModel.id == cronograma_id)
+    result_cronograma = await db.execute(stmt_cronograma)
+    cronograma = result_cronograma.scalar_one_or_none()
+
+    if cronograma:
+        # Obtener todas las partidas del cronograma
+        stmt_partidas = select(PartidaModel).where(PartidaModel.cronograma_id == cronograma_id)
+        result_partidas = await db.execute(stmt_partidas)
+        todas_partidas = result_partidas.scalars().all()
+
+        # Recalcular fechas del cronograma
+        fechas_inicio_validas = [p.fecha_inicio for p in todas_partidas if p.fecha_inicio]
+        fechas_fin_validas = [p.fecha_fin for p in todas_partidas if p.fecha_fin]
+
+        if fechas_inicio_validas:
+            cronograma.fecha_inicio = min(fechas_inicio_validas)
+        if fechas_fin_validas:
+            cronograma.fecha_fin = max(fechas_fin_validas)
+
+        await db.commit()
+
+    print(f"✅ Fechas actualizadas para partida {partida_id}: inicio={fechas_data.fecha_inicio}, fin={fechas_data.fecha_fin}")
+
+    return partida_model_to_response(partida)

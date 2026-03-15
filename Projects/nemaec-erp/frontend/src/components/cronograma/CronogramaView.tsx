@@ -511,11 +511,12 @@ export const CronogramaView: React.FC<CronogramaViewProps> = ({
                 <td className="p-3 text-center text-sm">
                   {editingPartida === partida.id ? (
                     <div className="flex flex-col items-center space-y-1">
+                      <label className="text-xs text-gray-600 font-medium">Inicio</label>
                       <input
                         type="date"
                         value={editFechas.fecha_inicio}
                         onChange={(e) => setEditFechas(prev => ({ ...prev, fecha_inicio: e.target.value }))}
-                        className="text-xs border border-gray-300 rounded px-2 py-1 w-28"
+                        className="text-xs border border-gray-300 rounded px-2 py-1 w-32"
                       />
                     </div>
                   ) : (
@@ -550,30 +551,14 @@ export const CronogramaView: React.FC<CronogramaViewProps> = ({
                 {/* Fecha de Fin */}
                 <td className="p-3 text-center text-sm">
                   {editingPartida === partida.id ? (
-                    <div className="flex flex-col items-center space-y-2">
+                    <div className="flex flex-col items-center space-y-1">
+                      <label className="text-xs text-gray-600 font-medium">Fin</label>
                       <input
                         type="date"
                         value={editFechas.fecha_fin}
                         onChange={(e) => setEditFechas(prev => ({ ...prev, fecha_fin: e.target.value }))}
-                        className="text-xs border border-gray-300 rounded px-2 py-1 w-28"
+                        className="text-xs border border-gray-300 rounded px-2 py-1 w-32"
                       />
-                      <div className="flex space-x-1">
-                        <button
-                          onClick={() => handleSaveFechas(partida.id)}
-                          disabled={updateFechasMutation.isPending}
-                          className="p-1 rounded text-green-600 hover:bg-green-50 transition-colors disabled:opacity-50"
-                          title="Guardar"
-                        >
-                          <Check className="w-3 h-3" />
-                        </button>
-                        <button
-                          onClick={handleCancelEdit}
-                          className="p-1 rounded text-red-600 hover:bg-red-50 transition-colors"
-                          title="Cancelar"
-                        >
-                          <X className="w-3 h-3" />
-                        </button>
-                      </div>
                     </div>
                   ) : (
                     <div className="flex flex-col items-center">
@@ -593,29 +578,54 @@ export const CronogramaView: React.FC<CronogramaViewProps> = ({
                   )}
                 </td>
 
-                {/* Duración */}
+                {/* Duración / Acciones */}
                 <td className="p-3 text-center text-sm">
-                  {partida.fecha_inicio && partida.fecha_fin &&
-                   partida.fecha_inicio !== '1970-01-01T00:00:00.000Z' &&
-                   partida.fecha_fin !== '1970-01-01T00:00:00.000Z' ? (
-                    <div className="flex flex-col items-center">
-                      <span className="font-semibold text-blue-600">
-                        {calcularDuracion(partida.fecha_inicio, partida.fecha_fin)}
-                      </span>
-                      <div className="w-full bg-gray-200 rounded-full h-1.5 mt-1">
-                        <div
-                          className="bg-blue-500 h-1.5 rounded-full"
-                          style={{
-                            width: `${Math.min(100, Math.max(10,
-                              (new Date(partida.fecha_fin).getTime() - new Date(partida.fecha_inicio).getTime()) /
-                              (1000 * 60 * 60 * 24 * 30) * 20
-                            ))}%`
-                          }}
-                        ></div>
+                  {editingPartida === partida.id ? (
+                    <div className="flex flex-col items-center space-y-2">
+                      <span className="text-xs text-gray-600 font-medium">Acciones</span>
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => handleSaveFechas(partida.id)}
+                          disabled={updateFechasMutation.isPending}
+                          className="px-2 py-1 rounded text-white bg-green-600 hover:bg-green-700 transition-colors disabled:opacity-50 flex items-center space-x-1"
+                          title="Guardar fechas"
+                        >
+                          <Check className="w-3 h-3" />
+                          <span className="text-xs">Guardar</span>
+                        </button>
+                        <button
+                          onClick={handleCancelEdit}
+                          className="px-2 py-1 rounded text-white bg-red-600 hover:bg-red-700 transition-colors flex items-center space-x-1"
+                          title="Cancelar edición"
+                        >
+                          <X className="w-3 h-3" />
+                          <span className="text-xs">Cancelar</span>
+                        </button>
                       </div>
                     </div>
                   ) : (
-                    <span className="text-gray-400 text-xs">—</span>
+                    partida.fecha_inicio && partida.fecha_fin &&
+                    partida.fecha_inicio !== '1970-01-01T00:00:00.000Z' &&
+                    partida.fecha_fin !== '1970-01-01T00:00:00.000Z' ? (
+                      <div className="flex flex-col items-center">
+                        <span className="font-semibold text-blue-600">
+                          {calcularDuracion(partida.fecha_inicio, partida.fecha_fin)}
+                        </span>
+                        <div className="w-full bg-gray-200 rounded-full h-1.5 mt-1">
+                          <div
+                            className="bg-blue-500 h-1.5 rounded-full"
+                            style={{
+                              width: `${Math.min(100, Math.max(10,
+                                (new Date(partida.fecha_fin).getTime() - new Date(partida.fecha_inicio).getTime()) /
+                                (1000 * 60 * 60 * 24 * 30) * 20
+                              ))}%`
+                            }}
+                          ></div>
+                        </div>
+                      </div>
+                    ) : (
+                      <span className="text-gray-400 text-xs">—</span>
+                    )
                   )}
                 </td>
               </tr>

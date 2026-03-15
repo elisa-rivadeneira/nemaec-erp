@@ -624,13 +624,17 @@ async def update_partida_fechas(
     # Actualizar fechas
     if fechas_data.fecha_inicio is not None:
         if fechas_data.fecha_inicio.strip():
-            partida.fecha_inicio = datetime.fromisoformat(fechas_data.fecha_inicio.replace('Z', '+00:00'))
+            # Convertir a datetime sin timezone para mantener consistencia con BD
+            fecha_dt = datetime.fromisoformat(fechas_data.fecha_inicio.replace('Z', '+00:00'))
+            partida.fecha_inicio = fecha_dt.replace(tzinfo=None)
         else:
             partida.fecha_inicio = None
 
     if fechas_data.fecha_fin is not None:
         if fechas_data.fecha_fin.strip():
-            partida.fecha_fin = datetime.fromisoformat(fechas_data.fecha_fin.replace('Z', '+00:00'))
+            # Convertir a datetime sin timezone para mantener consistencia con BD
+            fecha_dt = datetime.fromisoformat(fechas_data.fecha_fin.replace('Z', '+00:00'))
+            partida.fecha_fin = fecha_dt.replace(tzinfo=None)
         else:
             partida.fecha_fin = None
 

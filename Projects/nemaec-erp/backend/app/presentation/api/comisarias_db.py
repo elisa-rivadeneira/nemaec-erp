@@ -11,7 +11,7 @@ from sqlalchemy import select, update, delete
 from pydantic import BaseModel
 
 from app.core.database import get_db
-from app.infrastructure.database.models import ComisariaModel
+from app.infrastructure.database.models import ComisariaModel, CronogramaModel, PartidaModel
 
 router = APIRouter(
     prefix="/comisarias",
@@ -247,15 +247,15 @@ async def delete_comisaria(comisaria_id: int, db: AsyncSession = Depends(get_db)
     if not comisaria:
         raise HTTPException(status_code=404, detail="Comisaría no encontrada")
 
-    # Store name for logging before deletion
     comisaria_name = comisaria.nombre
 
-    # Delete the record
-    stmt = delete(ComisariaModel).where(ComisariaModel.id == comisaria_id)
-    await db.execute(stmt)
+    # Cascade delete: partidas → cronogramas → comisaria
+    await db.execute(delete(PartidaModel).where(PartidaModel.comisaria_id == comisaria_id))
+    await db.execute(delete(CronogramaModel).where(CronogramaModel.comisaria_id == comisaria_id))
+    await db.execute(delete(ComisariaModel).where(ComisariaModel.id == comisaria_id))
     await db.commit()
 
-    print(f"✅ Comisaría eliminada: {comisaria_name} (ID: {comisaria_id})")
+    print(f"✅ Comisaría eliminada con cascade: {comisaria_name} (ID: {comisaria_id})")
 
 @router.get("/search", response_model=List[ComisariaResponse])
 async def search_comisarias(

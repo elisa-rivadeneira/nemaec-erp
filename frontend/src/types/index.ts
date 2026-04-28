@@ -398,6 +398,7 @@ export interface UsuarioObraCreate {
   nombre: string;
   dni: string;
   login: string;
+  contrasena?: string;
   rol: RolUsuarioObra;
   comisaria_id?: number;
   comisaria_codigo?: string;

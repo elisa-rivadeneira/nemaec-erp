@@ -28,6 +28,7 @@ class UsuarioObraCreate(BaseModel):
     nombre: str
     dni: str
     login: str
+    contrasena: Optional[str] = None  # si no se pone, se usa el DNI
     rol: str  # 'monitor' | 'residente'
     comisaria_id: Optional[int] = None
     comisaria_codigo: Optional[str] = None
@@ -36,6 +37,7 @@ class UsuarioObraUpdate(BaseModel):
     nombre: Optional[str] = None
     dni: Optional[str] = None
     login: Optional[str] = None
+    contrasena: Optional[str] = None
     rol: Optional[str] = None
     comisaria_id: Optional[int] = None
     comisaria_codigo: Optional[str] = None
@@ -119,17 +121,35 @@ async def obtener_usuario(usuario_id: int, db: AsyncSession = Depends(get_db)):
 @router.post("/", response_model=UsuarioObraResponse, status_code=201)
 async def crear_usuario(data: UsuarioObraCreate, db: AsyncSession = Depends(get_db)):
     """Crea un nuevo Monitor de Obra o Ingeniero Residente."""
-    # Validar login único
-    existing = await db.execute(
-        select(UsuarioObraModel).where(UsuarioObraModel.login == data.login)
-    )
-    if existing.scalar_one_or_none():
-        raise HTTPException(status_code=400, detail=f"El login '{data.login}' ya existe")
+    if data.rol == 'residente':
+        # Residente: único globalmente (solo puede estar en una comisaría)
+        existing = await db.execute(
+            select(UsuarioObraModel)
+            .where(UsuarioObraModel.login == data.login)
+            .where(UsuarioObraModel.activo == True)
+        )
+        if existing.scalar_one_or_none():
+            raise HTTPException(status_code=400, detail=f"El residente '{data.login}' ya está asignado a otra comisaría")
+    else:
+        # Monitor: único por comisaría (puede tener varias)
+        existing = await db.execute(
+            select(UsuarioObraModel)
+            .where(UsuarioObraModel.login == data.login)
+            .where(UsuarioObraModel.comisaria_id == data.comisaria_id)
+            .where(UsuarioObraModel.activo == True)
+        )
+        if existing.scalar_one_or_none():
+            raise HTTPException(status_code=400, detail=f"El monitor '{data.login}' ya está asignado a esta comisaría")
 
     if data.rol not in ('monitor', 'residente'):
         raise HTTPException(status_code=400, detail="Rol debe ser 'monitor' o 'residente'")
 
-    nuevo = UsuarioObraModel(**data.model_dump())
+    datos = data.model_dump()
+    # Si no se especifica contraseña, usar el DNI por defecto
+    if not datos.get('contrasena'):
+        datos['contrasena'] = datos['dni']
+
+    nuevo = UsuarioObraModel(**datos)
     db.add(nuevo)
     await db.flush()
     await db.refresh(nuevo)
@@ -163,15 +183,23 @@ async def login_usuario(data: LoginRequest, db: AsyncSession = Depends(get_db)):
     Autenticar un usuario de obra desde la app móvil.
     La contraseña es el DNI del usuario.
     """
+    pwd = data.password.strip()
+    # Buscar por login activo (puede tener varias comisarías; autenticar con cualquiera)
     result = await db.execute(
         select(UsuarioObraModel)
         .where(UsuarioObraModel.login == data.login.strip().lower())
-        .where(UsuarioObraModel.dni == data.password.strip())
         .where(UsuarioObraModel.activo == True)
+        .limit(1)
     )
     usuario = result.scalar_one_or_none()
     if not usuario:
         raise HTTPException(status_code=401, detail="Usuario o contraseña incorrectos")
+
+    # La contraseña válida es contrasena si está definida, sino el DNI
+    contrasena_valida = usuario.contrasena if usuario.contrasena else usuario.dni
+    if pwd != contrasena_valida:
+        raise HTTPException(status_code=401, detail="Usuario o contraseña incorrectos")
+
     return to_response(usuario)
 
 

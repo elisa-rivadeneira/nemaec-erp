@@ -96,7 +96,7 @@ class Settings(BaseSettings):
 
     # 🌐 CORS Configuration
     ALLOWED_ORIGINS: List[str] = Field(
-        default=["http://localhost:3000", "http://localhost:5173"],
+        default=["http://localhost:3000", "http://localhost:3001", "http://localhost:5173"],
         description="Orígenes permitidos para CORS"
     )
 
@@ -186,7 +186,7 @@ class Settings(BaseSettings):
         os.makedirs(data_dir, exist_ok=True)
         db_path = os.path.join(data_dir, "nemaec_erp.db")
 
-        print(f"🗄️ Database path: {db_path}")  # Log crítico para debugging
+        print(f"[DB] Database path: {db_path}")
         return f"sqlite+aiosqlite:///{db_path}"
 
         # Código comentado - PostgreSQL requiere servidor dedicado

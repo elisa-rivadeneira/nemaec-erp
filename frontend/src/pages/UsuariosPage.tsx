@@ -50,46 +50,59 @@ interface ModalProps {
   comisaria: ComisariaSimple | null;
   usuario: UsuarioObra | null;
   rolPredefinido?: RolUsuarioObra;
+  todosUsuarios: UsuarioObra[];
   onClose: () => void;
   onSaved: () => void;
 }
 
-function UsuarioModal({ open, comisaria, usuario, rolPredefinido, onClose, onSaved }: ModalProps) {
+function UsuarioModal({ open, comisaria, usuario, rolPredefinido, todosUsuarios, onClose, onSaved }: ModalProps) {
+  const rolInicial = rolPredefinido || 'monitor';
   const [form, setForm] = useState<UsuarioObraCreate>({
-    nombre: '',
-    dni: '',
-    login: '',
-    rol: rolPredefinido || 'monitor',
+    nombre: '', dni: '', login: '', contrasena: '',
+    rol: rolInicial,
     comisaria_id: comisaria?.id,
     comisaria_codigo: comisaria?.codigo,
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [busqueda, setBusqueda] = useState('');
+  const [mostrarSugerencias, setMostrarSugerencias] = useState(false);
 
   useEffect(() => {
     if (usuario) {
-      setForm({
-        nombre: usuario.nombre,
-        dni: usuario.dni,
-        login: usuario.login,
-        rol: usuario.rol,
-        comisaria_id: usuario.comisaria_id,
-        comisaria_codigo: usuario.comisaria_codigo,
-      });
+      setForm({ nombre: usuario.nombre, dni: usuario.dni, login: usuario.login, rol: usuario.rol, comisaria_id: usuario.comisaria_id, comisaria_codigo: usuario.comisaria_codigo });
     } else {
-      setForm({
-        nombre: '',
-        dni: '',
-        login: '',
-        rol: rolPredefinido || 'monitor',
-        comisaria_id: comisaria?.id,
-        comisaria_codigo: comisaria?.codigo,
-      });
+      setForm({ nombre: '', dni: '', login: '', contrasena: '', rol: rolInicial, comisaria_id: comisaria?.id, comisaria_codigo: comisaria?.codigo });
     }
     setError('');
+    setBusqueda('');
   }, [usuario, comisaria, rolPredefinido, open]);
 
   if (!open) return null;
+
+  // Usuarios existentes del mismo rol, filtrados por búsqueda
+  const usuariosDelRol = todosUsuarios.filter(u => u.rol === form.rol);
+  const sugerencias = busqueda.length >= 2
+    ? usuariosDelRol.filter(u =>
+        u.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
+        u.login.toLowerCase().includes(busqueda.toLowerCase())
+      ).slice(0, 6)
+    : [];
+
+  // Usuarios únicos por login (para el buscador)
+  const usuariosUnicos = Array.from(new Map(usuariosDelRol.map(u => [u.login, u])).values());
+  const sugerenciasUnicas = busqueda.length >= 2
+    ? usuariosUnicos.filter(u =>
+        u.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
+        u.login.toLowerCase().includes(busqueda.toLowerCase())
+      ).slice(0, 6)
+    : [];
+
+  function seleccionarExistente(u: UsuarioObra) {
+    setForm(f => ({ ...f, nombre: u.nombre, dni: u.dni, login: u.login }));
+    setBusqueda(u.nombre);
+    setMostrarSugerencias(false);
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -115,7 +128,7 @@ function UsuarioModal({ open, comisaria, usuario, rolPredefinido, onClose, onSav
       <div className="bg-nemaec-gray-800 border border-nemaec-green-500/30 rounded-2xl shadow-2xl w-full max-w-md mx-4">
         <div className="flex items-center justify-between px-6 py-4 border-b border-nemaec-green-500/20">
           <h2 className="text-white font-bold text-lg">
-            {usuario ? 'Editar Usuario' : `Asignar ${ROL_LABEL[form.rol]}`}
+            {usuario ? 'Editar Usuario' : `Asignar ${ROL_LABEL[form.rol as RolUsuarioObra]}`}
           </h2>
           <button onClick={onClose} className="text-nemaec-gray-300 hover:text-white">
             <XMarkIcon className="w-5 h-5" />
@@ -141,6 +154,41 @@ function UsuarioModal({ open, comisaria, usuario, rolPredefinido, onClose, onSav
               <option value="residente">Ingeniero Residente</option>
             </select>
           </div>
+
+          {/* Buscador de usuario existente — solo para monitores (pueden cubrir varias comisarías) */}
+          {!usuario && form.rol === 'monitor' && usuariosDelRol.length > 0 && (
+            <div className="relative">
+              <label className="block text-xs font-semibold text-nemaec-gray-300 mb-1 uppercase tracking-wide">
+                Buscar usuario existente
+              </label>
+              <input
+                type="text"
+                value={busqueda}
+                onChange={e => { setBusqueda(e.target.value); setMostrarSugerencias(true); }}
+                onFocus={() => setMostrarSugerencias(true)}
+                placeholder="Escribe nombre o login..."
+                className="w-full bg-nemaec-gray-700 border border-nemaec-gray-600 rounded-lg px-3 py-2 text-white text-sm placeholder-nemaec-gray-500 focus:outline-none focus:ring-2 focus:ring-nemaec-green-500"
+              />
+              {mostrarSugerencias && sugerenciasUnicas.length > 0 && (
+                <div className="absolute z-10 w-full mt-1 bg-nemaec-gray-700 border border-nemaec-gray-600 rounded-lg shadow-xl overflow-hidden">
+                  {sugerenciasUnicas.map(u => (
+                    <button
+                      key={u.login}
+                      type="button"
+                      onClick={() => seleccionarExistente(u)}
+                      className="w-full text-left px-3 py-2.5 hover:bg-nemaec-gray-600 transition-colors border-b border-nemaec-gray-600/50 last:border-0"
+                    >
+                      <p className="text-white text-sm font-medium">{u.nombre}</p>
+                      <p className="text-nemaec-gray-400 text-xs">{u.login} · DNI {u.dni}</p>
+                    </button>
+                  ))}
+                </div>
+              )}
+              <p className="text-xs text-nemaec-gray-500 mt-1">
+                O deja vacío para crear uno nuevo abajo
+              </p>
+            </div>
+          )}
 
           <div>
             <label className="block text-xs font-semibold text-nemaec-gray-300 mb-1 uppercase tracking-wide">Nombre completo</label>
@@ -177,9 +225,19 @@ function UsuarioModal({ open, comisaria, usuario, rolPredefinido, onClose, onSav
             </div>
           </div>
 
-          <p className="text-xs text-nemaec-gray-400">
-            La contraseña inicial será el DNI del usuario.
-          </p>
+          <div>
+            <label className="block text-xs font-semibold text-nemaec-gray-300 mb-1 uppercase tracking-wide">
+              Contraseña
+            </label>
+            <input
+              type="password"
+              value={form.contrasena || ''}
+              onChange={e => setForm(f => ({ ...f, contrasena: e.target.value }))}
+              placeholder="Dejar vacío para usar el DNI"
+              className="w-full bg-nemaec-gray-700 border border-nemaec-gray-600 rounded-lg px-3 py-2 text-white text-sm placeholder-nemaec-gray-500 focus:outline-none focus:ring-2 focus:ring-nemaec-green-500"
+            />
+            <p className="text-xs text-nemaec-gray-500 mt-1">Si no se ingresa, la contraseña será el DNI.</p>
+          </div>
 
           {error && (
             <div className="bg-red-900/40 border border-red-500/40 rounded-lg px-3 py-2 text-red-300 text-sm">
@@ -200,7 +258,7 @@ function UsuarioModal({ open, comisaria, usuario, rolPredefinido, onClose, onSav
               disabled={saving}
               className="flex-1 px-4 py-2.5 rounded-lg bg-nemaec-green-700 hover:bg-nemaec-green-600 text-white text-sm font-semibold transition-colors disabled:opacity-50"
             >
-              {saving ? 'Guardando...' : usuario ? 'Actualizar' : 'Crear usuario'}
+              {saving ? 'Guardando...' : usuario ? 'Actualizar' : 'Asignar'}
             </button>
           </div>
         </form>
@@ -213,6 +271,7 @@ function UsuarioModal({ open, comisaria, usuario, rolPredefinido, onClose, onSav
 
 const UsuariosPage: React.FC = () => {
   const [comisariasConUsuarios, setComisariasConUsuarios] = useState<ComisariaConUsuarios[]>([]);
+  const [todosUsuarios, setTodosUsuarios] = useState<UsuarioObra[]>([]);
   const [loading, setLoading] = useState(true);
   const [busqueda, setBusqueda] = useState('');
   const [modal, setModal] = useState<{
@@ -232,6 +291,8 @@ const UsuariosPage: React.FC = () => {
 
       const comisarias: ComisariaSimple[] = comRes.data;
       const usuarios: UsuarioObra[] = usrRes.data;
+
+      setTodosUsuarios(usuarios);
 
       const resultado: ComisariaConUsuarios[] = comisarias.map(com => ({
         comisaria: com,
@@ -448,6 +509,7 @@ const UsuariosPage: React.FC = () => {
         comisaria={modal.comisaria}
         usuario={modal.usuario}
         rolPredefinido={modal.rol}
+        todosUsuarios={todosUsuarios}
         onClose={() => setModal({ open: false, comisaria: null, usuario: null })}
         onSaved={cargarDatos}
       />

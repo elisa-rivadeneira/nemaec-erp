@@ -114,7 +114,8 @@ class UsuarioObraModel(Base):
     id = Column(Integer, primary_key=True, index=True)
     nombre = Column(String(255), nullable=False)
     dni = Column(String(20), nullable=False)
-    login = Column(String(100), unique=True, nullable=False, index=True)
+    login = Column(String(100), nullable=False, index=True)  # único por comisaría, no globalmente
+    contrasena = Column(String(255), nullable=True)  # si es None, se usa el DNI como contraseña
     rol = Column(String(50), nullable=False)  # 'monitor' | 'residente'
     comisaria_id = Column(Integer, nullable=True, index=True)
     comisaria_codigo = Column(String(50), nullable=True, index=True)

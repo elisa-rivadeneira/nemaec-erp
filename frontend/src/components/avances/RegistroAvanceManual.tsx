@@ -788,15 +788,15 @@ export default function RegistroAvanceManual({ comisariaId, onSave }: RegistroAv
 
             <div className="border rounded-lg overflow-hidden flex-1 bg-white">
               <div className="h-full overflow-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm table-fixed">
                   <thead className="bg-gray-50 sticky top-0 z-10">
                     <tr>
-                      <th className="text-left p-2 border-b text-gray-900 font-semibold whitespace-nowrap w-[100px]">Código</th>
-                      <th className="text-left p-2 border-b text-gray-900 font-semibold min-w-[250px]">Descripción</th>
-                      <th className="text-center p-2 border-b text-gray-900 font-semibold whitespace-nowrap w-[90px]">Actual</th>
-                      <th className="text-center p-2 border-b text-gray-900 font-semibold whitespace-nowrap w-[90px]">Programado</th>
-                      <th className="text-center p-2 border-b text-gray-900 font-semibold whitespace-nowrap w-[250px]">Avance Adicional</th>
-                      <th className="text-center p-2 border-b text-gray-900 font-semibold whitespace-nowrap w-[90px]">Nuevo</th>
+                      <th className="text-left p-2 border-b text-gray-900 font-semibold w-[110px]">Código</th>
+                      <th className="text-left p-2 border-b text-gray-900 font-semibold">Descripción</th>
+                      <th className="text-center p-2 border-b text-gray-900 font-semibold w-[80px]">Actual</th>
+                      <th className="text-center p-2 border-b text-gray-900 font-semibold w-[90px]">Programado</th>
+                      <th className="text-center p-2 border-b text-gray-900 font-semibold w-[220px]">Avance Adicional</th>
+                      <th className="text-center p-2 border-b text-gray-900 font-semibold w-[80px]">Nuevo</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -808,7 +808,7 @@ export default function RegistroAvanceManual({ comisariaId, onSave }: RegistroAv
                       return (
                         <tr key={partida.id} className={tieneAvance ? 'bg-green-50 border-l-4 border-green-400' : 'hover:bg-gray-50'}>
                           <td className="p-2 border-b font-mono text-xs text-gray-900 font-medium">{partida.codigo}</td>
-                          <td className="p-2 border-b text-gray-900">
+                          <td className="p-2 border-b text-gray-900 overflow-hidden">
                             <div className="truncate" title={partida.descripcion}>
                               {partida.descripcion}
                             </div>

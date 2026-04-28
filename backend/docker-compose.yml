@@ -1,0 +1,115 @@
+# 🐳 NEMAEC ERP - Development Environment
+# Docker Compose para desarrollo local
+
+version: '3.8'
+
+services:
+  # 🗄️ PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: nemaec_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: nemaec_erp
+      POSTGRES_USER: nemaec_user
+      POSTGRES_PASSWORD: nemaec_secure_password_2026
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --lc-collate=es_PE.UTF-8 --lc-ctype=es_PE.UTF-8"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nemaec_user -d nemaec_erp"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # 📦 Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: nemaec_redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # 🔍 Database Admin (PgAdmin)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: nemaec_pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@nemaec.gob.pe
+      PGADMIN_DEFAULT_PASSWORD: admin123
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    ports:
+      - "8080:80"
+    depends_on:
+      - postgres
+
+  # 📊 Redis Admin (RedisInsight)
+  redis-insight:
+    image: redislabs/redisinsight:latest
+    container_name: nemaec_redis_insight
+    restart: unless-stopped
+    volumes:
+      - redis_insight_data:/db
+    ports:
+      - "8081:8001"
+    depends_on:
+      - redis
+
+  # 🚀 NEMAEC ERP Backend (para desarrollo)
+  # Descomenta cuando tengas el Dockerfile listo
+  # backend:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   container_name: nemaec_backend
+  #   restart: unless-stopped
+  #   environment:
+  #     - DATABASE_URL=postgresql+asyncpg://nemaec_user:nemaec_secure_password_2026@postgres:5432/nemaec_erp
+  #     - REDIS_URL=redis://redis:6379/0
+  #     - DEBUG=true
+  #   volumes:
+  #     - ./uploads:/app/uploads
+  #     - .:/app
+  #   ports:
+  #     - "8000:8000"
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #     redis:
+  #       condition: service_healthy
+
+volumes:
+  postgres_data:
+    name: nemaec_postgres_data
+    driver: local
+
+  redis_data:
+    name: nemaec_redis_data
+    driver: local
+
+  pgadmin_data:
+    name: nemaec_pgadmin_data
+    driver: local
+
+  redis_insight_data:
+    name: nemaec_redis_insight_data
+    driver: local
+
+networks:
+  default:
+    name: nemaec_network
+    driver: bridge

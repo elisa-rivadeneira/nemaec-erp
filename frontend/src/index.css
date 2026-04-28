@@ -1,0 +1,406 @@
+/**
+ * 🎨 GLOBAL STYLES - NEMAEC ERP
+ * Estilos globales con diseño militar/policial institucional.
+ */
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* ===========================
+   VARIABLES CSS GLOBALES
+=========================== */
+:root {
+  /* Colores NEMAEC - Sincronizados con Tailwind */
+  --nemaec-green-primary: #1B5E20;
+  --nemaec-green-secondary: #388E3C;
+  --nemaec-green-light: #4CAF50;
+  --nemaec-gray-dark: #263238;
+  --nemaec-gray-medium: #37474F;
+  --nemaec-gray-light: #455A64;
+  --nemaec-yellow: #FFC107;
+  --nemaec-red: #C62828;
+
+  /* Tipografía */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Consolas', monospace;
+
+  /* Espaciado */
+  --spacing-unit: 0.25rem;
+  --border-radius: 0.5rem;
+
+  /* Sombras */
+  --shadow-nemaec: 0 4px 6px -1px rgba(27, 94, 32, 0.1), 0 2px 4px -1px rgba(27, 94, 32, 0.06);
+  --shadow-critical: 0 4px 6px -1px rgba(198, 40, 40, 0.3), 0 2px 4px -1px rgba(198, 40, 40, 0.2);
+}
+
+/* ===========================
+   BASE STYLES
+=========================== */
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  background: linear-gradient(135deg, #263238 0%, #000000 100%);
+  min-height: 100vh;
+}
+
+/* ===========================
+   SCROLLBAR CUSTOM - NEMAEC
+=========================== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--nemaec-gray-dark);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--nemaec-green-secondary);
+  border-radius: 4px;
+  border: 2px solid var(--nemaec-gray-dark);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--nemaec-green-light);
+}
+
+/* Firefox */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--nemaec-green-secondary) var(--nemaec-gray-dark);
+}
+
+/* ===========================
+   SELECTION COLORS
+=========================== */
+::selection {
+  background-color: var(--nemaec-green-light);
+  color: white;
+}
+
+::-moz-selection {
+  background-color: var(--nemaec-green-light);
+  color: white;
+}
+
+/* ===========================
+   FOCUS STYLES
+=========================== */
+*:focus {
+  outline: 2px solid var(--nemaec-green-light);
+  outline-offset: 2px;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--nemaec-green-light);
+  outline-offset: 2px;
+}
+
+/* Remove outline for mouse users */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ===========================
+   ANIMATIONS CUSTOM
+=========================== */
+@keyframes pulse-critical {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes slide-in-right {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounce-subtle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+/* ===========================
+   UTILITY CLASSES
+=========================== */
+.animate-pulse-critical {
+  animation: pulse-critical 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 0.3s ease-out;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.4s ease-out;
+}
+
+.animate-bounce-subtle {
+  animation: bounce-subtle 2s ease-in-out infinite;
+}
+
+/* ===========================
+   TYPOGRAPHY UTILITIES
+=========================== */
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+.text-gradient-nemaec {
+  background: linear-gradient(135deg, var(--nemaec-green-light) 0%, var(--nemaec-yellow) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ===========================
+   COMPONENT UTILITIES
+=========================== */
+.glass-effect {
+  backdrop-filter: blur(10px);
+  background: rgba(55, 71, 79, 0.8);
+  border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.card-hover-effect {
+  transition: all 0.3s ease;
+}
+
+.card-hover-effect:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-nemaec);
+}
+
+.critical-glow {
+  background: rgba(198, 40, 40, 0.1);
+  border: 1px solid #C62828;
+  box-shadow: 0 0 20px rgba(198, 40, 40, 0.3);
+}
+
+.success-glow {
+  background: rgba(76, 175, 80, 0.1);
+  border: 1px solid #4CAF50;
+  box-shadow: 0 0 15px rgba(76, 175, 80, 0.2);
+}
+
+/* ===========================
+   LOADING STATES
+=========================== */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--nemaec-gray-medium) 25%,
+    var(--nemaec-gray-light) 50%,
+    var(--nemaec-gray-medium) 75%
+  );
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ===========================
+   PRINT STYLES
+=========================== */
+@media print {
+  * {
+    background: white !important;
+    color: black !important;
+    box-shadow: none !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    font-size: 12pt;
+    line-height: 1.4;
+  }
+
+  h1, h2, h3 {
+    page-break-after: avoid;
+  }
+
+  p, li {
+    page-break-inside: avoid;
+  }
+}
+
+/* ===========================
+   ACCESSIBILITY
+=========================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --nemaec-green-primary: #0A4A0A;
+    --nemaec-green-light: #00AA00;
+    --nemaec-gray-dark: #000000;
+    --nemaec-gray-medium: #222222;
+  }
+}
+
+/* ===========================
+   FORM ELEMENTS
+=========================== */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+textarea,
+select {
+  @apply bg-white border border-gray-300 text-gray-900 placeholder-gray-400;
+  @apply focus:border-nemaec-green-500 focus:ring-2 focus:ring-nemaec-green-500 focus:ring-opacity-20;
+  @apply rounded-lg px-3 py-2 transition-all duration-200;
+}
+
+input[type="text"]:invalid,
+input[type="email"]:invalid {
+  @apply border-nemaec-red-600 focus:border-nemaec-red-500 focus:ring-nemaec-red-500;
+}
+
+/* ===========================
+   RECHARTS CUSTOM STYLES
+=========================== */
+.recharts-tooltip-wrapper {
+  outline: none;
+}
+
+.recharts-default-tooltip {
+  background-color: var(--nemaec-gray-medium) !important;
+  border: 1px solid var(--nemaec-green-light) !important;
+  border-radius: 8px !important;
+  color: white !important;
+  box-shadow: var(--shadow-nemaec) !important;
+}
+
+.recharts-tooltip-label {
+  color: var(--nemaec-green-light) !important;
+  font-weight: 600 !important;
+}
+
+.recharts-tooltip-item {
+  color: #ECEFF1 !important;
+}
+
+/* ===========================
+   HEROICONS CUSTOM
+=========================== */
+.hero-icon {
+  @apply w-5 h-5 flex-shrink-0;
+}
+
+.hero-icon-lg {
+  @apply w-6 h-6 flex-shrink-0;
+}
+
+/* ===========================
+   DEBUG UTILITIES (Development Only)
+=========================== */
+.debug-grid {
+  background-image:
+    linear-gradient(rgba(76, 175, 80, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(76, 175, 80, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.debug-border {
+  border: 1px solid rgba(255, 193, 7, 0.5) !important;
+}
+
+/* Solo en desarrollo */
+@media (max-width: 640px) {
+  .debug-responsive::before {
+    content: 'XS';
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: var(--nemaec-yellow);
+    color: black;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    z-index: 9999;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 768px) {
+  .debug-responsive::before {
+    content: 'SM';
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .debug-responsive::before {
+    content: 'MD';
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1280px) {
+  .debug-responsive::before {
+    content: 'LG';
+  }
+}
+
+@media (min-width: 1280px) {
+  .debug-responsive::before {
+    content: 'XL';
+  }
+}

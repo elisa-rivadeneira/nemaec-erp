@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Cronograma Import</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+    <h1>Test Importación Cronograma COLLIQUE</h1>
+    <input type="file" id="fileInput" accept=".xlsx" />
+    <button onclick="processFile()">Procesar Excel</button>
+
+    <div id="output"></div>
+
+    <script>
+        function processFile() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert('Por favor selecciona un archivo');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = e.target.result;
+                const workbook = XLSX.read(data, { type: 'binary' });
+                const sheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[sheetName];
+
+                // Convertir a JSON
+                const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+                console.log('Datos procesados:', jsonData);
+
+                // Mostrar información
+                const output = document.getElementById('output');
+                output.innerHTML = `
+                    <h2>Análisis del Cronograma</h2>
+                    <p><strong>Total filas:</strong> ${jsonData.length}</p>
+                    <p><strong>Primera fila:</strong></p>
+                    <pre>${JSON.stringify(jsonData[0], null, 2)}</pre>
+
+                    <h3>Primeras 5 partidas:</h3>
+                    <table border="1" style="border-collapse: collapse; width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>Código Interno</th>
+                                <th>Código Partida</th>
+                                <th>Descripción</th>
+                                <th>Unidad</th>
+                                <th>Precio Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${jsonData.slice(0, 5).map(row => `
+                                <tr>
+                                    <td>${row['Unnamed: 1'] || 'N/A'}</td>
+                                    <td>${row['Unnamed: 3'] || 'N/A'}</td>
+                                    <td>${row['Unnamed: 4'] || 'N/A'}</td>
+                                    <td>${row['Unnamed: 9'] || 'N/A'}</td>
+                                    <td>S/ ${(row['Unnamed: 8'] || 0).toLocaleString('es-PE', { minimumFractionDigits: 2 })}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            };
+
+            reader.readAsBinaryString(file);
+        }
+    </script>
+</body>
+</html>

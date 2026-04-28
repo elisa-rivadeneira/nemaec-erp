@@ -48,10 +48,12 @@ ENV/
 .env.test
 .env.production
 
-# Databases
-*.db
-*.sqlite
-*.sqlite3
+# Databases (excluding production data)
+# *.db
+# *.sqlite
+# *.sqlite3
+!backend/data/*.db
+!backend/*.db
 /tmp/nemaec_*.json
 
 # ========== NODE.JS / FRONTEND ==========

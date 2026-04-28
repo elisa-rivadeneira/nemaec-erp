@@ -14,7 +14,7 @@ import {
 import { clsx } from 'clsx';
 import type { AvanceApp } from '@/types';
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1';
+const API = import.meta.env.VITE_API_URL || '/api/v1';
 
 const AvancesAppPage: React.FC = () => {
   const [avances, setAvances] = useState<AvanceApp[]>([]);

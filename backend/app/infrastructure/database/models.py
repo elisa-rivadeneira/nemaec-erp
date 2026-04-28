@@ -105,3 +105,52 @@ class PartidaModel(Base):
 
     def __repr__(self):
         return f"<PartidaModel(id={self.id}, codigo_partida='{self.codigo_partida}', descripcion='{self.descripcion[:30]}...')>"
+
+
+class UsuarioObraModel(Base):
+    """Monitor de obra o Ingeniero Residente asignado a una comisaría."""
+    __tablename__ = "usuarios_obra"
+
+    id = Column(Integer, primary_key=True, index=True)
+    nombre = Column(String(255), nullable=False)
+    dni = Column(String(20), nullable=False)
+    login = Column(String(100), unique=True, nullable=False, index=True)
+    rol = Column(String(50), nullable=False)  # 'monitor' | 'residente'
+    comisaria_id = Column(Integer, nullable=True, index=True)
+    comisaria_codigo = Column(String(50), nullable=True, index=True)
+    activo = Column(Boolean, default=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+    def __repr__(self):
+        return f"<UsuarioObraModel(login='{self.login}', rol='{self.rol}', comisaria='{self.comisaria_codigo}')>"
+
+
+class AvanceAppModel(Base):
+    """Avance verificado recibido desde la app móvil de monitoreo."""
+    __tablename__ = "avances_app"
+
+    id = Column(Integer, primary_key=True, index=True)
+    app_id = Column(Integer, nullable=False)
+    comisaria_codigo = Column(String(50), nullable=False, index=True)
+    comisaria_id = Column(Integer, nullable=True, index=True)
+    codigo_partida = Column(String(50), nullable=False, index=True)
+    descripcion_partida = Column(Text, nullable=True)
+    fecha = Column(String(20), nullable=False)
+    hora = Column(String(10), nullable=True)
+    porcentaje_dia = Column(Float, nullable=False)
+    acumulado = Column(Float, nullable=False)
+    residente_login = Column(String(100), nullable=True)
+    obs_residente = Column(Text, nullable=True)
+    monitor_verificador = Column(String(100), nullable=True)
+    acuerdo_con_avance = Column(Boolean, nullable=True)
+    porcentaje_dia_monitor = Column(Float, nullable=True)
+    acumulado_final = Column(Float, nullable=False)
+    obs_monitor = Column(Text, nullable=True)
+    fecha_verificacion = Column(String(20), nullable=True)
+    lat = Column(Float, nullable=True)
+    lng = Column(Float, nullable=True)
+    sincronizado_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    def __repr__(self):
+        return f"<AvanceAppModel(comisaria='{self.comisaria_codigo}', partida='{self.codigo_partida}', acumulado={self.acumulado_final})>"

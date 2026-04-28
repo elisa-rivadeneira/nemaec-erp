@@ -232,6 +232,8 @@ from app.presentation.api.cronogramas_db import router as cronogramas_router  # 
 from app.presentation.api.cronograma_versiones import router as cronograma_versiones_router
 from app.presentation.api.seguimiento import router as seguimiento_router  # 📊 New: Progress tracking
 from app.api.routes.avances_routes import router as avances_router  # 📊 Manual progress registration
+from app.presentation.api.usuarios_obra import router as usuarios_obra_router  # 👷 Usuarios de obra
+from app.presentation.api.avances_app import router as avances_app_router  # 📱 Avances desde app móvil
 
 app.include_router(google_maps_router, prefix=settings.API_PREFIX)
 app.include_router(comisarias_router, prefix=settings.API_PREFIX)
@@ -239,6 +241,8 @@ app.include_router(cronogramas_router, prefix=settings.API_PREFIX)
 app.include_router(cronograma_versiones_router, prefix=settings.API_PREFIX)
 app.include_router(seguimiento_router, prefix=settings.API_PREFIX)  # 📊 Seguimiento de avances físicos
 app.include_router(avances_router, prefix=settings.API_PREFIX)  # 📊 Registro manual de avances
+app.include_router(usuarios_obra_router, prefix=settings.API_PREFIX)  # 👷 Monitores e ingenieros residentes
+app.include_router(avances_app_router, prefix=settings.API_PREFIX)  # 📱 Avances verificados desde app móvil
 
 # Otros routers pendientes de implementar:
 # from app.presentation.api.auth import router as auth_router

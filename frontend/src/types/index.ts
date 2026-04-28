@@ -375,3 +375,58 @@ export interface ChartDataPoint {
   color?: string;
   [key: string]: any;
 }
+
+// ===============================
+// USUARIOS DE OBRA (APP MÓVIL)
+// ===============================
+
+export type RolUsuarioObra = 'monitor' | 'residente';
+
+export interface UsuarioObra {
+  id: number;
+  nombre: string;
+  dni: string;
+  login: string;
+  rol: RolUsuarioObra;
+  comisaria_id?: number;
+  comisaria_codigo?: string;
+  activo: boolean;
+  created_at: string;
+}
+
+export interface UsuarioObraCreate {
+  nombre: string;
+  dni: string;
+  login: string;
+  rol: RolUsuarioObra;
+  comisaria_id?: number;
+  comisaria_codigo?: string;
+}
+
+// ===============================
+// AVANCES DESDE APP MÓVIL
+// ===============================
+
+export interface AvanceApp {
+  id: number;
+  app_id: number;
+  comisaria_codigo: string;
+  comisaria_id?: number;
+  codigo_partida: string;
+  descripcion_partida?: string;
+  fecha: string;
+  hora?: string;
+  porcentaje_dia: number;
+  acumulado: number;
+  residente_login?: string;
+  obs_residente?: string;
+  monitor_verificador?: string;
+  acuerdo_con_avance?: boolean;
+  porcentaje_dia_monitor?: number;
+  acumulado_final: number;
+  obs_monitor?: string;
+  fecha_verificacion?: string;
+  lat?: number;
+  lng?: number;
+  sincronizado_at: string;
+}

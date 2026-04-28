@@ -16,6 +16,8 @@ import AvancesImportExcel from '@/pages/AvancesImportExcel';
 import SeguimientoEvolucionPage from '@/pages/SeguimientoEvolucionPage';
 import RegistroAvancesPage from '@/pages/RegistroAvancesPage';
 import GraficosAvancePage from '@/pages/GraficosAvancePage';
+import UsuariosPage from '@/pages/UsuariosPage';
+import AvancesAppPage from '@/pages/AvancesAppPage';
 
 // React Query Devtools (solo en desarrollo)
 const ReactQueryDevtools = process.env.NODE_ENV === 'development'
@@ -73,6 +75,10 @@ const App: React.FC = () => {
 
           {/* Seguimiento Routes */}
           <Route path="/seguimiento/evolucion/:comisariaId" element={<SeguimientoEvolucionPage />} />
+
+          {/* Usuarios de Obra */}
+          <Route path="/usuarios" element={<UsuariosPage />} />
+          <Route path="/avances/app-movil" element={<AvancesAppPage />} />
 
           {/* Other Routes */}
           <Route path="/reportes" element={<div className="p-6 text-gray-800">Reportes (Próximamente)</div>} />

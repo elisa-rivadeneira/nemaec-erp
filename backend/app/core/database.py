@@ -93,7 +93,9 @@ async def init_db() -> None:
         # Importar todos los modelos para que estén disponibles
         from app.infrastructure.database.models import (  # noqa
             ComisariaModel,
-            CronogramaModel
+            CronogramaModel,
+            UsuarioObraModel,
+            AvanceAppModel,
         )
         from app.infrastructure.database.models_seguimiento import (  # noqa
             AvanceFisico,

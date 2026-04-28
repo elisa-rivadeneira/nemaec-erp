@@ -16,12 +16,16 @@ import {
   ChevronRightIcon,
   ChevronDownIcon,
   ExclamationTriangleIcon,
+  UserGroupIcon,
+  DevicePhoneMobileIcon,
 } from '@heroicons/react/24/outline';
 import {
   HomeIcon as HomeIconSolid,
   BuildingOfficeIcon as BuildingOfficeIconSolid,
   DocumentTextIcon as DocumentTextIconSolid,
   ChartBarIcon as ChartBarIconSolid,
+  UserGroupIcon as UserGroupIconSolid,
+  DevicePhoneMobileIcon as DevicePhoneMobileIconSolid,
 } from '@heroicons/react/24/solid';
 
 interface MenuItem {
@@ -108,6 +112,28 @@ const menuItems: MenuItem[] = [
         href: '/avances/import-excel',
         icon: DocumentTextIcon,
         iconSolid: DocumentTextIconSolid,
+      },
+    ],
+  },
+  {
+    id: 'usuarios',
+    name: 'Usuarios de Obra',
+    icon: UserGroupIcon,
+    iconSolid: UserGroupIconSolid,
+    children: [
+      {
+        id: 'usuarios-lista',
+        name: 'Por Comisaría',
+        href: '/usuarios',
+        icon: UserGroupIcon,
+        iconSolid: UserGroupIconSolid,
+      },
+      {
+        id: 'avances-app',
+        name: 'Avances App Móvil',
+        href: '/avances/app-movil',
+        icon: DevicePhoneMobileIcon,
+        iconSolid: DevicePhoneMobileIconSolid,
       },
     ],
   },

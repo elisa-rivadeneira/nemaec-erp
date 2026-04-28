@@ -124,6 +124,14 @@ async def recibir_avance(data: AvanceAppCreate, db: AsyncSession = Depends(get_d
 
     # Escribir también en AvanceFisico/DetalleAvancePartida para que el ERP lo muestre
     comisaria_id = data.comisaria_id
+    if not comisaria_id and data.comisaria_codigo:
+        from app.infrastructure.database.models import ComisariaModel
+        res_com = await db.execute(
+            select(ComisariaModel).where(ComisariaModel.codigo == data.comisaria_codigo)
+        )
+        com = res_com.scalar_one_or_none()
+        if com:
+            comisaria_id = com.id
     if comisaria_id:
         try:
             fecha = datetime.date.fromisoformat(data.fecha)
@@ -240,3 +248,91 @@ async def resumen_por_comisaria(db: AsyncSession = Depends(get_db)):
         resumen[av.comisaria_codigo]["total_registros"] = resumen.get(av.comisaria_codigo, {}).get("total_registros", 0) + 1
 
     return list(resumen.values())
+
+
+@router.post("/resincronizar", tags=["avances-app"])
+async def resincronizar_avances(db: AsyncSession = Depends(get_db)):
+    """
+    Re-sincroniza todos los registros de avances_app a AvanceFisico/DetalleAvancePartida.
+    Útil cuando avances llegaron sin comisaria_id y no se sincronizaron al ERP.
+    """
+    from app.infrastructure.database.models import ComisariaModel
+
+    result = await db.execute(select(AvanceAppModel).order_by(AvanceAppModel.fecha.asc()))
+    avances = result.scalars().all()
+
+    # Cache de comisaria_codigo → comisaria_id
+    cache_comisarias: dict = {}
+    sincronizados = 0
+    errores = 0
+
+    for av in avances:
+        try:
+            comisaria_id = av.comisaria_id
+            if not comisaria_id:
+                if av.comisaria_codigo not in cache_comisarias:
+                    res_com = await db.execute(
+                        select(ComisariaModel).where(ComisariaModel.codigo == av.comisaria_codigo)
+                    )
+                    com = res_com.scalar_one_or_none()
+                    cache_comisarias[av.comisaria_codigo] = com.id if com else None
+                comisaria_id = cache_comisarias[av.comisaria_codigo]
+
+            if not comisaria_id:
+                errores += 1
+                continue
+
+            fecha = datetime.date.fromisoformat(av.fecha)
+            acumulado_decimal = Decimal(str(av.acumulado_final / 100))
+
+            # Buscar o crear AvanceFisico del día
+            stmt_af = select(AvanceFisico).where(
+                and_(AvanceFisico.comisaria_id == comisaria_id,
+                     AvanceFisico.fecha_reporte == fecha)
+            )
+            result_af = await db.execute(stmt_af)
+            avance_fisico = result_af.scalar_one_or_none()
+
+            if not avance_fisico:
+                avance_fisico = AvanceFisico(
+                    comisaria_id=comisaria_id,
+                    fecha_reporte=fecha,
+                    avance_ejecutado_acum=acumulado_decimal,
+                    avance_programado_acum=None,
+                    dias_transcurridos=None,
+                    observaciones=None,
+                )
+                db.add(avance_fisico)
+                await db.flush()
+
+            # Buscar o actualizar DetalleAvancePartida
+            stmt_d = select(DetalleAvancePartida).where(
+                and_(DetalleAvancePartida.avance_fisico_id == avance_fisico.id,
+                     DetalleAvancePartida.codigo_partida == av.codigo_partida)
+            )
+            result_d = await db.execute(stmt_d)
+            detalle = result_d.scalar_one_or_none()
+
+            obs = av.obs_monitor or av.obs_residente
+            if detalle:
+                detalle.porcentaje_avance = acumulado_decimal
+                if obs:
+                    detalle.observaciones_partida = obs
+            else:
+                db.add(DetalleAvancePartida(
+                    avance_fisico_id=avance_fisico.id,
+                    codigo_partida=av.codigo_partida,
+                    porcentaje_avance=acumulado_decimal,
+                    monto_ejecutado=None,
+                    observaciones_partida=obs,
+                ))
+            sincronizados += 1
+        except Exception as e:
+            print(f"[WARN] resincronizar: error en avance id={av.id}: {e}")
+            errores += 1
+
+    return {
+        "sincronizados": sincronizados,
+        "errores": errores,
+        "total_procesados": len(avances)
+    }

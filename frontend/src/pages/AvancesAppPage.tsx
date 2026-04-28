@@ -10,6 +10,7 @@ import {
   CheckBadgeIcon,
   ExclamationTriangleIcon,
   ArrowPathIcon,
+  ArrowsRightLeftIcon,
 } from '@heroicons/react/24/outline';
 import { clsx } from 'clsx';
 import type { AvanceApp } from '@/types';
@@ -21,6 +22,8 @@ const AvancesAppPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [filtroCom, setFiltroCom] = useState('');
   const [ultimaSync, setUltimaSync] = useState<string | null>(null);
+  const [syncing, setSyncing] = useState(false);
+  const [syncResult, setSyncResult] = useState<{ sincronizados: number; errores: number } | null>(null);
 
   async function cargar() {
     setLoading(true);
@@ -38,6 +41,20 @@ const AvancesAppPage: React.FC = () => {
   }
 
   useEffect(() => { cargar(); }, [filtroCom]);
+
+  async function resincronizar() {
+    setSyncing(true);
+    setSyncResult(null);
+    try {
+      const res = await axios.post(`${API}/avances-app/resincronizar`);
+      setSyncResult(res.data);
+      await cargar();
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setSyncing(false);
+    }
+  }
 
   // Comisarías únicas presentes en los avances
   const comisariasUnicas = [...new Set(avances.map(a => a.comisaria_codigo))].sort();
@@ -61,14 +78,31 @@ const AvancesAppPage: React.FC = () => {
             {ultimaSync && <span className="ml-2 text-nemaec-gray-500">· Última actualización: {ultimaSync}</span>}
           </p>
         </div>
-        <button
-          onClick={cargar}
-          disabled={loading}
-          className="flex items-center gap-2 px-4 py-2 bg-nemaec-gray-700 hover:bg-nemaec-gray-600 text-nemaec-gray-200 rounded-lg text-sm transition-colors disabled:opacity-50"
-        >
-          <ArrowPathIcon className={clsx('w-4 h-4', loading && 'animate-spin')} />
-          Actualizar
-        </button>
+        <div className="flex items-center gap-3">
+          {syncResult && (
+            <span className="text-xs text-nemaec-green-400">
+              ✓ {syncResult.sincronizados} avances sincronizados al ERP
+              {syncResult.errores > 0 && ` · ${syncResult.errores} errores`}
+            </span>
+          )}
+          <button
+            onClick={resincronizar}
+            disabled={syncing || loading}
+            title="Sincroniza los avances de la app al Registro de Avances del ERP. Usar una sola vez si los avances no aparecen en el ERP."
+            className="flex items-center gap-2 px-4 py-2 bg-nemaec-green-700 hover:bg-nemaec-green-600 text-white rounded-lg text-sm transition-colors disabled:opacity-50"
+          >
+            <ArrowsRightLeftIcon className={clsx('w-4 h-4', syncing && 'animate-spin')} />
+            {syncing ? 'Sincronizando...' : 'Sincronizar al ERP'}
+          </button>
+          <button
+            onClick={cargar}
+            disabled={loading}
+            className="flex items-center gap-2 px-4 py-2 bg-nemaec-gray-700 hover:bg-nemaec-gray-600 text-nemaec-gray-200 rounded-lg text-sm transition-colors disabled:opacity-50"
+          >
+            <ArrowPathIcon className={clsx('w-4 h-4', loading && 'animate-spin')} />
+            Actualizar
+          </button>
+        </div>
       </div>
 
       {/* Stats */}

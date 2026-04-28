@@ -4,6 +4,9 @@
 # 🎨 Stage 1: Build Frontend React
 FROM node:18-alpine AS frontend-builder
 
+# Cache bust: incrementar para forzar rebuild limpio del frontend
+ARG CACHE_BUST=2
+
 WORKDIR /app/frontend
 
 # Copiar package files
@@ -16,7 +19,7 @@ RUN npm install
 COPY frontend/ ./
 
 # Build de producción del frontend con logs detallados
-RUN echo "🔨 Building frontend..." && \
+RUN echo "🔨 Building frontend (bust=$CACHE_BUST)..." && \
     npm run build && \
     echo "✅ Frontend build complete" && \
     ls -la dist/

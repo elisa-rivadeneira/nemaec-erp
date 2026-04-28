@@ -79,6 +79,7 @@ async def listar_usuarios(
     comisaria_id: Optional[int] = None,
     comisaria_codigo: Optional[str] = None,
     rol: Optional[str] = None,
+    login: Optional[str] = None,
     db: AsyncSession = Depends(get_db)
 ):
     """Lista todos los usuarios de obra con filtros opcionales."""
@@ -89,6 +90,8 @@ async def listar_usuarios(
         query = query.where(UsuarioObraModel.comisaria_codigo == comisaria_codigo)
     if rol:
         query = query.where(UsuarioObraModel.rol == rol)
+    if login:
+        query = query.where(UsuarioObraModel.login == login.strip().lower())
     result = await db.execute(query.order_by(UsuarioObraModel.nombre))
     return [to_response(u) for u in result.scalars().all()]
 

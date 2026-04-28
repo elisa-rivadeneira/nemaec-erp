@@ -52,10 +52,16 @@ app = FastAPI(
 
 
 # 🌐 Configurar CORS
+# Incluye URLs de EasyPanel para que la app móvil pueda autenticar en producción
+EASYPANEL_ORIGINS = [
+    "https://automation-nemaec-app.gnrjtm.easypanel.host",
+    "https://automation-nemaec-erp.gnrjtm.easypanel.host",
+]
+allowed_origins = list(set(settings.ALLOWED_ORIGINS + EASYPANEL_ORIGINS))
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.ALLOWED_ORIGINS if not settings.is_production
-                  else ["https://nemaec-erp.gob.pe"],  # Ejemplo URL producción
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

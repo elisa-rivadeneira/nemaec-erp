@@ -20,6 +20,10 @@ router = APIRouter(
 
 # ─── Pydantic Models ─────────────────────────────────────────────────────────
 
+class LoginRequest(BaseModel):
+    login: str
+    password: str  # DNI del usuario
+
 class UsuarioObraCreate(BaseModel):
     nombre: str
     dni: str
@@ -150,6 +154,24 @@ async def actualizar_usuario(
 
     await db.flush()
     await db.refresh(usuario)
+    return to_response(usuario)
+
+
+@router.post("/login", response_model=UsuarioObraResponse)
+async def login_usuario(data: LoginRequest, db: AsyncSession = Depends(get_db)):
+    """
+    Autenticar un usuario de obra desde la app móvil.
+    La contraseña es el DNI del usuario.
+    """
+    result = await db.execute(
+        select(UsuarioObraModel)
+        .where(UsuarioObraModel.login == data.login.strip().lower())
+        .where(UsuarioObraModel.dni == data.password.strip())
+        .where(UsuarioObraModel.activo == True)
+    )
+    usuario = result.scalar_one_or_none()
+    if not usuario:
+        raise HTTPException(status_code=401, detail="Usuario o contraseña incorrectos")
     return to_response(usuario)
 
 

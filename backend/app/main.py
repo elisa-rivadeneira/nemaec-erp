@@ -250,6 +250,20 @@ app.include_router(avances_router, prefix=settings.API_PREFIX)  # 📊 Registro 
 app.include_router(usuarios_obra_router, prefix=settings.API_PREFIX)  # 👷 Monitores e ingenieros residentes
 app.include_router(avances_app_router, prefix=settings.API_PREFIX)  # 📱 Avances verificados desde app móvil
 
+# TEMPORAL: endpoint para restaurar base de datos desde archivo
+from fastapi import UploadFile, File
+import shutil
+
+@app.post("/admin/restore-db", tags=["admin"])
+async def restore_db(file: UploadFile = File(...)):
+    from app.core.config import settings
+    db_path = settings.database_url.replace("sqlite+aiosqlite:///", "")
+    import os
+    os.makedirs(os.path.dirname(db_path), exist_ok=True)
+    with open(db_path, "wb") as f:
+        shutil.copyfileobj(file.file, f)
+    return {"ok": True, "db_path": db_path, "size": os.path.getsize(db_path)}
+
 # Otros routers pendientes de implementar:
 # from app.presentation.api.auth import router as auth_router
 # from app.presentation.api.contracts import router as contracts_router

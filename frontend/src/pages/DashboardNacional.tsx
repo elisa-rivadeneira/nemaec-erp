@@ -292,9 +292,9 @@ const DashboardNacional: React.FC = () => {
         {/* Comisarías sin Avances (Problemáticas) */}
         <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-2xl font-bold text-gray-800">🚨 Comisarías sin Reportes de Avance</h3>
+            <h3 className="text-2xl font-bold text-gray-800">🚨 Comisarías en Riesgo - Sin Reportes</h3>
             <div className="text-sm text-red-600 bg-red-50 px-3 py-1 rounded">
-              {comisariasProblematicas?.length || 0} Requieren Atención
+              {comisariasProblematicas?.length || 0} En Riesgo
             </div>
           </div>
 

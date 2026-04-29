@@ -895,34 +895,81 @@ async def obtener_partidas_db(comisaria_id: int) -> List[PartidaDB]:
 
 
 async def consultar_avances_comisaria(comisaria_id: int):
-    """Consulta todos los avances de una comisaría"""
+    """Consulta todos los avances de una comisaría incluyendo ERP y app móvil"""
     from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
     from app.infrastructure.database.models_seguimiento import AvanceFisico
+    from app.infrastructure.database.models import AvanceAppModel, ComisariaModel
     from app.core.config import settings
-    from sqlalchemy import select, desc
+    from sqlalchemy import select, desc, text, func
+    from datetime import datetime
 
     engine = create_async_engine(settings.database_url, echo=False)
     AsyncSessionLocal = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
     async with AsyncSessionLocal() as session:
         try:
-            result = await session.execute(
+            # 1. Obtener código de comisaría para buscar en avances_app
+            comisaria_result = await session.execute(
+                select(ComisariaModel.codigo)
+                .where(ComisariaModel.id == comisaria_id)
+            )
+            comisaria_codigo = comisaria_result.scalar_one_or_none()
+
+            avances_combinados = []
+
+            # 2. Consultar avances ERP (tabla avances_fisicos)
+            result_erp = await session.execute(
                 select(AvanceFisico)
                 .where(AvanceFisico.comisaria_id == comisaria_id)
                 .order_by(desc(AvanceFisico.fecha_reporte))
             )
-            avances = result.scalars().all()
+            avances_erp = result_erp.scalars().all()
 
-            return [
-                {
+            for a in avances_erp:
+                avances_combinados.append({
                     "id": a.id,
                     "fecha_reporte": a.fecha_reporte.isoformat(),
                     "avance_ejecutado": float(a.avance_ejecutado_acum),
                     "archivo_seguimiento": a.archivo_seguimiento,
-                    "created_at": a.created_at.isoformat()
-                }
-                for a in avances
-            ]
+                    "created_at": a.created_at.isoformat(),
+                    "fuente": "ERP"
+                })
+
+            # 3. Consultar último avance desde app móvil si existe código de comisaría
+            if comisaria_codigo:
+                # Obtener el último avance acumulado más alto por comisaría desde app móvil
+                result_app = await session.execute(
+                    select(
+                        AvanceAppModel.fecha,
+                        func.max(AvanceAppModel.acumulado_final).label('max_acumulado'),
+                        func.max(AvanceAppModel.sincronizado_at).label('ultima_sync')
+                    )
+                    .where(AvanceAppModel.comisaria_codigo == comisaria_codigo)
+                    .group_by(AvanceAppModel.fecha)
+                    .order_by(desc(AvanceAppModel.fecha))
+                )
+                avances_app = result_app.fetchall()
+
+                for avance_app in avances_app:
+                    # Convertir fecha string a datetime para comparar
+                    try:
+                        fecha_obj = datetime.strptime(avance_app.fecha, "%Y-%m-%d")
+                        avances_combinados.append({
+                            "id": f"app_{avance_app.fecha}",
+                            "fecha_reporte": fecha_obj.date().isoformat(),
+                            "avance_ejecutado": float(avance_app.max_acumulado) / 100.0,  # Convertir % a decimal
+                            "archivo_seguimiento": f"App Móvil - {avance_app.fecha}",
+                            "created_at": avance_app.ultima_sync.isoformat(),
+                            "fuente": "App Móvil"
+                        })
+                    except (ValueError, AttributeError) as e:
+                        print(f"⚠️ Error procesando fecha app móvil {avance_app.fecha}: {e}")
+
+            # 4. Ordenar por fecha descendente y retornar
+            avances_combinados.sort(key=lambda x: x["fecha_reporte"], reverse=True)
+
+            return avances_combinados
+
         finally:
             await engine.dispose()
 

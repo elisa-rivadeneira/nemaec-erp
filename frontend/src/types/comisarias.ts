@@ -42,6 +42,7 @@ export interface ComisariaFormData {
     lng: number;
   };
   google_place_id?: string;
+  foto_url?: string;
 }
 
 export interface GoogleMapsResult {

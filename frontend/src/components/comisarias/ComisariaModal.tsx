@@ -11,7 +11,9 @@ import {
   CheckIcon,
   ExclamationTriangleIcon,
   DocumentTextIcon,
-  ChartBarIcon
+  ChartBarIcon,
+  PhotoIcon,
+  CameraIcon
 } from '@heroicons/react/24/outline';
 
 import { useCreateComisaria, useUpdateComisaria } from '@/hooks/useComisarias';
@@ -57,6 +59,8 @@ const ComisariaModal: React.FC<ComisariaModalProps> = ({
   const [selectedMapLocation, setSelectedMapLocation] = useState<any>(null);
   const [addressInput, setAddressInput] = useState('');
   const [googleMapsResults, setGoogleMapsResults] = useState<any[]>([]); // Resultados convertidos para el mapa
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
   // Estado para tabs y cronograma
   const [activeTab, setActiveTab] = useState<'info' | 'cronograma'>('info');
@@ -89,6 +93,11 @@ const ComisariaModal: React.FC<ComisariaModalProps> = ({
         google_place_id: comisaria.ubicacion.google_place_id
       });
       setPresupuestoRaw(comisaria.presupuesto_total ? comisaria.presupuesto_total.toString() : '');
+
+      // Si existe una imagen, mostrarla
+      if (comisaria.foto_url) {
+        setImagePreview(comisaria.foto_url);
+      }
     }
   }, [comisaria, mode]);
 
@@ -423,15 +432,73 @@ const ComisariaModal: React.FC<ComisariaModalProps> = ({
     // Mantener lo que el usuario escribió en el campo de dirección
   };
 
+  // Función para manejar la selección de imagen
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Verificar que sea una imagen
+      if (!file.type.startsWith('image/')) {
+        alert('Por favor selecciona un archivo de imagen');
+        return;
+      }
+
+      // Verificar tamaño (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('La imagen no debe superar los 5MB');
+        return;
+      }
+
+      setImageFile(file);
+
+      // Crear preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Función para eliminar la imagen
+  const handleRemoveImage = () => {
+    setImageFile(null);
+    setImagePreview(null);
+    // Si estamos editando y había una imagen previa, marcarla para eliminar
+    if (comisaria?.foto_url) {
+      setImagePreview(''); // String vacío indica que se debe eliminar
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isReadOnly) return;
 
     try {
+      // Si hay una imagen nueva, convertirla a base64
+      let foto_url = formData.foto_url;
+      if (imageFile) {
+        const reader = new FileReader();
+        foto_url = await new Promise<string>((resolve) => {
+          reader.onload = (e) => resolve(e.target?.result as string);
+          reader.readAsDataURL(imageFile);
+        });
+      } else if (imagePreview === '') {
+        // Si se eliminó la imagen
+        foto_url = undefined;
+      } else if (imagePreview) {
+        // Mantener la imagen existente
+        foto_url = imagePreview;
+      }
+
+      const dataToSubmit = {
+        ...formData,
+        foto_url
+      };
+
       if (mode === 'create') {
-        await createMutation.mutateAsync(formData);
+        await createMutation.mutateAsync(dataToSubmit);
       } else if (mode === 'edit' && comisaria) {
-        await updateMutation.mutateAsync({ id: comisaria.id, data: formData });
+        await updateMutation.mutateAsync({ id: comisaria.id, data: dataToSubmit });
       }
       onClose();
     } catch (error) {
@@ -689,6 +756,63 @@ const ComisariaModal: React.FC<ComisariaModalProps> = ({
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-nemaec-green-500 focus:border-transparent disabled:bg-gray-100 text-gray-900"
                 placeholder="0.00"
               />
+            </div>
+
+            {/* Imagen de la Comisaría */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                <PhotoIcon className="w-5 h-5 inline mr-2" />
+                Imagen de la Comisaría
+              </label>
+
+              {imagePreview ? (
+                <div className="relative">
+                  <img
+                    src={imagePreview}
+                    alt="Vista previa de la comisaría"
+                    className="w-full h-64 object-cover rounded-lg border-2 border-gray-300"
+                  />
+                  {!isReadOnly && (
+                    <button
+                      type="button"
+                      onClick={handleRemoveImage}
+                      className="absolute top-2 right-2 p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                    >
+                      <XMarkIcon className="w-5 h-5" />
+                    </button>
+                  )}
+                </div>
+              ) : (
+                !isReadOnly && (
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-nemaec-green-500 transition-colors">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="hidden"
+                      id="image-upload"
+                    />
+                    <label htmlFor="image-upload" className="cursor-pointer">
+                      <div className="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                        <CameraIcon className="w-8 h-8 text-gray-400" />
+                      </div>
+                      <p className="text-sm font-medium text-gray-900 mb-1">
+                        Haz clic para seleccionar una imagen
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        JPG, PNG o GIF (máximo 5MB)
+                      </p>
+                    </label>
+                  </div>
+                )
+              )}
+
+              {mode === 'view' && !imagePreview && (
+                <div className="bg-gray-100 rounded-lg p-8 text-center">
+                  <PhotoIcon className="w-16 h-16 text-gray-400 mx-auto mb-2" />
+                  <p className="text-sm text-gray-600">No hay imagen disponible</p>
+                </div>
+              )}
             </div>
 
             {/* Input manual de coordenadas */}

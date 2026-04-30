@@ -67,15 +67,6 @@ const menuItems: MenuItem[] = [
         iconSolid: ChartBarIconSolid,
       },
       {
-        id: 'comisarias-criticas',
-        name: 'En Riesgo',
-        href: '/comisarias/criticas',
-        icon: ExclamationTriangleIcon,
-        iconSolid: ExclamationTriangleIcon,
-        critical: true,
-        badge: 8, // Número dinámico de comisarías críticas
-      },
-      {
         id: 'comisarias-mapa',
         name: 'Mapa Nacional',
         href: '/comisarias/mapa',
@@ -90,22 +81,6 @@ const menuItems: MenuItem[] = [
     icon: ChartBarIcon,
     iconSolid: ChartBarIconSolid,
     children: [
-      {
-        id: 'avances-dashboard',
-        name: 'Dashboard Crítico',
-        href: '/avances/dashboard',
-        icon: ChartBarIcon,
-        iconSolid: ChartBarIconSolid,
-      },
-      {
-        id: 'avances-partidas',
-        name: 'Partidas Críticas',
-        href: '/avances/partidas-criticas',
-        icon: ExclamationTriangleIcon,
-        iconSolid: ExclamationTriangleIcon,
-        critical: true,
-        badge: 145,
-      },
       {
         id: 'avances-excel',
         name: 'Import Excel',

@@ -556,7 +556,7 @@ export default function RegistroAvanceManual({ comisariaId, onSave }: RegistroAv
             <div>
               <h1 className="text-xl font-semibold flex items-center gap-2 text-gray-900">
                 <CalendarIcon className="w-5 h-5 text-blue-600" />
-                Registro Manual de Avances Físicos
+                Avances Físicos por Partidas
               </h1>
               <p className="text-sm text-gray-600">
                 Registre los avances realizados en las partidas durante una fecha específica

@@ -39,6 +39,7 @@ interface MapLocation {
 interface LeafletMapProps {
   locations: MapLocation[];
   onLocationClick?: (location: MapLocation) => void;
+  onViewAvances?: (location: MapLocation) => void;
   center?: { lat: number; lng: number };
   zoom?: number;
   className?: string;
@@ -50,6 +51,7 @@ delete (L.Icon.Default.prototype as any)._getIconUrl;
 const LeafletMap: React.FC<LeafletMapProps> = ({
   locations,
   onLocationClick,
+  onViewAvances,
   center = { lat: -12.0464, lng: -77.0428 }, // Lima, Perú
   zoom = 11,
   className = "w-full h-96"
@@ -57,6 +59,20 @@ const LeafletMap: React.FC<LeafletMapProps> = ({
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<L.Marker[]>([]);
+
+  // Configurar función global para el botón Ver Avances
+  useEffect(() => {
+    (window as any).handleViewAvances = (locationId: string) => {
+      const location = locations.find(loc => loc.id === locationId);
+      if (location && onViewAvances) {
+        onViewAvances(location);
+      }
+    };
+
+    return () => {
+      delete (window as any).handleViewAvances;
+    };
+  }, [locations, onViewAvances]);
 
   // Inicializar el mapa
   useEffect(() => {
@@ -195,7 +211,7 @@ const LeafletMap: React.FC<LeafletMapProps> = ({
             <p style="margin: 0 0 12px 0; color: #6b7280; font-size: 13px; line-height: 1.4;">
               📍 ${location.address || location.comisaria?.ubicacion?.distrito || 'Ubicación no disponible'}
             </p>
-            <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;">
+            <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; margin-bottom: 12px;">
               ${location.tipo ? `
                 <span style="
                   background: #dbeafe;
@@ -221,6 +237,26 @@ const LeafletMap: React.FC<LeafletMapProps> = ({
                   ${location.estado.replace('_', ' ').toUpperCase()}
                 </span>
               ` : ''}
+            </div>
+            <div style="border-top: 1px solid #e5e7eb; padding-top: 12px; text-align: center;">
+              <button
+                onclick="window.handleViewAvances && window.handleViewAvances('${location.id}')"
+                style="
+                  background: #059669;
+                  color: white;
+                  border: none;
+                  padding: 8px 16px;
+                  border-radius: 6px;
+                  font-size: 12px;
+                  font-weight: 600;
+                  cursor: pointer;
+                  transition: background-color 0.2s;
+                "
+                onmouseover="this.style.background='#047857'"
+                onmouseout="this.style.background='#059669'"
+              >
+                📊 Ver Avances
+              </button>
             </div>
           </div>
         </div>

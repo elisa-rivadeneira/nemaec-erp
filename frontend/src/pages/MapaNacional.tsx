@@ -9,7 +9,8 @@ import {
   ArrowPathIcon,
   EyeIcon,
   PencilIcon,
-  BuildingOfficeIcon
+  BuildingOfficeIcon,
+  ChartBarIcon
 } from '@heroicons/react/24/outline';
 import {
   MapPinIcon as MapPinIconSolid,
@@ -23,8 +24,10 @@ import ComisariaModal from '@/components/comisarias/ComisariaModal';
 import LeafletMap from '@/components/maps/LeafletMap';
 import type { Comisaria } from '@/types/comisarias';
 import type { MapLocation } from '@/data/mockLocations';
+import { useNavigate } from 'react-router-dom';
 
 const MapaNacional: React.FC = () => {
+  const navigate = useNavigate();
   const [selectedComisaria, setSelectedComisaria] = useState<Comisaria | null>(null);
   const [modalMode, setModalMode] = useState<'view' | 'edit' | null>(null);
   const [filterDepartamento, setFilterDepartamento] = useState<string>('all');
@@ -83,6 +86,10 @@ const MapaNacional: React.FC = () => {
   const handleEdit = (comisaria: Comisaria) => {
     setSelectedComisaria(comisaria);
     setModalMode('edit');
+  };
+
+  const handleViewAvances = (comisaria: Comisaria) => {
+    navigate(`/avances/registro/${comisaria.id}`);
   };
 
   const closeModal = () => {
@@ -267,6 +274,16 @@ const MapaNacional: React.FC = () => {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
+                            handleViewAvances(comisaria);
+                          }}
+                          className="p-1.5 rounded text-gray-500 hover:text-green-600 hover:bg-green-50 transition-colors"
+                          title="Ver avances"
+                        >
+                          <ChartBarIcon className="w-3 h-3" />
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
                             handleView(comisaria);
                           }}
                           className="p-1.5 rounded text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-colors"
@@ -298,6 +315,7 @@ const MapaNacional: React.FC = () => {
           <LeafletMap
             locations={filteredMapLocations}
             onLocationClick={handleLocationClick}
+            onViewAvances={(location) => handleViewAvances(location.comisaria)}
             center={{ lat: -12.0464, lng: -77.0428 }}
             zoom={6}
             className="w-full h-full"

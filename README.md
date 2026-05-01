@@ -4,6 +4,13 @@
 
 Sistema ERP empresarial para gestión de contratos, obras y seguimiento de avances en tiempo real. Diseñado para escalar a **132 comisarías a nivel nacional**.
 
+## 🚨 **IMPORTANTE PARA CLAUDE CODE**
+> ⚠️  **ESTE PROYECTO TIENE DATOS DE PRODUCCIÓN REALES**
+> - 📋 Lee **CLAUDE.md** antes de modificar cualquier dato
+> - 🔍 Ejecuta `python3 backend/check_data_status.py` para verificar estado
+> - ❌ **NUNCA borrar tablas sin confirmar con el usuario**
+> - ✅ Los avances en `avances_app` son datos REALES del usuario
+
 ---
 
 ## 🎯 **ARQUITECTURA CLEAN - GUÍA PARA DEVELOPERS**

@@ -252,19 +252,25 @@ const Sidebar: React.FC<SidebarProps> = ({
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-nemaec-green-500/30">
         <div className="flex items-center space-x-3">
-          {/* Logo NEMAEC */}
-          <div className="w-8 h-8 bg-nemaec-yellow-500 rounded-full flex items-center justify-center">
-            <span className="text-sm font-bold text-nemaec-gray-900">⚡</span>
+          {/* Logo NEMAEC Oficial */}
+          <div className="flex-shrink-0">
+            <img
+              src="/logo-nemaec.png"
+              alt="NEMAEC Logo"
+              className={clsx(
+                "object-contain transition-all duration-300",
+                expanded ? "w-10 h-10" : "w-8 h-8"
+              )}
+            />
           </div>
 
           {expanded && (
             <div className="animate-slide-in">
-              <div className="font-bold text-nemaec-green-400 text-lg">
-                NEMAEC
-                <span className="text-nemaec-yellow-500 ml-1">ERP</span>
+              <div className="font-semibold text-white text-base tracking-tight">
+                SISTEMA NEMAEC
               </div>
-              <div className="text-xs text-nemaec-gray-100">
-                v1.0 Nacional
+              <div className="text-xs text-nemaec-gray-300 font-light">
+                Gestión de Obras Nacionales
               </div>
             </div>
           )}

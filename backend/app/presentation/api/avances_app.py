@@ -106,6 +106,32 @@ async def recibir_avance(data: AvanceAppCreate, db: AsyncSession = Depends(get_d
     Recibe un avance verificado desde la app móvil.
     Si ya existe un registro con el mismo app_id, lo actualiza (idempotente).
     """
+    # Buscar descripción de la partida si no viene en los datos
+    if not data.descripcion_partida and data.codigo_partida:
+        from app.infrastructure.database.models import PartidaModel, ComisariaModel
+
+        # Primero obtener comisaria_id si no lo tenemos
+        comisaria_id = data.comisaria_id
+        if not comisaria_id and data.comisaria_codigo:
+            res_com = await db.execute(
+                select(ComisariaModel).where(ComisariaModel.codigo == data.comisaria_codigo)
+            )
+            com = res_com.scalar_one_or_none()
+            if com:
+                comisaria_id = com.id
+
+        # Buscar descripción de la partida
+        if comisaria_id:
+            res_partida = await db.execute(
+                select(PartidaModel).where(
+                    and_(PartidaModel.comisaria_id == comisaria_id,
+                         PartidaModel.codigo_partida == data.codigo_partida)
+                ).limit(1)
+            )
+            partida = res_partida.scalar_one_or_none()
+            if partida:
+                data.descripcion_partida = partida.descripcion
+
     # Idempotencia: evitar duplicados por app_id
     existing = await db.execute(
         select(AvanceAppModel).where(AvanceAppModel.app_id == data.app_id)
@@ -199,7 +225,35 @@ async def listar_avances(
         query = query.where(AvanceAppModel.codigo_partida == codigo_partida)
     query = query.order_by(AvanceAppModel.fecha.desc(), AvanceAppModel.sincronizado_at.desc()).limit(limit)
     result = await db.execute(query)
-    return [to_response(a) for a in result.scalars().all()]
+    avances = result.scalars().all()
+
+    # Enriquecer con descripciones de partidas faltantes
+    from app.infrastructure.database.models import PartidaModel, ComisariaModel
+    for avance in avances:
+        if not avance.descripcion_partida and avance.codigo_partida:
+            # Obtener comisaria_id
+            comisaria_id = avance.comisaria_id
+            if not comisaria_id and avance.comisaria_codigo:
+                res_com = await db.execute(
+                    select(ComisariaModel).where(ComisariaModel.codigo == avance.comisaria_codigo)
+                )
+                com = res_com.scalar_one_or_none()
+                if com:
+                    comisaria_id = com.id
+
+            # Buscar descripción de la partida
+            if comisaria_id:
+                res_partida = await db.execute(
+                    select(PartidaModel).where(
+                        and_(PartidaModel.comisaria_id == comisaria_id,
+                             PartidaModel.codigo_partida == avance.codigo_partida)
+                    ).limit(1)
+                )
+                partida = res_partida.scalar_one_or_none()
+                if partida:
+                    avance.descripcion_partida = partida.descripcion
+
+    return [to_response(a) for a in avances]
 
 
 @router.get("/comisaria/{comisaria_codigo}", response_model=List[AvanceAppResponse])
@@ -227,6 +281,32 @@ async def resumen_por_comisaria(db: AsyncSession = Depends(get_db)):
         )
     )
     avances = result.scalars().all()
+
+    # Enriquecer con descripciones de partidas faltantes
+    from app.infrastructure.database.models import PartidaModel, ComisariaModel
+    for avance in avances:
+        if not avance.descripcion_partida and avance.codigo_partida:
+            # Obtener comisaria_id
+            comisaria_id = avance.comisaria_id
+            if not comisaria_id and avance.comisaria_codigo:
+                res_com = await db.execute(
+                    select(ComisariaModel).where(ComisariaModel.codigo == avance.comisaria_codigo)
+                )
+                com = res_com.scalar_one_or_none()
+                if com:
+                    comisaria_id = com.id
+
+            # Buscar descripción de la partida
+            if comisaria_id:
+                res_partida = await db.execute(
+                    select(PartidaModel).where(
+                        and_(PartidaModel.comisaria_id == comisaria_id,
+                             PartidaModel.codigo_partida == avance.codigo_partida)
+                    ).limit(1)
+                )
+                partida = res_partida.scalar_one_or_none()
+                if partida:
+                    avance.descripcion_partida = partida.descripcion
 
     # Agrupa por comisaría, tomando el último acumulado por partida
     resumen: dict = {}

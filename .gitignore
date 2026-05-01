@@ -48,10 +48,10 @@ ENV/
 .env.test
 .env.production
 
-# Databases
-*.db
-*.sqlite
-*.sqlite3
+# Databases (DESHABILITADO EN MODO DESARROLLO)
+# *.db              # <- Comentado: subir BD en desarrollo
+# *.sqlite          # <- Comentado: subir BD en desarrollo
+# *.sqlite3         # <- Comentado: subir BD en desarrollo
 /tmp/nemaec_*.json
 
 # ========== NODE.JS / FRONTEND ==========

@@ -2,7 +2,8 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/nemaec-logo.svg" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/logo-nemaec.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Metadatos para NEMAEC -->
@@ -37,7 +38,7 @@
     <!-- Preload critical fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Montserrat:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 
     <!-- Critical CSS inlined for better performance -->
     <style>
@@ -45,7 +46,7 @@
       html, body {
         margin: 0;
         padding: 0;
-        font-family: 'Inter', system-ui, sans-serif;
+        font-family: 'Roboto', system-ui, sans-serif;
         background: linear-gradient(135deg, #263238 0%, #000000 100%);
         color: white;
         overflow-x: hidden;
@@ -76,16 +77,19 @@
 
       /* NEMAEC Logo en loading */
       .nemaec-logo {
-        width: 80px;
-        height: 80px;
-        background: #FFC107;
-        border-radius: 50%;
+        width: 100px;
+        height: 100px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 2rem;
         margin: 0 auto 20px;
         animation: pulse 2s infinite;
+      }
+
+      .nemaec-logo img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
       }
 
       @keyframes pulse {
@@ -96,8 +100,10 @@
       .loading-text {
         text-align: center;
         color: #ECEFF1;
-        font-size: 1.125rem;
-        font-weight: 600;
+        font-size: 1.25rem;
+        font-weight: 700;
+        font-family: 'Montserrat', system-ui, sans-serif;
+        letter-spacing: 0.05em;
         margin-top: 16px;
       }
 
@@ -112,10 +118,12 @@
   <body>
     <!-- Loading Screen -->
     <div id="initial-loading" class="loading-spinner">
-      <div class="nemaec-logo">🏛️</div>
+      <div class="nemaec-logo">
+        <img src="/logo-nemaec.png" alt="NEMAEC Logo" />
+      </div>
       <div class="spinner"></div>
-      <div class="loading-text">NEMAEC ERP</div>
-      <div class="loading-subtext">Cargando Sistema Nacional...</div>
+      <div class="loading-text">SISTEMA NEMAEC</div>
+      <div class="loading-subtext">Cargando Sistema de Gestión Nacional...</div>
     </div>
 
     <!-- React App Root -->

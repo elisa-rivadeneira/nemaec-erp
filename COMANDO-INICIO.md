@@ -1,21 +1,39 @@
 # 🪄 COMANDO MÁGICO DE INICIO
 
-## Para el usuario ULTRA-LAZY:
+## Para el usuario ULTRA-ULTRA-LAZY:
 
-Simplemente copia y pega esto al inicio de CUALQUIER sesión de Claude Code:
+Simplemente escribe esto:
 
 ---
 
 ```
-🚀 PROTOCOLO DE INICIO: Lee README.md, CLAUDE.md, ejecuta check_data_status.py y start_all.sh
+START
 ```
 
 ---
 
-Claude automáticamente:
+Y Claude automáticamente:
 ✅ Entenderá el proyecto
 ✅ Verificará los datos
 ✅ Levantará todos los servicios
 ✅ Te dará el reporte completo
 
-**¡Un solo comando y todo funcionando!** 🎯
+**¡Una palabra y todo funcionando!** 🎯
+
+---
+
+## Alternativas igual de lazy:
+
+```
+INICIO
+```
+
+```
+GO
+```
+
+```
+RUN
+```
+
+**¡4 letras máximo!** 😂

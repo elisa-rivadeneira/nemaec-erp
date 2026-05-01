@@ -5,7 +5,7 @@
 Sistema ERP empresarial para gestión de contratos, obras y seguimiento de avances en tiempo real. Diseñado para escalar a **132 comisarías a nivel nacional**.
 
 ## 🚨 **PROTOCOLO PARA CLAUDE CODE**
-> ⚠️  **AL INICIAR CUALQUIER SESIÓN, EJECUTAR AUTOMÁTICAMENTE:**
+> ⚠️  **CUANDO EL USUARIO ESCRIBA "START", "INICIO", "GO" o "RUN":**
 >
 > 1. **📋 LEER:** `CLAUDE.md` (reglas críticas del proyecto)
 > 2. **🔍 VERIFICAR:** `python3 backend/check_data_status.py` (estado de datos)
@@ -13,6 +13,7 @@ Sistema ERP empresarial para gestión de contratos, obras y seguimiento de avanc
 >
 > ✅ **DATOS REALES DEL USUARIO** - Nunca borrar sin confirmar
 > 🎯 **MODO DESARROLLO** - BD se sincroniza por Git
+> 😂 **USUARIO ULTRA-LAZY** - Una palabra = todo funciona
 
 ---
 

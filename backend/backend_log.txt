@@ -1,0 +1,28 @@
+✅ Relaciones de seguimiento agregadas al modelo Comisaria
+Traceback (most recent call last):
+  File "/home/oem/Projects/nemaec-erp/backend/app/main.py", line 243, in <module>
+    from app.presentation.api.cuaderno import router as cuaderno_router  # 📋 Cuaderno de obra digital
+  File "/home/oem/Projects/nemaec-erp/backend/app/presentation/api/cuaderno.py", line 22, in <module>
+    from app.application.services.cuaderno_services import (
+  File "/home/oem/Projects/nemaec-erp/backend/app/application/services/cuaderno_services.py", line 15, in <module>
+    from app.infrastructure.database.models_cuaderno import (
+  File "/home/oem/Projects/nemaec-erp/backend/app/infrastructure/database/models_cuaderno.py", line 244, in <module>
+    class UsuarioObraModel(Base):
+  File "/home/oem/.local/lib/python3.10/site-packages/sqlalchemy/orm/decl_api.py", line 836, in __init_subclass__
+    _as_declarative(cls._sa_registry, cls, cls.__dict__)
+  File "/home/oem/.local/lib/python3.10/site-packages/sqlalchemy/orm/decl_base.py", line 244, in _as_declarative
+    return _MapperConfig.setup_mapping(registry, cls, dict_, None, {})
+  File "/home/oem/.local/lib/python3.10/site-packages/sqlalchemy/orm/decl_base.py", line 325, in setup_mapping
+    return _ClassScanMapperConfig(
+  File "/home/oem/.local/lib/python3.10/site-packages/sqlalchemy/orm/decl_base.py", line 575, in __init__
+    self._setup_table(table)
+  File "/home/oem/.local/lib/python3.10/site-packages/sqlalchemy/orm/decl_base.py", line 1726, in _setup_table
+    table_cls(
+  File "<string>", line 2, in __new__
+  File "/home/oem/.local/lib/python3.10/site-packages/sqlalchemy/util/deprecations.py", line 281, in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+  File "/home/oem/.local/lib/python3.10/site-packages/sqlalchemy/sql/schema.py", line 431, in __new__
+    return cls._new(*args, **kw)
+  File "/home/oem/.local/lib/python3.10/site-packages/sqlalchemy/sql/schema.py", line 463, in _new
+    raise exc.InvalidRequestError(
+sqlalchemy.exc.InvalidRequestError: Table 'usuarios_obra' is already defined for this MetaData instance.  Specify 'extend_existing=True' to redefine options and columns on an existing Table object.

@@ -23,6 +23,7 @@ async def lifespan(app: FastAPI):
     # 🚀 Startup
     print(f"🚀 Iniciando {settings.PROJECT_NAME} v{settings.VERSION} - DB Persistence Test")
     print(f"🌍 Entorno: {settings.ENVIRONMENT}")
+    print(f"📁 Database URL: {settings.database_url}")
 
     # Intentar activar base de datos SQLite
     try:
@@ -61,7 +62,7 @@ allowed_origins = list(set(settings.ALLOWED_ORIGINS + EASYPANEL_ORIGINS))
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,
+    allow_origins=["*"],  # TEMPORAL: Permitir todos los orígenes para desarrollo
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -240,6 +241,7 @@ from app.presentation.api.seguimiento import router as seguimiento_router  # �
 from app.api.routes.avances_routes import router as avances_router  # 📊 Manual progress registration
 from app.presentation.api.usuarios_obra import router as usuarios_obra_router  # 👷 Usuarios de obra
 from app.presentation.api.avances_app import router as avances_app_router  # 📱 Avances desde app móvil
+from app.presentation.api.cuaderno import router as cuaderno_router  # 📋 Cuaderno de obra digital
 
 app.include_router(google_maps_router, prefix=settings.API_PREFIX)
 app.include_router(comisarias_router, prefix=settings.API_PREFIX)
@@ -249,6 +251,11 @@ app.include_router(seguimiento_router, prefix=settings.API_PREFIX)  # 📊 Segui
 app.include_router(avances_router, prefix=settings.API_PREFIX)  # 📊 Registro manual de avances
 app.include_router(usuarios_obra_router, prefix=settings.API_PREFIX)  # 👷 Monitores e ingenieros residentes
 app.include_router(avances_app_router, prefix=settings.API_PREFIX)  # 📱 Avances verificados desde app móvil
+app.include_router(cuaderno_router)  # 📋 Cuaderno de obra digital - tiene su propio prefijo
+
+# Importar y registrar router de informes
+from app.presentation.api.informes import router as informes_router
+app.include_router(informes_router)  # 📊 Generación de informes con IA
 
 # TEMPORAL: endpoint para restaurar base de datos desde archivo
 from fastapi import UploadFile, File

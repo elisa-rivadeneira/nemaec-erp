@@ -94,13 +94,20 @@ async def init_db() -> None:
         from app.infrastructure.database.models import (  # noqa
             ComisariaModel,
             CronogramaModel,
-            UsuarioObraModel,
-            AvanceAppModel,
+            PartidaModel
         )
         from app.infrastructure.database.models_seguimiento import (  # noqa
             AvanceFisico,
             DetalleAvancePartida,
             AlertaAvance
+        )
+        from app.infrastructure.database.models_cuaderno import (  # noqa
+            CuadernoAsiento,
+            AsientoAvance,
+            AsientoFirma,
+            AsientoAdjunto,
+            UsuarioObraModel,
+            AvanceAppModel
         )
 
         # Crear todas las tablas

@@ -4,6 +4,7 @@ FastAPI application with Clean Architecture.
 Entry point para el sistema ERP.
 """
 from contextlib import asynccontextmanager
+from datetime import datetime
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -60,28 +61,47 @@ EASYPANEL_ORIGINS = [
 ]
 allowed_origins = list(set(settings.ALLOWED_ORIGINS + EASYPANEL_ORIGINS))
 
+# Configuración segura de CORS
+if settings.ENVIRONMENT == "production":
+    # Producción: solo orígenes específicos
+    allowed_origins = list(set(settings.ALLOWED_ORIGINS + EASYPANEL_ORIGINS))
+else:
+    # Desarrollo: permitir localhost
+    allowed_origins = [
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "http://localhost:8000",
+        "http://127.0.0.1:3000",
+        "http://127.0.0.1:5173",
+        "http://127.0.0.1:5174",
+        "http://127.0.0.1:8000",
+    ]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # TEMPORAL: Permitir todos los orígenes para desarrollo
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 
-# 🛡️ Middleware de seguridad - Deshabilitado temporalmente
-# @app.middleware("http")
-# async def add_security_headers(request, call_next):
-#     """Agregar headers de seguridad a todas las respuestas"""
-#     response = await call_next(request)
-#
-#     # Solo agregar en producción para no interferir con desarrollo
-#     if settings.is_production:
-#         security_headers = SecurityHeaders.get_security_headers()
-#         for header, value in security_headers.items():
-#             response.headers[header] = value
-#
-#     return response
+# 🛡️ Middleware de seguridad
+from app.core.security_headers import SecurityHeaders
+
+@app.middleware("http")
+async def add_security_headers(request, call_next):
+    """Agregar headers de seguridad a todas las respuestas"""
+    response = await call_next(request)
+
+    # Solo agregar en producción para no interferir con desarrollo
+    if settings.is_production:
+        security_headers = SecurityHeaders.get_security_headers()
+        for header, value in security_headers.items():
+            response.headers[header] = value
+
+    return response
 
 
 # 📁 Servir archivos estáticos del frontend
@@ -157,7 +177,7 @@ async def health_check():
             "redis": "healthy",     # TODO: Implementar check real
             "storage": "healthy"    # TODO: Implementar check real
         },
-        "timestamp": "2026-02-18T12:00:00Z"  # TODO: Usar datetime real
+        "timestamp": datetime.utcnow().isoformat() + "Z"
     }
 
 
@@ -271,13 +291,13 @@ async def restore_db(file: UploadFile = File(...)):
         shutil.copyfileobj(file.file, f)
     return {"ok": True, "db_path": db_path, "size": os.path.getsize(db_path)}
 
-# Otros routers pendientes de implementar:
-# from app.presentation.api.auth import router as auth_router
+# Importar router de autenticación
+from app.presentation.api.auth import router as auth_router
 # from app.presentation.api.contracts import router as contracts_router
 # from app.presentation.api.obras import router as obras_router
 # from app.presentation.api.dashboard import router as dashboard_router
 
-# app.include_router(auth_router, prefix=settings.API_PREFIX)
+app.include_router(auth_router, prefix=settings.API_PREFIX)
 # app.include_router(contracts_router, prefix=settings.API_PREFIX)
 # app.include_router(obras_router, prefix=settings.API_PREFIX)
 # app.include_router(dashboard_router, prefix=settings.API_PREFIX)

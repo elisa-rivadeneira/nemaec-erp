@@ -138,10 +138,10 @@ const ComisariasList: React.FC = () => {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setShowMap(!showMap)}
+                onClick={() => navigate('/comisarias/mapa')}
                 leftIcon={<MapPinIcon className="w-4 h-4" />}
               >
-                {showMap ? 'Ocultar' : 'Ver'} Mapa
+                Ver Mapa Nacional
               </Button>
               <Button
                 variant="primary"

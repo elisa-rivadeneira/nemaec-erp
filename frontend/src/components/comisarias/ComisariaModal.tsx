@@ -66,6 +66,8 @@ const ComisariaModal: React.FC<ComisariaModalProps> = ({
   const [activeTab, setActiveTab] = useState<'info' | 'cronograma'>('info');
   const [showCronogramaUpload, setShowCronogramaUpload] = useState(false);
   const [presupuestoRaw, setPresupuestoRaw] = useState('');
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isFormValid, setIsFormValid] = useState(false);
 
   const navigate = useNavigate();
   const createMutation = useCreateComisaria();
@@ -469,9 +471,62 @@ const ComisariaModal: React.FC<ComisariaModalProps> = ({
     }
   };
 
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    // Validaciones obligatorias
+    if (!formData.nombre?.trim()) {
+      newErrors.nombre = 'El nombre de la comisaría es obligatorio';
+    } else if (formData.nombre.length < 3) {
+      newErrors.nombre = 'El nombre debe tener al menos 3 caracteres';
+    }
+
+    if (!formData.direccion?.trim()) {
+      newErrors.direccion = 'La dirección es obligatoria';
+    }
+
+    if (!formData.distrito?.trim()) {
+      newErrors.distrito = 'El distrito es obligatorio';
+    }
+
+    if (!formData.provincia?.trim()) {
+      newErrors.provincia = 'La provincia es obligatoria';
+    }
+
+    if (!formData.departamento?.trim()) {
+      newErrors.departamento = 'El departamento es obligatorio';
+    }
+
+    // Validar presupuesto si se ingresó
+    if (formData.presupuesto_total < 0) {
+      newErrors.presupuesto_total = 'El presupuesto no puede ser negativo';
+    }
+
+    // Validar coordenadas si se ingresaron
+    if (formData.coordenadas) {
+      const { lat, lng } = formData.coordenadas;
+      if (lat < -90 || lat > 90) {
+        newErrors.coordenadas = 'La latitud debe estar entre -90 y 90';
+      }
+      if (lng < -180 || lng > 180) {
+        newErrors.coordenadas = 'La longitud debe estar entre -180 y 180';
+      }
+    }
+
+    setErrors(newErrors);
+    const isValid = Object.keys(newErrors).length === 0;
+    setIsFormValid(isValid);
+    return isValid;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isReadOnly) return;
+
+    // Validar formulario
+    if (!validateForm()) {
+      return;
+    }
 
     try {
       // Si hay una imagen nueva, convertirla a base64
@@ -609,10 +664,20 @@ const ComisariaModal: React.FC<ComisariaModalProps> = ({
                   required
                   disabled={isReadOnly}
                   value={formData.nombre}
-                  onChange={(e) => handleInputChange('nombre', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-nemaec-green-500 focus:border-transparent disabled:bg-gray-100 text-gray-900"
+                  onChange={(e) => {
+                    handleInputChange('nombre', e.target.value);
+                    if (errors.nombre) {
+                      setErrors(prev => ({ ...prev, nombre: '' }));
+                    }
+                  }}
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-nemaec-green-500 focus:border-transparent disabled:bg-gray-100 text-gray-900 ${
+                    errors.nombre ? 'border-red-500' : 'border-gray-300'
+                  }`}
                   placeholder="Ej: CPNP Ensenada, Comisaría Alfonso Ugarte, CPNP San Borja"
                 />
+                {errors.nombre && (
+                  <p className="text-red-500 text-xs mt-1">{errors.nombre}</p>
+                )}
                 <p className="text-xs text-gray-500 mt-1">
                   📝 Escribe el nombre de la comisaría manualmente
                 </p>
@@ -669,11 +734,21 @@ const ComisariaModal: React.FC<ComisariaModalProps> = ({
                 required
                 disabled={isReadOnly}
                 value={formData.direccion}
-                onChange={(e) => handleInputChange('direccion', e.target.value)}
+                onChange={(e) => {
+                  handleInputChange('direccion', e.target.value);
+                  if (errors.direccion) {
+                    setErrors(prev => ({ ...prev, direccion: '' }));
+                  }
+                }}
                 rows={2}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-nemaec-green-500 focus:border-transparent disabled:bg-gray-100"
+                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-nemaec-green-500 focus:border-transparent disabled:bg-gray-100 ${
+                  errors.direccion ? 'border-red-500' : 'border-gray-300'
+                }`}
                 placeholder="Escribe: CPNP Carabayllo, Comisaría Alfonso Ugarte, etc..."
               />
+              {errors.direccion && (
+                <p className="text-red-500 text-xs mt-1">{errors.direccion}</p>
+              )}
               <p className="text-xs text-gray-500 mt-1">
                 📍 Escribe la dirección completa de la comisaría
               </p>
@@ -690,9 +765,19 @@ const ComisariaModal: React.FC<ComisariaModalProps> = ({
                   required
                   disabled={isReadOnly}
                   value={formData.distrito}
-                  onChange={(e) => handleInputChange('distrito', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-nemaec-green-500 focus:border-transparent disabled:bg-gray-100 text-gray-900"
+                  onChange={(e) => {
+                    handleInputChange('distrito', e.target.value);
+                    if (errors.distrito) {
+                      setErrors(prev => ({ ...prev, distrito: '' }));
+                    }
+                  }}
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-nemaec-green-500 focus:border-transparent disabled:bg-gray-100 text-gray-900 ${
+                    errors.distrito ? 'border-red-500' : 'border-gray-300'
+                  }`}
                 />
+                {errors.distrito && (
+                  <p className="text-red-500 text-xs mt-1">{errors.distrito}</p>
+                )}
               </div>
 
               <div>
@@ -704,9 +789,19 @@ const ComisariaModal: React.FC<ComisariaModalProps> = ({
                   required
                   disabled={isReadOnly}
                   value={formData.provincia}
-                  onChange={(e) => handleInputChange('provincia', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-nemaec-green-500 focus:border-transparent disabled:bg-gray-100 text-gray-900"
+                  onChange={(e) => {
+                    handleInputChange('provincia', e.target.value);
+                    if (errors.provincia) {
+                      setErrors(prev => ({ ...prev, provincia: '' }));
+                    }
+                  }}
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-nemaec-green-500 focus:border-transparent disabled:bg-gray-100 text-gray-900 ${
+                    errors.provincia ? 'border-red-500' : 'border-gray-300'
+                  }`}
                 />
+                {errors.provincia && (
+                  <p className="text-red-500 text-xs mt-1">{errors.provincia}</p>
+                )}
               </div>
 
               <div>
@@ -718,9 +813,19 @@ const ComisariaModal: React.FC<ComisariaModalProps> = ({
                   required
                   disabled={isReadOnly}
                   value={formData.departamento}
-                  onChange={(e) => handleInputChange('departamento', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-nemaec-green-500 focus:border-transparent disabled:bg-gray-100 text-gray-900"
+                  onChange={(e) => {
+                    handleInputChange('departamento', e.target.value);
+                    if (errors.departamento) {
+                      setErrors(prev => ({ ...prev, departamento: '' }));
+                    }
+                  }}
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-nemaec-green-500 focus:border-transparent disabled:bg-gray-100 text-gray-900 ${
+                    errors.departamento ? 'border-red-500' : 'border-gray-300'
+                  }`}
                 />
+                {errors.departamento && (
+                  <p className="text-red-500 text-xs mt-1">{errors.departamento}</p>
+                )}
               </div>
             </div>
 
@@ -960,6 +1065,7 @@ const ComisariaModal: React.FC<ComisariaModalProps> = ({
                 type="submit"
                 variant="primary"
                 loading={isLoading}
+                disabled={!isFormValid && Object.keys(errors).length > 0}
                 onClick={handleSubmit}
               >
                 {mode === 'create' ? 'Crear Comisaría' : 'Guardar Cambios'}

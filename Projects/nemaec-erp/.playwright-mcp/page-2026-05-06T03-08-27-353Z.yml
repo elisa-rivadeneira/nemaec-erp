@@ -1,0 +1,304 @@
+- generic [ref=e9]:
+  - generic [ref=e10]:
+    - generic [ref=e12]:
+      - img "NEMAEC Logo" [ref=e14]
+      - generic [ref=e15]:
+        - generic [ref=e16]: SISTEMA NEMAEC
+        - generic [ref=e17]: Gestión de Obras Nacionales
+    - navigation [ref=e18]:
+      - link "Dashboard Nacional" [ref=e19] [cursor=pointer]:
+        - /url: /dashboard
+        - img [ref=e20]
+        - generic [ref=e23]: Dashboard Nacional
+      - generic [ref=e25]:
+        - button "Comisarías" [active] [ref=e26] [cursor=pointer]:
+          - img [ref=e27]
+          - generic [ref=e29]: Comisarías
+          - img [ref=e30]
+        - generic [ref=e504]:
+          - link "Vista General" [ref=e505] [cursor=pointer]:
+            - /url: /comisarias
+            - img [ref=e506]
+            - generic [ref=e508]: Vista General
+          - link "Mapa Nacional" [ref=e509] [cursor=pointer]:
+            - /url: /comisarias/mapa
+            - img [ref=e510]
+            - generic [ref=e512]: Mapa Nacional
+      - button "Seguimiento" [ref=e33] [cursor=pointer]:
+        - img [ref=e34]
+        - generic [ref=e36]: Seguimiento
+        - img [ref=e37]
+      - button "Usuarios de Obra" [ref=e40] [cursor=pointer]:
+        - img [ref=e41]
+        - generic [ref=e43]: Usuarios de Obra
+        - img [ref=e44]
+      - link "Reportes" [ref=e46] [cursor=pointer]:
+        - /url: /reportes
+        - img [ref=e47]
+        - generic [ref=e49]: Reportes
+      - link "Configuración" [ref=e50] [cursor=pointer]:
+        - /url: /configuracion
+        - img [ref=e51]
+        - generic [ref=e54]: Configuración
+    - generic [ref=e56]:
+      - img [ref=e57]
+      - generic [ref=e59]:
+        - generic [ref=e60]: 8 Alertas Críticas
+        - generic [ref=e61]: Requieren acción inmediata
+    - button [ref=e63] [cursor=pointer]:
+      - img [ref=e64]
+  - generic [ref=e67]:
+    - banner [ref=e75]:
+      - generic [ref=e76]:
+        - generic [ref=e77]:
+          - generic [ref=e79]: 🏛️
+          - generic [ref=e80]:
+            - heading "Dashboard Nacional NEMAEC" [level=1] [ref=e81]
+            - paragraph [ref=e82]: Monitoreo en Tiempo Real - 5/5/2026, 10:07:37 p. m.
+        - generic [ref=e83]:
+          - generic [ref=e85]:
+            - img [ref=e86]
+            - generic [ref=e88]: 23 Sin Reportes
+          - button "Actualizar" [ref=e89] [cursor=pointer]:
+            - img [ref=e91]
+            - text: Actualizar
+    - generic [ref=e93]:
+      - generic [ref=e94]:
+        - generic [ref=e95]:
+          - generic [ref=e96]:
+            - img [ref=e97]
+            - generic [ref=e99]: 0.0%
+          - generic [ref=e100]: 0.0%
+          - generic [ref=e101]: Avance Físico Nacional
+          - generic [ref=e102]: 0 reportes registrados
+        - generic [ref=e103]:
+          - generic [ref=e104]:
+            - img [ref=e105]
+            - generic [ref=e107]: 0.0%
+          - generic [ref=e108]: 0/23
+          - generic [ref=e109]: Comisarías Completadas
+          - generic [ref=e110]: 1 en proceso, 22 pendientes
+        - generic [ref=e111]:
+          - generic [ref=e112]:
+            - img [ref=e113]
+            - generic [ref=e115]: 0.0%
+          - generic [ref=e116]: S/ 0.0M
+          - generic [ref=e117]: de S/ 8.5M ejecutado
+          - generic [ref=e118]: Presupuesto nacional
+        - generic [ref=e119]:
+          - generic [ref=e120]:
+            - img [ref=e121]
+            - generic [ref=e123]: SIN REPORTES
+          - generic [ref=e124]: "23"
+          - generic [ref=e125]: Comisarías sin Avances
+          - generic [ref=e126]: Requieren atención inmediata
+      - generic [ref=e127]:
+        - generic [ref=e128]:
+          - heading "✅ Comisarías con Reportes de Avance" [level=3] [ref=e129]
+          - generic [ref=e130]: 0 Con Reportes
+        - generic [ref=e131]:
+          - generic [ref=e132]: 📊
+          - heading "Sin Reportes Aún" [level=4] [ref=e133]
+          - paragraph [ref=e134]: Ninguna comisaría ha reportado avances físicos.
+      - generic [ref=e135]:
+        - generic [ref=e136]:
+          - heading "🚨 Comisarías en Riesgo - Sin Reportes" [level=3] [ref=e137]
+          - generic [ref=e138]: 23 En Riesgo
+        - generic [ref=e139]:
+          - generic [ref=e140]:
+            - generic [ref=e141]:
+              - generic [ref=e142]:
+                - heading "Comisaría Collique" [level=4] [ref=e143]
+                - paragraph [ref=e144]: Comas, Lima
+              - generic [ref=e145]:
+                - generic [ref=e146]: SIN REPORTES
+                - generic [ref=e147]: "Estado: en_proceso"
+            - generic [ref=e148]:
+              - generic [ref=e149]:
+                - generic [ref=e150]: "Presupuesto:"
+                - generic [ref=e151]: S/ 2.5M
+              - generic [ref=e152]:
+                - generic [ref=e153]: "Último Avance:"
+                - generic [ref=e154]: Ninguno
+            - generic [ref=e155]:
+              - paragraph [ref=e156]: "Acciones Requeridas:"
+              - generic [ref=e159]: Solicitar reporte de avances inmediato
+              - generic [ref=e162]: Comunicarse con responsable de obra
+            - generic [ref=e163]:
+              - button "Ver Cronograma" [ref=e164] [cursor=pointer]
+              - button "Subir Avances" [ref=e165] [cursor=pointer]
+          - generic [ref=e166]:
+            - generic [ref=e167]:
+              - generic [ref=e168]:
+                - heading "Comisaría San Juan de Miraflores" [level=4] [ref=e169]
+                - paragraph [ref=e170]: San Juan de Miraflores, Lima
+              - generic [ref=e171]:
+                - generic [ref=e172]: SIN REPORTES
+                - generic [ref=e173]: "Estado: pendiente"
+            - generic [ref=e174]:
+              - generic [ref=e175]:
+                - generic [ref=e176]: "Presupuesto:"
+                - generic [ref=e177]: S/ 3.2M
+              - generic [ref=e178]:
+                - generic [ref=e179]: "Último Avance:"
+                - generic [ref=e180]: Ninguno
+            - generic [ref=e181]:
+              - paragraph [ref=e182]: "Acciones Requeridas:"
+              - generic [ref=e185]: Solicitar reporte de avances inmediato
+              - generic [ref=e188]: Comunicarse con responsable de obra
+            - generic [ref=e189]:
+              - button "Ver Cronograma" [ref=e190] [cursor=pointer]
+              - button "Subir Avances" [ref=e191] [cursor=pointer]
+          - generic [ref=e192]:
+            - generic [ref=e193]:
+              - generic [ref=e194]:
+                - heading "Comisaría Villa El Salvador" [level=4] [ref=e195]
+                - paragraph [ref=e196]: Villa El Salvador, Lima
+              - generic [ref=e197]:
+                - generic [ref=e198]: SIN REPORTES
+                - generic [ref=e199]: "Estado: pendiente"
+            - generic [ref=e200]:
+              - generic [ref=e201]:
+                - generic [ref=e202]: "Presupuesto:"
+                - generic [ref=e203]: S/ 2.8M
+              - generic [ref=e204]:
+                - generic [ref=e205]: "Último Avance:"
+                - generic [ref=e206]: Ninguno
+            - generic [ref=e207]:
+              - paragraph [ref=e208]: "Acciones Requeridas:"
+              - generic [ref=e211]: Solicitar reporte de avances inmediato
+              - generic [ref=e214]: Comunicarse con responsable de obra
+            - generic [ref=e215]:
+              - button "Ver Cronograma" [ref=e216] [cursor=pointer]
+              - button "Subir Avances" [ref=e217] [cursor=pointer]
+          - generic [ref=e218]:
+            - generic [ref=e219]:
+              - generic [ref=e220]:
+                - heading "Villa El Salvador" [level=4] [ref=e221]
+                - paragraph [ref=e222]: Villa El Salvador, Lima
+              - generic [ref=e223]:
+                - generic [ref=e224]: SIN REPORTES
+                - generic [ref=e225]: "Estado: pendiente"
+            - generic [ref=e226]:
+              - generic [ref=e227]:
+                - generic [ref=e228]: "Presupuesto:"
+                - generic [ref=e229]: S/ 0.0M
+              - generic [ref=e230]:
+                - generic [ref=e231]: "Último Avance:"
+                - generic [ref=e232]: Ninguno
+            - generic [ref=e233]:
+              - paragraph [ref=e234]: "Acciones Requeridas:"
+              - generic [ref=e237]: Solicitar reporte de avances inmediato
+              - generic [ref=e240]: Comunicarse con responsable de obra
+            - generic [ref=e241]:
+              - button "Ver Cronograma" [ref=e242] [cursor=pointer]
+              - button "Subir Avances" [ref=e243] [cursor=pointer]
+          - generic [ref=e244]:
+            - generic [ref=e245]:
+              - generic [ref=e246]:
+                - heading "Tahuantinsuyo" [level=4] [ref=e247]
+                - paragraph [ref=e248]: Los Olivos, Lima
+              - generic [ref=e249]:
+                - generic [ref=e250]: SIN REPORTES
+                - generic [ref=e251]: "Estado: pendiente"
+            - generic [ref=e252]:
+              - generic [ref=e253]:
+                - generic [ref=e254]: "Presupuesto:"
+                - generic [ref=e255]: S/ 0.0M
+              - generic [ref=e256]:
+                - generic [ref=e257]: "Último Avance:"
+                - generic [ref=e258]: Ninguno
+            - generic [ref=e259]:
+              - paragraph [ref=e260]: "Acciones Requeridas:"
+              - generic [ref=e263]: Solicitar reporte de avances inmediato
+              - generic [ref=e266]: Comunicarse con responsable de obra
+            - generic [ref=e267]:
+              - button "Ver Cronograma" [ref=e268] [cursor=pointer]
+              - button "Subir Avances" [ref=e269] [cursor=pointer]
+          - generic [ref=e270]:
+            - generic [ref=e271]:
+              - generic [ref=e272]:
+                - heading "San Martín de Porres" [level=4] [ref=e273]
+                - paragraph [ref=e274]: San Martín de Porres, Lima
+              - generic [ref=e275]:
+                - generic [ref=e276]: SIN REPORTES
+                - generic [ref=e277]: "Estado: pendiente"
+            - generic [ref=e278]:
+              - generic [ref=e279]:
+                - generic [ref=e280]: "Presupuesto:"
+                - generic [ref=e281]: S/ 0.0M
+              - generic [ref=e282]:
+                - generic [ref=e283]: "Último Avance:"
+                - generic [ref=e284]: Ninguno
+            - generic [ref=e285]:
+              - paragraph [ref=e286]: "Acciones Requeridas:"
+              - generic [ref=e289]: Solicitar reporte de avances inmediato
+              - generic [ref=e292]: Comunicarse con responsable de obra
+            - generic [ref=e293]:
+              - button "Ver Cronograma" [ref=e294] [cursor=pointer]
+              - button "Subir Avances" [ref=e295] [cursor=pointer]
+      - generic [ref=e296]:
+        - generic [ref=e297]:
+          - heading "📈 Reportes de Avances por Mes" [level=3] [ref=e298]
+          - generic [ref=e299]:
+            - generic [ref=e300]: 📊
+            - paragraph [ref=e301]: No hay suficientes datos para mostrar evolución
+        - generic [ref=e302]:
+          - heading "🏢 Estados de Comisarías" [level=3] [ref=e303]
+          - generic [ref=e305]:
+            - img [ref=e306]:
+              - generic [ref=e308]:
+                - img [ref=e310]
+                - img [ref=e312]
+            - list [ref=e314]:
+              - listitem [ref=e315]:
+                - img [ref=e316]
+                - text: Pendientes
+              - listitem [ref=e318]:
+                - img [ref=e319]
+                - text: En Proceso
+              - listitem [ref=e321]:
+                - img [ref=e322]
+                - text: Completadas
+      - generic [ref=e324]:
+        - heading "Alertas que Requieren Acción Inmediata" [level=3] [ref=e325]:
+          - img [ref=e326]
+          - text: Alertas que Requieren Acción Inmediata
+        - generic [ref=e328]:
+          - generic [ref=e330]:
+            - generic [ref=e331]:
+              - generic [ref=e332]:
+                - generic [ref=e333]: COM-COLLIQUE - Comisaría Collique
+                - generic [ref=e334]: CRÍTICO
+              - paragraph [ref=e335]: Comisaría sin reportes de avances físicos
+              - paragraph [ref=e336]: 📋 Contactar inmediatamente para obtener estado actual
+              - paragraph [ref=e337]: "Ubicación: Comas, Lima"
+            - generic [ref=e338]:
+              - generic [ref=e339]: SIN REPORTES
+              - generic [ref=e340]: Estado crítico
+          - generic [ref=e342]:
+            - generic [ref=e343]:
+              - generic [ref=e344]:
+                - generic [ref=e345]: COM-SJM - Comisaría San Juan de Miraflores
+                - generic [ref=e346]: CRÍTICO
+              - paragraph [ref=e347]: Comisaría sin reportes de avances físicos
+              - paragraph [ref=e348]: 📋 Contactar inmediatamente para obtener estado actual
+              - paragraph [ref=e349]: "Ubicación: San Juan de Miraflores, Lima"
+            - generic [ref=e350]:
+              - generic [ref=e351]: SIN REPORTES
+              - generic [ref=e352]: Estado crítico
+          - generic [ref=e354]:
+            - generic [ref=e355]:
+              - generic [ref=e356]:
+                - generic [ref=e357]: COM-VES - Comisaría Villa El Salvador
+                - generic [ref=e358]: CRÍTICO
+              - paragraph [ref=e359]: Comisaría sin reportes de avances físicos
+              - paragraph [ref=e360]: 📋 Contactar inmediatamente para obtener estado actual
+              - paragraph [ref=e361]: "Ubicación: Villa El Salvador, Lima"
+            - generic [ref=e362]:
+              - generic [ref=e363]: SIN REPORTES
+              - generic [ref=e364]: Estado crítico
+  - generic [ref=e365]:
+    - img [ref=e367]
+    - button "Open Tanstack query devtools" [ref=e435] [cursor=pointer]:
+      - img [ref=e436]

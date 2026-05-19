@@ -1,0 +1,20 @@
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - paragraph [ref=e7]: Monitor de Obra
+        - heading "Luis Callupe" [level=1] [ref=e8]
+      - generic [ref=e9]:
+        - button [ref=e10] [cursor=pointer]:
+          - img [ref=e11]
+        - button "Reenviar todos los avances al ERP" [ref=e12] [cursor=pointer]:
+          - img [ref=e13]
+        - button [ref=e18] [cursor=pointer]:
+          - img [ref=e19]
+    - paragraph [ref=e22]: Selecciona la comisaría a registrar
+    - generic [ref=e23]:
+      - img [ref=e24]
+      - generic [ref=e27]: Ubicación registrada · -12.04640, -77.04280
+  - generic [ref=e29]:
+    - img [ref=e30]
+    - paragraph [ref=e32]: Cargando comisarías...

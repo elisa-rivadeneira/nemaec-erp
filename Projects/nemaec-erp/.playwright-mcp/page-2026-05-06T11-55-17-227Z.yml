@@ -1,0 +1,36 @@
+- generic [ref=e3]:
+  - generic [ref=e5]:
+    - button [ref=e6] [cursor=pointer]:
+      - img [ref=e7]
+    - generic [ref=e9]:
+      - heading "Generador de Informes" [level=1] [ref=e10]
+      - paragraph [ref=e11]: · Monitor
+    - img [ref=e12]
+  - generic [ref=e71]:
+    - generic [ref=e73]:
+      - img [ref=e74]
+      - generic [ref=e76]:
+        - paragraph [ref=e77]: La IA necesita más información
+        - paragraph [ref=e78]: Responde estas preguntas para mejorar tu informe
+    - generic [ref=e79]:
+      - paragraph [ref=e80]: 1. Se detectaron 146 partidas con retraso crítico. ¿Cuáles son las causas principales de estos retrasos?
+      - textbox "Escribe tu respuesta..." [ref=e81]
+      - paragraph [ref=e82]: "* Respuesta requerida"
+    - generic [ref=e83]:
+      - paragraph [ref=e84]: 2. ¿Qué medidas correctivas recomienda implementar para recuperar el cronograma?
+      - textbox "Escribe tu respuesta..." [ref=e85]
+      - paragraph [ref=e86]: "* Respuesta requerida"
+    - generic [ref=e87]:
+      - paragraph [ref=e88]: 3. ¿Existe algún riesgo identificado que pueda afectar el cumplimiento del plazo?
+      - generic [ref=e89]:
+        - button "Sí" [ref=e90] [cursor=pointer]
+        - button "No" [ref=e91] [cursor=pointer]
+    - generic [ref=e92]:
+      - paragraph [ref=e93]: 4. ¿Cómo califica el desempeño general del contratista?
+      - generic [ref=e94]:
+        - button "Excelente" [ref=e95] [cursor=pointer]
+        - button "Bueno" [ref=e96] [cursor=pointer]
+        - button "Regular" [ref=e97] [cursor=pointer]
+        - button "Deficiente" [ref=e98] [cursor=pointer]
+      - paragraph [ref=e99]: "* Respuesta requerida"
+    - button "Generar Borrador" [disabled] [ref=e100]

@@ -1,0 +1,74 @@
+- generic [ref=e51]:
+  - generic [ref=e53]:
+    - button [ref=e54] [cursor=pointer]:
+      - img [ref=e55]
+    - generic [ref=e57]:
+      - heading "Asiento del día" [level=1] [ref=e58]
+      - paragraph [ref=e59]: Asiento N°37 · 037
+  - generic [ref=e60]:
+    - generic [ref=e62]:
+      - generic [ref=e63]:
+        - img [ref=e64]
+        - generic [ref=e66]:
+          - paragraph [ref=e67]: Fecha
+          - paragraph [ref=e68]: 6/5/2026
+      - generic [ref=e69]:
+        - img [ref=e70]
+        - generic [ref=e73]:
+          - paragraph [ref=e74]: Autor
+          - paragraph [ref=e75]: Test Monitor
+    - generic [ref=e76]:
+      - button "Avances del día ✓ 0 partidas precargadas desde tus avances de hoy" [ref=e77] [cursor=pointer]:
+        - generic [ref=e78]:
+          - img [ref=e79]
+          - generic [ref=e82]:
+            - heading "Avances del día" [level=3] [ref=e83]
+            - paragraph [ref=e84]: ✓ 0 partidas precargadas desde tus avances de hoy
+        - img [ref=e85]
+      - paragraph [ref=e89]: 💡 Esta sección se generó analizando 0 avances registrados en el sistema móvil
+    - generic [ref=e90]:
+      - button "Condiciones" [ref=e91] [cursor=pointer]:
+        - generic [ref=e92]:
+          - img [ref=e93]
+          - heading "Condiciones" [level=3] [ref=e95]
+        - img [ref=e139]
+      - generic [ref=e141]:
+        - generic [ref=e142]:
+          - generic [ref=e143]: Clima
+          - combobox [ref=e144]:
+            - option "Seleccionar clima" [selected]
+            - option "☀️ Despejado"
+            - option "☁️ Nublado"
+            - option "🌧️ Lluvioso"
+            - option "⛈️ Tormenta"
+            - option "🌫️ Neblina"
+        - generic [ref=e146]:
+          - generic [ref=e147]: Personal en obra
+          - button [ref=e148] [cursor=pointer]:
+            - img [ref=e149]
+    - generic [ref=e98]:
+      - button "Ocurrencias relevantes" [ref=e99] [cursor=pointer]:
+        - generic [ref=e100]:
+          - img [ref=e102]
+          - heading "Ocurrencias relevantes" [level=3] [ref=e104]
+        - img [ref=e150]
+      - textbox "¿Hubo paralizaciones, accidentes, problemas de calidad, visitas externas, llegada de materiales esperados?" [ref=e153]: Se realizaron trabajos de excavación para los cimientos del sector norte. Se encontró material rocoso no previsto en el estudio de suelos, lo cual requirió el uso de martillo hidráulico. El avance fue del 85% del programado para hoy.
+    - generic [ref=e107]:
+      - button "Consultas al supervisor" [active] [ref=e108] [cursor=pointer]:
+        - generic [ref=e109]:
+          - img [ref=e111]
+          - heading "Consultas al supervisor" [level=3] [ref=e113]
+        - img [ref=e154]
+      - textbox "Escribe aquí las consultas técnicas o administrativas que requieran respuesta..." [ref=e157]
+    - button "Observaciones" [ref=e117] [cursor=pointer]:
+      - generic [ref=e118]:
+        - img [ref=e120]
+        - heading "Observaciones" [level=3] [ref=e123]
+      - img [ref=e124]
+  - generic [ref=e127]:
+    - button "Guardar borrador" [ref=e128] [cursor=pointer]:
+      - img [ref=e129]
+      - generic [ref=e133]: Guardar borrador
+    - button "Cerrar y solicitar firmas" [ref=e134] [cursor=pointer]:
+      - img [ref=e135]
+      - generic [ref=e138]: Cerrar y solicitar firmas

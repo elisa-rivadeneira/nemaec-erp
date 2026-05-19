@@ -1,0 +1,85 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - img "NEMAEC Logo" [ref=e4]
+    - generic [ref=e6]: SISTEMA NEMAEC
+    - generic [ref=e7]: Cargando Sistema de Gestión Nacional...
+  - generic [ref=e9]:
+    - generic [ref=e10]:
+      - generic [ref=e12]:
+        - img "NEMAEC Logo" [ref=e14]
+        - generic [ref=e15]:
+          - generic [ref=e16]: SISTEMA NEMAEC
+          - generic [ref=e17]: Gestión de Obras Nacionales
+      - navigation [ref=e18]:
+        - link "Dashboard Nacional" [ref=e19] [cursor=pointer]:
+          - /url: /dashboard
+          - img [ref=e20]
+          - generic [ref=e22]: Dashboard Nacional
+        - button "Comisarías" [ref=e24] [cursor=pointer]:
+          - img [ref=e25]
+          - generic [ref=e27]: Comisarías
+          - img [ref=e28]
+        - button "Seguimiento" [ref=e31] [cursor=pointer]:
+          - img [ref=e32]
+          - generic [ref=e34]: Seguimiento
+          - img [ref=e35]
+        - button "Usuarios de Obra" [ref=e38] [cursor=pointer]:
+          - img [ref=e39]
+          - generic [ref=e41]: Usuarios de Obra
+          - img [ref=e42]
+        - link "Reportes" [ref=e44] [cursor=pointer]:
+          - /url: /reportes
+          - img [ref=e45]
+          - generic [ref=e47]: Reportes
+        - link "Configuración" [ref=e48] [cursor=pointer]:
+          - /url: /configuracion
+          - img [ref=e49]
+          - generic [ref=e52]: Configuración
+      - generic [ref=e54]:
+        - img [ref=e55]
+        - generic [ref=e57]:
+          - generic [ref=e58]: 8 Alertas Críticas
+          - generic [ref=e59]: Requieren acción inmediata
+      - button [ref=e61] [cursor=pointer]:
+        - img [ref=e62]
+    - generic [ref=e65]:
+      - banner [ref=e66]:
+        - generic [ref=e68]:
+          - generic [ref=e69]:
+            - img [ref=e71]
+            - generic [ref=e73]:
+              - heading "Gestión de Comisarías" [level=1] [ref=e74]
+              - paragraph [ref=e75]: Administrar las 0 comisarías del proyecto NEMAEC
+          - generic [ref=e76]:
+            - button "Ver Mapa" [ref=e77] [cursor=pointer]:
+              - img [ref=e79]
+              - text: Ver Mapa
+            - button "Nueva Comisaría" [ref=e82] [cursor=pointer]:
+              - img [ref=e84]
+              - text: Nueva Comisaría
+      - generic [ref=e87]:
+        - generic [ref=e88]:
+          - generic [ref=e89]: "0"
+          - generic [ref=e90]: Total
+        - generic [ref=e91]:
+          - generic [ref=e92]: "0"
+          - generic [ref=e93]: Completadas
+        - generic [ref=e94]:
+          - generic [ref=e95]: "0"
+          - generic [ref=e96]: En Proceso
+        - generic [ref=e97]:
+          - generic [ref=e98]: "0"
+          - generic [ref=e99]: Retrasadas
+      - generic [ref=e101]:
+        - generic [ref=e103]:
+          - img [ref=e104]
+          - textbox "Buscar por nombre, código, distrito o departamento..." [ref=e106]
+        - combobox [ref=e108]:
+          - option "Todos los estados" [selected]
+          - option "Pendientes"
+          - option "En Proceso"
+          - option "Completadas"
+        - button "Actualizar" [disabled] [ref=e109]:
+          - img [ref=e110]
+          - text: Actualizar
+      - img [ref=e116]

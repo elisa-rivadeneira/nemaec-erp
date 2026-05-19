@@ -1,0 +1,28 @@
+- generic [ref=e76]:
+  - generic [ref=e77]:
+    - img [ref=e79]
+    - heading "Monitor de Obra" [level=1] [ref=e84]
+    - paragraph [ref=e85]: NEMAEC — Sistema de Avance de Partidas
+  - generic [ref=e86]:
+    - generic [ref=e87]:
+      - generic [ref=e88]: Usuario
+      - textbox "ej. nquispe" [ref=e89]
+    - generic [ref=e90]:
+      - generic [ref=e91]: Contraseña (DNI)
+      - generic [ref=e92]:
+        - textbox "Tu número de DNI" [ref=e93]
+        - button [ref=e94] [cursor=pointer]:
+          - img [ref=e95]
+    - generic [ref=e98]:
+      - img [ref=e99]
+      - paragraph [ref=e102]:
+        - text: Al ingresar se solicitará tu
+        - strong [ref=e103]: ubicación GPS
+        - text: para verificar que estás en la comisaría.
+    - button "Ingresar" [disabled] [ref=e104]
+  - generic [ref=e105]:
+    - paragraph [ref=e106]: "Monitores de obra:"
+    - paragraph [ref=e107]: lcallupe / 123456 · nquispe / 123456 · mbustamante / 123456
+    - paragraph [ref=e108]: "Residentes de obra:"
+    - paragraph [ref=e109]: grodriguez / 123465 · cvera / 123456
+    - 'button "🐛 DEBUG: Skip to App" [ref=e110] [cursor=pointer]'

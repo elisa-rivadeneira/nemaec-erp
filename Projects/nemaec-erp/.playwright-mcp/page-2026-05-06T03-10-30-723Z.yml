@@ -1,0 +1,159 @@
+- generic [ref=e9]:
+  - generic [ref=e10]:
+    - generic [ref=e12]:
+      - img "NEMAEC Logo" [ref=e14]
+      - generic [ref=e15]:
+        - generic [ref=e16]: SISTEMA NEMAEC
+        - generic [ref=e17]: Gestión de Obras Nacionales
+    - navigation [ref=e18]:
+      - link "Dashboard Nacional" [ref=e19] [cursor=pointer]:
+        - /url: /dashboard
+        - img [ref=e513]
+        - generic [ref=e23]: Dashboard Nacional
+      - generic [ref=e25]:
+        - button "Comisarías" [ref=e26] [cursor=pointer]:
+          - img [ref=e27]
+          - generic [ref=e29]: Comisarías
+          - img [ref=e30]
+        - generic [ref=e504]:
+          - link "Vista General" [ref=e505] [cursor=pointer]:
+            - /url: /comisarias
+            - img [ref=e515]
+            - generic [ref=e508]: Vista General
+          - link "Mapa Nacional" [ref=e509] [cursor=pointer]:
+            - /url: /comisarias/mapa
+            - img [ref=e510]
+            - generic [ref=e512]: Mapa Nacional
+      - button "Seguimiento" [ref=e33] [cursor=pointer]:
+        - img [ref=e34]
+        - generic [ref=e36]: Seguimiento
+        - img [ref=e37]
+      - button "Usuarios de Obra" [ref=e40] [cursor=pointer]:
+        - img [ref=e41]
+        - generic [ref=e43]: Usuarios de Obra
+        - img [ref=e44]
+      - link "Reportes" [ref=e46] [cursor=pointer]:
+        - /url: /reportes
+        - img [ref=e47]
+        - generic [ref=e49]: Reportes
+      - link "Configuración" [ref=e50] [cursor=pointer]:
+        - /url: /configuracion
+        - img [ref=e51]
+        - generic [ref=e54]: Configuración
+    - generic [ref=e56]:
+      - img [ref=e57]
+      - generic [ref=e59]:
+        - generic [ref=e60]: 8 Alertas Críticas
+        - generic [ref=e61]: Requieren acción inmediata
+    - button [ref=e63] [cursor=pointer]:
+      - img [ref=e64]
+  - generic [ref=e518]:
+    - banner [ref=e519]:
+      - generic [ref=e521]:
+        - generic [ref=e522]:
+          - img [ref=e524]
+          - generic [ref=e526]:
+            - heading "Gestión de Comisarías" [level=1] [ref=e527]
+            - paragraph [ref=e528]: Administrar las 23 comisarías del proyecto NEMAEC
+        - generic [ref=e529]:
+          - button "Ocultar Mapa" [active] [ref=e1695] [cursor=pointer]:
+            - img [ref=e532]
+            - text: Ocultar Mapa
+          - button "Nueva Comisaría" [ref=e535] [cursor=pointer]:
+            - img [ref=e537]
+            - text: Nueva Comisaría
+    - generic [ref=e540]:
+      - generic [ref=e541]:
+        - generic [ref=e542]: "23"
+        - generic [ref=e543]: Total
+      - generic [ref=e544]:
+        - generic [ref=e545]: "0"
+        - generic [ref=e546]: Completadas
+      - generic [ref=e547]:
+        - generic [ref=e548]: "1"
+        - generic [ref=e549]: En Proceso
+      - generic [ref=e550]:
+        - generic [ref=e551]: "0"
+        - generic [ref=e552]: Retrasadas
+    - generic [ref=e554]:
+      - generic [ref=e556]:
+        - img [ref=e557]
+        - textbox "Buscar por nombre, código, distrito o departamento..." [ref=e559]: Collique
+      - combobox [ref=e561]:
+        - option "Todos los estados" [selected]
+        - option "Pendientes"
+        - option "En Proceso"
+        - option "Completadas"
+      - button "Actualizar" [ref=e562] [cursor=pointer]:
+        - img [ref=e564]
+        - text: Actualizar
+    - generic [ref=e567]:
+      - generic [ref=e569]:
+        - generic [ref=e571]:
+          - generic [ref=e572]:
+            - heading "Comisaría Collique" [level=3] [ref=e573]
+            - generic [ref=e574]: comisaria
+          - generic [ref=e575]:
+            - generic [ref=e576]: COM-COLLIQUE
+            - generic [ref=e577]: en proceso
+        - generic [ref=e579]:
+          - img [ref=e580]
+          - generic [ref=e583]:
+            - generic [ref=e584]: Av. Los Incas 123, Collique
+            - generic [ref=e585]: Comas, Lima
+            - generic [ref=e586]: Lima
+        - generic [ref=e588]:
+          - text: "Presupuesto:"
+          - generic [ref=e589]: S/ 2,500,000.00
+        - generic [ref=e591]:
+          - button "Ver detalles" [ref=e592] [cursor=pointer]:
+            - img [ref=e593]
+          - button "Ver avances" [ref=e596] [cursor=pointer]:
+            - img [ref=e597]
+          - button "Ver historial" [ref=e599] [cursor=pointer]:
+            - img [ref=e600]
+          - button "Ver evolución" [ref=e602] [cursor=pointer]:
+            - img [ref=e603]
+          - button "Registrar avance manual" [ref=e605] [cursor=pointer]:
+            - img [ref=e606]
+          - button "Ver gráficos de avance" [ref=e608] [cursor=pointer]:
+            - img [ref=e609]
+          - button "Editar" [ref=e612] [cursor=pointer]:
+            - img [ref=e613]
+          - button "Eliminar" [ref=e615] [cursor=pointer]:
+            - img [ref=e616]
+      - generic [ref=e1409]:
+        - generic [ref=e1411]:
+          - generic [ref=e1412]:
+            - heading "Collique" [level=3] [ref=e1413]
+            - generic [ref=e1414]: comisaria
+          - generic [ref=e1415]:
+            - generic [ref=e1416]: COM-066
+            - generic [ref=e1417]: pendiente
+        - generic [ref=e1419]:
+          - img [ref=e1420]
+          - generic [ref=e1423]:
+            - generic [ref=e1424]: Comas, Lima
+            - generic [ref=e1425]: Lima
+        - text: "0"
+        - generic [ref=e1427]:
+          - button "Ver detalles" [ref=e1428] [cursor=pointer]:
+            - img [ref=e1429]
+          - button "Ver avances" [ref=e1432] [cursor=pointer]:
+            - img [ref=e1433]
+          - button "Ver historial" [ref=e1435] [cursor=pointer]:
+            - img [ref=e1436]
+          - button "Ver evolución" [ref=e1438] [cursor=pointer]:
+            - img [ref=e1439]
+          - button "Registrar avance manual" [ref=e1441] [cursor=pointer]:
+            - img [ref=e1442]
+          - button "Ver gráficos de avance" [ref=e1444] [cursor=pointer]:
+            - img [ref=e1445]
+          - button "Editar" [ref=e1448] [cursor=pointer]:
+            - img [ref=e1449]
+          - button "Eliminar" [ref=e1451] [cursor=pointer]:
+            - img [ref=e1452]
+  - generic [ref=e365]:
+    - img [ref=e367]
+    - button "Open Tanstack query devtools" [ref=e435] [cursor=pointer]:
+      - img [ref=e436]

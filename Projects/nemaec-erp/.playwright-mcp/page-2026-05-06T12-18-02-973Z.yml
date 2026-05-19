@@ -1,0 +1,78 @@
+- generic [ref=e121]:
+  - generic [ref=e122]:
+    - generic [ref=e123]:
+      - button [ref=e124] [cursor=pointer]:
+        - img [ref=e125]
+      - generic [ref=e127]:
+        - heading "Ensenada" [level=1] [ref=e128]
+        - paragraph [ref=e129]: COM-067 · Avance 0%
+    - generic [ref=e130]:
+      - generic [ref=e131]:
+        - generic [ref=e132]: Progreso general
+        - generic [ref=e133]: 0%
+      - generic [ref=e135]:
+        - generic [ref=e136]: 0 completadas
+        - generic [ref=e137]: 0 en curso
+        - generic [ref=e138]: 169 sin iniciar
+  - generic [ref=e139]:
+    - paragraph [ref=e140]: Módulos
+    - generic [ref=e141]:
+      - button "Avances 169 partidas 0 completadas 0 en curso" [ref=e142] [cursor=pointer]:
+        - generic [ref=e143]:
+          - img [ref=e145]
+          - generic [ref=e148]:
+            - generic [ref=e149]:
+              - heading "Avances" [level=3] [ref=e150]
+              - img [ref=e151]
+            - paragraph [ref=e153]: 169 partidas
+            - generic [ref=e154]:
+              - generic [ref=e155]: 0 completadas
+              - generic [ref=e156]: 0 en curso
+      - button "NUEVO Cuaderno de obra 12 asientos firmados 2 pendientes de firma" [ref=e157] [cursor=pointer]:
+        - generic [ref=e158]: NUEVO
+        - generic [ref=e159]:
+          - img [ref=e161]
+          - generic [ref=e163]:
+            - generic [ref=e164]:
+              - heading "Cuaderno de obra" [level=3] [ref=e165]
+              - img [ref=e166]
+            - paragraph [ref=e168]: 12 asientos firmados
+            - generic [ref=e170]: 2 pendientes de firma
+      - button "CON IA Informes Inteligentes Genera informes de monitoría Semanal/Mensual Asistente IA" [ref=e171] [cursor=pointer]:
+        - generic [ref=e172]:
+          - img [ref=e173]
+          - text: CON IA
+        - generic [ref=e175]:
+          - img [ref=e177]
+          - generic [ref=e180]:
+            - generic [ref=e181]:
+              - heading "Informes Inteligentes" [level=3] [ref=e182]
+              - img [ref=e183]
+            - paragraph [ref=e185]: Genera informes de monitoría
+            - generic [ref=e186]:
+              - generic [ref=e187]: Semanal/Mensual
+              - generic [ref=e188]: Asistente IA
+  - generic [ref=e189]:
+    - paragraph [ref=e190]: Hoy
+    - button "Cerrar día Genera asiento con tus avances de hoy" [ref=e191] [cursor=pointer]:
+      - generic [ref=e192]:
+        - generic [ref=e193]:
+          - img [ref=e195]
+          - generic [ref=e196]:
+            - paragraph [ref=e197]: Cerrar día
+            - paragraph [ref=e198]: Genera asiento con tus avances de hoy
+        - img [ref=e199]
+    - generic [ref=e201]:
+      - generic [ref=e203]:
+        - img [ref=e204]
+        - generic [ref=e206]: miércoles, 6 de mayo
+      - generic [ref=e207]:
+        - generic [ref=e208]:
+          - img [ref=e209]
+          - paragraph [ref=e212]: 3 avances
+        - generic [ref=e213]:
+          - img [ref=e214]
+          - paragraph [ref=e217]: Sin cerrar
+        - generic [ref=e218]:
+          - img [ref=e219]
+          - paragraph [ref=e221]: 2 consultas

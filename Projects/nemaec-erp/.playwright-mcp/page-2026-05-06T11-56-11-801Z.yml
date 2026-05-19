@@ -1,0 +1,124 @@
+- generic [ref=e3]:
+  - generic [ref=e5]:
+    - button [ref=e6] [cursor=pointer]:
+      - img [ref=e7]
+    - generic [ref=e9]:
+      - heading "Generador de Informes" [level=1] [ref=e10]
+      - paragraph [ref=e11]: · Monitor
+    - img [ref=e12]
+  - generic [ref=e101]:
+    - generic [ref=e102]:
+      - heading "Informe Semanal - Ensenada" [level=2] [ref=e103]
+      - generic [ref=e105]:
+        - paragraph
+        - heading "REPORTE DE SEGUIMIENTO DE OBRA N°01-2026-NEMAEC" [level=3] [ref=e106]:
+          - text: REPORTE DE SEGUIMIENTO DE OBRA N°01-2026-NEMAEC
+          - paragraph
+          - paragraph
+        - 'heading "DATOS GENERALES COMISARÍA: Ensenada - COM-067 PERÍODO: 2026-04-29 al 2026-05-06 TIPO DE REPORTE: SEMANAL AUTOR: Monitor de Obra NEMAEC" [level=4] [ref=e107]':
+          - text: DATOS GENERALES
+          - paragraph
+          - paragraph [ref=e108]:
+            - strong [ref=e109]: "COMISARÍA:"
+            - text: Ensenada - COM-067
+            - strong [ref=e110]: "PERÍODO:"
+            - text: 2026-04-29 al 2026-05-06
+            - strong [ref=e111]: "TIPO DE REPORTE:"
+            - text: SEMANAL
+            - strong [ref=e112]: "AUTOR:"
+            - text: Monitor de Obra NEMAEC
+          - paragraph
+        - heading "RESUMEN EJECUTIVO Al cierre del período reportado, la obra de mantenimiento y acondicionamiento de la Ensenada presenta un avance financiero acumulado del 60.0%. Se han identificado 146 partidas con retraso crítico que requieren atención prioritaria." [level=4] [ref=e113]:
+          - text: RESUMEN EJECUTIVO
+          - paragraph
+          - paragraph [ref=e114]: Al cierre del período reportado, la obra de mantenimiento y acondicionamiento de la Ensenada
+          - paragraph [ref=e115]: presenta un avance financiero acumulado del 60.0%. Se han identificado
+          - paragraph [ref=e116]: 146 partidas con retraso crítico que requieren atención prioritaria.
+          - paragraph
+        - heading "ANÁLISIS DEL AVANCE" [level=4] [ref=e117]:
+          - text: ANÁLISIS DEL AVANCE
+          - paragraph
+          - paragraph
+        - heading [level=5] [ref=e118]:
+          - text: Avance Físico-Financiero
+          - paragraph
+          - paragraph
+          - listitem [ref=e119]:
+            - strong [ref=e120]: "Presupuesto Total:"
+            - text: S/ 0.00
+          - listitem [ref=e121]:
+            - strong [ref=e122]: "Avance Financiero:"
+            - text: 60.0%
+          - listitem [ref=e123]:
+            - strong [ref=e124]: "Estado General:"
+            - text: Con retrasos
+            - paragraph
+            - paragraph
+            - heading [level=5] [ref=e125]:
+              - text: Partidas Críticas
+              - paragraph
+              - paragraph [ref=e126]: "Se han identificado las siguientes partidas con desviación significativa respecto al cronograma:"
+              - paragraph
+              - listitem [ref=e127]:
+                - strong [ref=e128]: "Instalaciones Eléctricas:"
+                - text: "Programado 80% - Ejecutado 45% (Retraso: 35%)"
+              - listitem [ref=e129]:
+                - strong [ref=e130]: "Carpintería de Madera:"
+                - text: "Programado 90% - Ejecutado 60% (Retraso: 30%)"
+              - listitem [ref=e131]:
+                - strong [ref=e132]: "Pintura:"
+                - text: "Programado 70% - Ejecutado 50% (Retraso: 20%)"
+                - paragraph
+                - paragraph
+                - heading [level=4] [ref=e133]:
+                  - text: OBSERVACIONES DEL PERÍODO
+                  - paragraph
+                  - paragraph [ref=e134]: "Durante el período de evaluación se registraron las siguientes observaciones relevantes:"
+                  - paragraph
+                  - listitem [ref=e135]: "29/04: Trabajo normal"
+                  - listitem [ref=e136]:
+                    - text: "29/04: Sin ocurrencias relevantes"
+                    - paragraph
+                    - paragraph
+                    - 'heading "ACCIONES RECOMENDADAS 1. Inmediatas: - Reforzar las cuadrillas en partidas críticas - Verificar disponibilidad de materiales para las próximas semanas - Coordinar con el contratista la aceleración de trabajos atrasados 2. Seguimiento: - Monitoreo diario de partidas críticas - Actualización semanal del cronograma de obra - Reuniones de coordinación con el residente" [level=4] [ref=e137]':
+                      - text: ACCIONES RECOMENDADAS
+                      - paragraph
+                      - paragraph [ref=e138]:
+                        - text: "1."
+                        - strong [ref=e139]: "Inmediatas:"
+                      - paragraph [ref=e140]: "- Reforzar las cuadrillas en partidas críticas"
+                      - paragraph [ref=e141]: "- Verificar disponibilidad de materiales para las próximas semanas"
+                      - paragraph [ref=e142]: "- Coordinar con el contratista la aceleración de trabajos atrasados"
+                      - paragraph [ref=e143]:
+                        - text: "2."
+                        - strong [ref=e144]: "Seguimiento:"
+                      - paragraph [ref=e145]: "- Monitoreo diario de partidas críticas"
+                      - paragraph [ref=e146]: "- Actualización semanal del cronograma de obra"
+                      - paragraph [ref=e147]: "- Reuniones de coordinación con el residente"
+                      - paragraph
+                    - heading "CONCLUSIONES 1. La obra presenta un avance con retrasos respecto al cronograma contractual. 2. Se requiere implementar medidas correctivas para garantizar el cumplimiento del plazo. 3. El flujo financiero se encuentra por debajo con el avance físico reportado." [level=4] [ref=e148]:
+                      - text: CONCLUSIONES
+                      - paragraph
+                      - paragraph [ref=e149]: 1. La obra presenta un avance con retrasos
+                      - paragraph [ref=e150]: respecto al cronograma contractual.
+                      - paragraph [ref=e151]: 2. Se requiere implementar medidas correctivas
+                      - paragraph [ref=e152]: para garantizar el cumplimiento del plazo.
+                      - paragraph [ref=e153]: 3. El flujo financiero se encuentra por debajo
+                      - paragraph [ref=e154]: con el avance físico reportado.
+                      - paragraph
+                    - 'heading "RECOMENDACIONES DE MONITORÍA 1. Realizar seguimiento permanente y diario al avance de las partidas críticas 2. Verificar el cumplimiento del cronograma acelerado del contratista 3. Fortalecer la coordinación entre las partes involucradas 4. Mantener registro actualizado de toda la documentación técnica --- ELABORADO POR: Monitor de Obra NEMAEC" [level=4] [ref=e155]':
+                      - text: RECOMENDACIONES DE MONITORÍA
+                      - paragraph
+                      - paragraph [ref=e156]: 1. Realizar seguimiento permanente y diario al avance de las partidas críticas
+                      - paragraph [ref=e157]: 2. Verificar el cumplimiento del cronograma acelerado del contratista
+                      - paragraph [ref=e158]: 3. Fortalecer la coordinación entre las partes involucradas
+                      - paragraph [ref=e159]: 4. Mantener registro actualizado de toda la documentación técnica
+                      - paragraph [ref=e160]: "---"
+                      - paragraph [ref=e161]:
+                        - strong [ref=e162]: "ELABORADO POR:"
+                      - paragraph [ref=e163]: Monitor de Obra
+                      - paragraph [ref=e164]: NEMAEC
+                      - paragraph
+    - generic [ref=e165]:
+      - button "Revisar" [ref=e166] [cursor=pointer]
+      - button "Confirmar y Finalizar" [ref=e167] [cursor=pointer]

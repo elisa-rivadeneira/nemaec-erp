@@ -1,0 +1,21 @@
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - button [ref=e6] [cursor=pointer]:
+        - img [ref=e7]
+      - generic [ref=e9]:
+        - heading "Cuaderno de obra" [level=1] [ref=e10]
+        - paragraph [ref=e11]: ·
+      - button [ref=e12] [cursor=pointer]:
+        - img [ref=e13]
+    - generic [ref=e14]:
+      - button "Todos (37)" [ref=e15] [cursor=pointer]
+      - button "Pendientes (18)" [ref=e16] [cursor=pointer]
+      - button "Borradores (13)" [ref=e17] [cursor=pointer]
+      - button "Firmados (6)" [ref=e18] [cursor=pointer]
+  - button "Nuevo asiento del día Auto-precarga tus avances de hoy" [ref=e20] [cursor=pointer]:
+    - generic [ref=e22]:
+      - img [ref=e24]
+      - generic [ref=e25]:
+        - paragraph [ref=e26]: Nuevo asiento del día
+        - paragraph [ref=e27]: Auto-precarga tus avances de hoy

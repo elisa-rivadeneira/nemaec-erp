@@ -1,0 +1,51 @@
+- generic [ref=e3]:
+  - generic [ref=e5]:
+    - button [ref=e6] [cursor=pointer]:
+      - img [ref=e7]
+    - generic [ref=e9]:
+      - heading "Generador de Informes" [level=1] [ref=e10]
+      - paragraph [ref=e11]: · Monitor
+    - img [ref=e12]
+  - generic [ref=e14]:
+    - generic [ref=e15]:
+      - paragraph [ref=e16]: Tipo de Informe
+      - generic [ref=e17]:
+        - button "Semanal" [ref=e18] [cursor=pointer]
+        - button "Quincenal" [ref=e19] [cursor=pointer]
+        - button "Mensual" [ref=e20] [cursor=pointer]
+    - generic [ref=e21]:
+      - button "Generación con IA Informe personalizado con preguntas" [ref=e22] [cursor=pointer]:
+        - generic [ref=e23]:
+          - generic [ref=e24]:
+            - img [ref=e26]
+            - generic [ref=e28]:
+              - paragraph [ref=e29]: Generación con IA
+              - paragraph [ref=e30]: Informe personalizado con preguntas
+          - img [ref=e31]
+      - button "Generación Rápida Informe estándar sin preguntas" [ref=e33] [cursor=pointer]:
+        - generic [ref=e34]:
+          - generic [ref=e35]:
+            - img [ref=e37]
+            - generic [ref=e39]:
+              - paragraph [ref=e40]: Generación Rápida
+              - paragraph [ref=e41]: Informe estándar sin preguntas
+          - img [ref=e42]
+    - generic [ref=e44]:
+      - paragraph [ref=e45]: Informes Anteriores
+      - generic [ref=e46]:
+        - button "03-2026-NEMAEC-MON 2026-03-15 · semanal" [ref=e47] [cursor=pointer]:
+          - generic [ref=e48]:
+            - generic [ref=e49]:
+              - img [ref=e50]
+              - generic [ref=e53]:
+                - paragraph [ref=e54]: 03-2026-NEMAEC-MON
+                - paragraph [ref=e55]: 2026-03-15 · semanal
+            - img [ref=e56]
+        - button "02-2026-NEMAEC-MON 2026-03-08 · semanal" [ref=e59] [cursor=pointer]:
+          - generic [ref=e60]:
+            - generic [ref=e61]:
+              - img [ref=e62]
+              - generic [ref=e65]:
+                - paragraph [ref=e66]: 02-2026-NEMAEC-MON
+                - paragraph [ref=e67]: 2026-03-08 · semanal
+            - img [ref=e68]

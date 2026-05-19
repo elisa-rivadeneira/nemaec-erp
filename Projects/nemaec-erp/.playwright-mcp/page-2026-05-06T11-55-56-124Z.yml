@@ -1,0 +1,33 @@
+- generic [ref=e3]:
+  - generic [ref=e5]:
+    - button [ref=e6] [cursor=pointer]:
+      - img [ref=e7]
+    - generic [ref=e9]:
+      - heading "Generador de Informes" [level=1] [ref=e10]
+      - paragraph [ref=e11]: · Monitor
+    - img [ref=e12]
+  - generic [ref=e71]:
+    - generic [ref=e73]:
+      - img [ref=e74]
+      - generic [ref=e76]:
+        - paragraph [ref=e77]: La IA necesita más información
+        - paragraph [ref=e78]: Responde estas preguntas para mejorar tu informe
+    - generic [ref=e79]:
+      - paragraph [ref=e80]: 1. Se detectaron 146 partidas con retraso crítico. ¿Cuáles son las causas principales de estos retrasos?
+      - textbox "Escribe tu respuesta..." [ref=e81]: "Los principales retrasos se deben a: 1) Demoras en la entrega de materiales por parte del proveedor (60%), 2) Condiciones climáticas adversas durante la temporada de lluvias (25%), y 3) Falta de personal especializado en algunas partidas técnicas (15%)."
+    - generic [ref=e83]:
+      - paragraph [ref=e84]: 2. ¿Qué medidas correctivas recomienda implementar para recuperar el cronograma?
+      - textbox "Escribe tu respuesta..." [ref=e85]: "Se recomienda: 1) Establecer stock de seguridad para materiales críticos, 2) Implementar turnos adicionales en días sin lluvia, 3) Contratar personal especializado adicional de manera temporal, 4) Revisar y optimizar la secuencia de actividades para trabajar en paralelo donde sea posible."
+    - generic [ref=e87]:
+      - paragraph [ref=e88]: 3. ¿Existe algún riesgo identificado que pueda afectar el cumplimiento del plazo?
+      - generic [ref=e89]:
+        - button "Sí" [ref=e90] [cursor=pointer]
+        - button "No" [ref=e91] [cursor=pointer]
+    - generic [ref=e92]:
+      - paragraph [ref=e93]: 4. ¿Cómo califica el desempeño general del contratista?
+      - generic [ref=e94]:
+        - button "Excelente" [ref=e95] [cursor=pointer]
+        - button "Bueno" [active] [ref=e96] [cursor=pointer]
+        - button "Regular" [ref=e97] [cursor=pointer]
+        - button "Deficiente" [ref=e98] [cursor=pointer]
+    - button "Generar Borrador" [ref=e100] [cursor=pointer]

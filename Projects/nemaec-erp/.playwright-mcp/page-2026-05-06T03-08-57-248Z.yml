@@ -1,0 +1,860 @@
+- generic [ref=e9]:
+  - generic [ref=e10]:
+    - generic [ref=e12]:
+      - img "NEMAEC Logo" [ref=e14]
+      - generic [ref=e15]:
+        - generic [ref=e16]: SISTEMA NEMAEC
+        - generic [ref=e17]: Gestión de Obras Nacionales
+    - navigation [ref=e18]:
+      - link "Dashboard Nacional" [ref=e19] [cursor=pointer]:
+        - /url: /dashboard
+        - img [ref=e513]
+        - generic [ref=e23]: Dashboard Nacional
+      - generic [ref=e25]:
+        - button "Comisarías" [ref=e26] [cursor=pointer]:
+          - img [ref=e27]
+          - generic [ref=e29]: Comisarías
+          - img [ref=e30]
+        - generic [ref=e504]:
+          - link "Vista General" [ref=e505] [cursor=pointer]:
+            - /url: /comisarias
+            - img [ref=e515]
+            - generic [ref=e508]: Vista General
+          - link "Mapa Nacional" [ref=e509] [cursor=pointer]:
+            - /url: /comisarias/mapa
+            - img [ref=e510]
+            - generic [ref=e512]: Mapa Nacional
+      - button "Seguimiento" [ref=e33] [cursor=pointer]:
+        - img [ref=e34]
+        - generic [ref=e36]: Seguimiento
+        - img [ref=e37]
+      - button "Usuarios de Obra" [ref=e40] [cursor=pointer]:
+        - img [ref=e41]
+        - generic [ref=e43]: Usuarios de Obra
+        - img [ref=e44]
+      - link "Reportes" [ref=e46] [cursor=pointer]:
+        - /url: /reportes
+        - img [ref=e47]
+        - generic [ref=e49]: Reportes
+      - link "Configuración" [ref=e50] [cursor=pointer]:
+        - /url: /configuracion
+        - img [ref=e51]
+        - generic [ref=e54]: Configuración
+    - generic [ref=e56]:
+      - img [ref=e57]
+      - generic [ref=e59]:
+        - generic [ref=e60]: 8 Alertas Críticas
+        - generic [ref=e61]: Requieren acción inmediata
+    - button [ref=e63] [cursor=pointer]:
+      - img [ref=e64]
+  - generic [ref=e518]:
+    - banner [ref=e519]:
+      - generic [ref=e521]:
+        - generic [ref=e522]:
+          - img [ref=e524]
+          - generic [ref=e526]:
+            - heading "Gestión de Comisarías" [level=1] [ref=e527]
+            - paragraph [ref=e528]: Administrar las 23 comisarías del proyecto NEMAEC
+        - generic [ref=e529]:
+          - button "Ver Mapa" [ref=e530] [cursor=pointer]:
+            - img [ref=e532]
+            - text: Ver Mapa
+          - button "Nueva Comisaría" [active] [ref=e535] [cursor=pointer]:
+            - img [ref=e537]
+            - text: Nueva Comisaría
+    - generic [ref=e540]:
+      - generic [ref=e541]:
+        - generic [ref=e542]: "23"
+        - generic [ref=e543]: Total
+      - generic [ref=e544]:
+        - generic [ref=e545]: "0"
+        - generic [ref=e546]: Completadas
+      - generic [ref=e547]:
+        - generic [ref=e548]: "1"
+        - generic [ref=e549]: En Proceso
+      - generic [ref=e550]:
+        - generic [ref=e551]: "0"
+        - generic [ref=e552]: Retrasadas
+    - generic [ref=e554]:
+      - generic [ref=e556]:
+        - img [ref=e557]
+        - textbox "Buscar por nombre, código, distrito o departamento..." [ref=e559]
+      - combobox [ref=e561]:
+        - option "Todos los estados" [selected]
+        - option "Pendientes"
+        - option "En Proceso"
+        - option "Completadas"
+      - button "Actualizar" [ref=e562] [cursor=pointer]:
+        - img [ref=e564]
+        - text: Actualizar
+    - generic [ref=e567]:
+      - generic [ref=e569]:
+        - generic [ref=e571]:
+          - generic [ref=e572]:
+            - heading "Comisaría Collique" [level=3] [ref=e573]
+            - generic [ref=e574]: comisaria
+          - generic [ref=e575]:
+            - generic [ref=e576]: COM-COLLIQUE
+            - generic [ref=e577]: en proceso
+        - generic [ref=e579]:
+          - img [ref=e580]
+          - generic [ref=e583]:
+            - generic [ref=e584]: Av. Los Incas 123, Collique
+            - generic [ref=e585]: Comas, Lima
+            - generic [ref=e586]: Lima
+        - generic [ref=e588]:
+          - text: "Presupuesto:"
+          - generic [ref=e589]: S/ 2,500,000.00
+        - generic [ref=e591]:
+          - button "Ver detalles" [ref=e592] [cursor=pointer]:
+            - img [ref=e593]
+          - button "Ver avances" [ref=e596] [cursor=pointer]:
+            - img [ref=e597]
+          - button "Ver historial" [ref=e599] [cursor=pointer]:
+            - img [ref=e600]
+          - button "Ver evolución" [ref=e602] [cursor=pointer]:
+            - img [ref=e603]
+          - button "Registrar avance manual" [ref=e605] [cursor=pointer]:
+            - img [ref=e606]
+          - button "Ver gráficos de avance" [ref=e608] [cursor=pointer]:
+            - img [ref=e609]
+          - button "Editar" [ref=e612] [cursor=pointer]:
+            - img [ref=e613]
+          - button "Eliminar" [ref=e615] [cursor=pointer]:
+            - img [ref=e616]
+      - generic [ref=e619]:
+        - generic [ref=e621]:
+          - generic [ref=e622]:
+            - heading "Comisaría San Juan de Miraflores" [level=3] [ref=e623]
+            - generic [ref=e624]: comisaria
+          - generic [ref=e625]:
+            - generic [ref=e626]: COM-SJM
+            - generic [ref=e627]: pendiente
+        - generic [ref=e629]:
+          - img [ref=e630]
+          - generic [ref=e633]:
+            - generic [ref=e634]: Av. San Juan 456
+            - generic [ref=e635]: San Juan de Miraflores, Lima
+            - generic [ref=e636]: Lima
+        - generic [ref=e638]:
+          - text: "Presupuesto:"
+          - generic [ref=e639]: S/ 3,200,000.00
+        - generic [ref=e641]:
+          - button "Ver detalles" [ref=e642] [cursor=pointer]:
+            - img [ref=e643]
+          - button "Ver avances" [ref=e646] [cursor=pointer]:
+            - img [ref=e647]
+          - button "Ver historial" [ref=e649] [cursor=pointer]:
+            - img [ref=e650]
+          - button "Ver evolución" [ref=e652] [cursor=pointer]:
+            - img [ref=e653]
+          - button "Registrar avance manual" [ref=e655] [cursor=pointer]:
+            - img [ref=e656]
+          - button "Ver gráficos de avance" [ref=e658] [cursor=pointer]:
+            - img [ref=e659]
+          - button "Editar" [ref=e662] [cursor=pointer]:
+            - img [ref=e663]
+          - button "Eliminar" [ref=e665] [cursor=pointer]:
+            - img [ref=e666]
+      - generic [ref=e669]:
+        - generic [ref=e671]:
+          - generic [ref=e672]:
+            - heading "Comisaría Villa El Salvador" [level=3] [ref=e673]
+            - generic [ref=e674]: comisaria
+          - generic [ref=e675]:
+            - generic [ref=e676]: COM-VES
+            - generic [ref=e677]: pendiente
+        - generic [ref=e679]:
+          - img [ref=e680]
+          - generic [ref=e683]:
+            - generic [ref=e684]: Av. Villa 789
+            - generic [ref=e685]: Villa El Salvador, Lima
+            - generic [ref=e686]: Lima
+        - generic [ref=e688]:
+          - text: "Presupuesto:"
+          - generic [ref=e689]: S/ 2,800,000.00
+        - generic [ref=e691]:
+          - button "Ver detalles" [ref=e692] [cursor=pointer]:
+            - img [ref=e693]
+          - button "Ver avances" [ref=e696] [cursor=pointer]:
+            - img [ref=e697]
+          - button "Ver historial" [ref=e699] [cursor=pointer]:
+            - img [ref=e700]
+          - button "Ver evolución" [ref=e702] [cursor=pointer]:
+            - img [ref=e703]
+          - button "Registrar avance manual" [ref=e705] [cursor=pointer]:
+            - img [ref=e706]
+          - button "Ver gráficos de avance" [ref=e708] [cursor=pointer]:
+            - img [ref=e709]
+          - button "Editar" [ref=e712] [cursor=pointer]:
+            - img [ref=e713]
+          - button "Eliminar" [ref=e715] [cursor=pointer]:
+            - img [ref=e716]
+      - generic [ref=e719]:
+        - generic [ref=e721]:
+          - generic [ref=e722]:
+            - heading "Villa El Salvador" [level=3] [ref=e723]
+            - generic [ref=e724]: comisaria
+          - generic [ref=e725]:
+            - generic [ref=e726]: COM-081
+            - generic [ref=e727]: pendiente
+        - generic [ref=e729]:
+          - img [ref=e730]
+          - generic [ref=e733]:
+            - generic [ref=e734]: Villa El Salvador, Lima
+            - generic [ref=e735]: Lima
+        - text: "0"
+        - generic [ref=e737]:
+          - button "Ver detalles" [ref=e738] [cursor=pointer]:
+            - img [ref=e739]
+          - button "Ver avances" [ref=e742] [cursor=pointer]:
+            - img [ref=e743]
+          - button "Ver historial" [ref=e745] [cursor=pointer]:
+            - img [ref=e746]
+          - button "Ver evolución" [ref=e748] [cursor=pointer]:
+            - img [ref=e749]
+          - button "Registrar avance manual" [ref=e751] [cursor=pointer]:
+            - img [ref=e752]
+          - button "Ver gráficos de avance" [ref=e754] [cursor=pointer]:
+            - img [ref=e755]
+          - button "Editar" [ref=e758] [cursor=pointer]:
+            - img [ref=e759]
+          - button "Eliminar" [ref=e761] [cursor=pointer]:
+            - img [ref=e762]
+      - generic [ref=e765]:
+        - generic [ref=e767]:
+          - generic [ref=e768]:
+            - heading "Tahuantinsuyo" [level=3] [ref=e769]
+            - generic [ref=e770]: comisaria
+          - generic [ref=e771]:
+            - generic [ref=e772]: COM-080
+            - generic [ref=e773]: pendiente
+        - generic [ref=e775]:
+          - img [ref=e776]
+          - generic [ref=e779]:
+            - generic [ref=e780]: Los Olivos, Lima
+            - generic [ref=e781]: Lima
+        - text: "0"
+        - generic [ref=e783]:
+          - button "Ver detalles" [ref=e784] [cursor=pointer]:
+            - img [ref=e785]
+          - button "Ver avances" [ref=e788] [cursor=pointer]:
+            - img [ref=e789]
+          - button "Ver historial" [ref=e791] [cursor=pointer]:
+            - img [ref=e792]
+          - button "Ver evolución" [ref=e794] [cursor=pointer]:
+            - img [ref=e795]
+          - button "Registrar avance manual" [ref=e797] [cursor=pointer]:
+            - img [ref=e798]
+          - button "Ver gráficos de avance" [ref=e800] [cursor=pointer]:
+            - img [ref=e801]
+          - button "Editar" [ref=e804] [cursor=pointer]:
+            - img [ref=e805]
+          - button "Eliminar" [ref=e807] [cursor=pointer]:
+            - img [ref=e808]
+      - generic [ref=e811]:
+        - generic [ref=e813]:
+          - generic [ref=e814]:
+            - heading "San Martín de Porres" [level=3] [ref=e815]
+            - generic [ref=e816]: comisaria
+          - generic [ref=e817]:
+            - generic [ref=e818]: COM-079
+            - generic [ref=e819]: pendiente
+        - generic [ref=e821]:
+          - img [ref=e822]
+          - generic [ref=e825]:
+            - generic [ref=e826]: San Martín de Porres, Lima
+            - generic [ref=e827]: Lima
+        - text: "0"
+        - generic [ref=e829]:
+          - button "Ver detalles" [ref=e830] [cursor=pointer]:
+            - img [ref=e831]
+          - button "Ver avances" [ref=e834] [cursor=pointer]:
+            - img [ref=e835]
+          - button "Ver historial" [ref=e837] [cursor=pointer]:
+            - img [ref=e838]
+          - button "Ver evolución" [ref=e840] [cursor=pointer]:
+            - img [ref=e841]
+          - button "Registrar avance manual" [ref=e843] [cursor=pointer]:
+            - img [ref=e844]
+          - button "Ver gráficos de avance" [ref=e846] [cursor=pointer]:
+            - img [ref=e847]
+          - button "Editar" [ref=e850] [cursor=pointer]:
+            - img [ref=e851]
+          - button "Eliminar" [ref=e853] [cursor=pointer]:
+            - img [ref=e854]
+      - generic [ref=e857]:
+        - generic [ref=e859]:
+          - generic [ref=e860]:
+            - heading "Santa Clara" [level=3] [ref=e861]
+            - generic [ref=e862]: comisaria
+          - generic [ref=e863]:
+            - generic [ref=e864]: COM-078
+            - generic [ref=e865]: pendiente
+        - generic [ref=e867]:
+          - img [ref=e868]
+          - generic [ref=e871]:
+            - generic [ref=e872]: Ate, Lima
+            - generic [ref=e873]: Lima
+        - text: "0"
+        - generic [ref=e875]:
+          - button "Ver detalles" [ref=e876] [cursor=pointer]:
+            - img [ref=e877]
+          - button "Ver avances" [ref=e880] [cursor=pointer]:
+            - img [ref=e881]
+          - button "Ver historial" [ref=e883] [cursor=pointer]:
+            - img [ref=e884]
+          - button "Ver evolución" [ref=e886] [cursor=pointer]:
+            - img [ref=e887]
+          - button "Registrar avance manual" [ref=e889] [cursor=pointer]:
+            - img [ref=e890]
+          - button "Ver gráficos de avance" [ref=e892] [cursor=pointer]:
+            - img [ref=e893]
+          - button "Editar" [ref=e896] [cursor=pointer]:
+            - img [ref=e897]
+          - button "Eliminar" [ref=e899] [cursor=pointer]:
+            - img [ref=e900]
+      - generic [ref=e903]:
+        - generic [ref=e905]:
+          - generic [ref=e906]:
+            - heading "Santa Anita" [level=3] [ref=e907]
+            - generic [ref=e908]: comisaria
+          - generic [ref=e909]:
+            - generic [ref=e910]: COM-077
+            - generic [ref=e911]: pendiente
+        - generic [ref=e913]:
+          - img [ref=e914]
+          - generic [ref=e917]:
+            - generic [ref=e918]: Santa Anita, Lima
+            - generic [ref=e919]: Lima
+        - text: "0"
+        - generic [ref=e921]:
+          - button "Ver detalles" [ref=e922] [cursor=pointer]:
+            - img [ref=e923]
+          - button "Ver avances" [ref=e926] [cursor=pointer]:
+            - img [ref=e927]
+          - button "Ver historial" [ref=e929] [cursor=pointer]:
+            - img [ref=e930]
+          - button "Ver evolución" [ref=e932] [cursor=pointer]:
+            - img [ref=e933]
+          - button "Registrar avance manual" [ref=e935] [cursor=pointer]:
+            - img [ref=e936]
+          - button "Ver gráficos de avance" [ref=e938] [cursor=pointer]:
+            - img [ref=e939]
+          - button "Editar" [ref=e942] [cursor=pointer]:
+            - img [ref=e943]
+          - button "Eliminar" [ref=e945] [cursor=pointer]:
+            - img [ref=e946]
+      - generic [ref=e949]:
+        - generic [ref=e951]:
+          - generic [ref=e952]:
+            - heading "San Genaro" [level=3] [ref=e953]
+            - generic [ref=e954]: comisaria
+          - generic [ref=e955]:
+            - generic [ref=e956]: COM-076
+            - generic [ref=e957]: pendiente
+        - generic [ref=e959]:
+          - img [ref=e960]
+          - generic [ref=e963]:
+            - generic [ref=e964]: Los Olivos, Lima
+            - generic [ref=e965]: Lima
+        - text: "0"
+        - generic [ref=e967]:
+          - button "Ver detalles" [ref=e968] [cursor=pointer]:
+            - img [ref=e969]
+          - button "Ver avances" [ref=e972] [cursor=pointer]:
+            - img [ref=e973]
+          - button "Ver historial" [ref=e975] [cursor=pointer]:
+            - img [ref=e976]
+          - button "Ver evolución" [ref=e978] [cursor=pointer]:
+            - img [ref=e979]
+          - button "Registrar avance manual" [ref=e981] [cursor=pointer]:
+            - img [ref=e982]
+          - button "Ver gráficos de avance" [ref=e984] [cursor=pointer]:
+            - img [ref=e985]
+          - button "Editar" [ref=e988] [cursor=pointer]:
+            - img [ref=e989]
+          - button "Eliminar" [ref=e991] [cursor=pointer]:
+            - img [ref=e992]
+      - generic [ref=e995]:
+        - generic [ref=e997]:
+          - generic [ref=e998]:
+            - heading "San Cosme" [level=3] [ref=e999]
+            - generic [ref=e1000]: comisaria
+          - generic [ref=e1001]:
+            - generic [ref=e1002]: COM-075
+            - generic [ref=e1003]: pendiente
+        - generic [ref=e1005]:
+          - img [ref=e1006]
+          - generic [ref=e1009]:
+            - generic [ref=e1010]: La Victoria, Lima
+            - generic [ref=e1011]: Lima
+        - text: "0"
+        - generic [ref=e1013]:
+          - button "Ver detalles" [ref=e1014] [cursor=pointer]:
+            - img [ref=e1015]
+          - button "Ver avances" [ref=e1018] [cursor=pointer]:
+            - img [ref=e1019]
+          - button "Ver historial" [ref=e1021] [cursor=pointer]:
+            - img [ref=e1022]
+          - button "Ver evolución" [ref=e1024] [cursor=pointer]:
+            - img [ref=e1025]
+          - button "Registrar avance manual" [ref=e1027] [cursor=pointer]:
+            - img [ref=e1028]
+          - button "Ver gráficos de avance" [ref=e1030] [cursor=pointer]:
+            - img [ref=e1031]
+          - button "Editar" [ref=e1034] [cursor=pointer]:
+            - img [ref=e1035]
+          - button "Eliminar" [ref=e1037] [cursor=pointer]:
+            - img [ref=e1038]
+      - generic [ref=e1041]:
+        - generic [ref=e1043]:
+          - generic [ref=e1044]:
+            - heading "San Cayetano" [level=3] [ref=e1045]
+            - generic [ref=e1046]: comisaria
+          - generic [ref=e1047]:
+            - generic [ref=e1048]: COM-074
+            - generic [ref=e1049]: pendiente
+        - generic [ref=e1051]:
+          - img [ref=e1052]
+          - generic [ref=e1055]:
+            - generic [ref=e1056]: San Martín de Porres, Lima
+            - generic [ref=e1057]: Lima
+        - text: "0"
+        - generic [ref=e1059]:
+          - button "Ver detalles" [ref=e1060] [cursor=pointer]:
+            - img [ref=e1061]
+          - button "Ver avances" [ref=e1064] [cursor=pointer]:
+            - img [ref=e1065]
+          - button "Ver historial" [ref=e1067] [cursor=pointer]:
+            - img [ref=e1068]
+          - button "Ver evolución" [ref=e1070] [cursor=pointer]:
+            - img [ref=e1071]
+          - button "Registrar avance manual" [ref=e1073] [cursor=pointer]:
+            - img [ref=e1074]
+          - button "Ver gráficos de avance" [ref=e1076] [cursor=pointer]:
+            - img [ref=e1077]
+          - button "Editar" [ref=e1080] [cursor=pointer]:
+            - img [ref=e1081]
+          - button "Eliminar" [ref=e1083] [cursor=pointer]:
+            - img [ref=e1084]
+      - generic [ref=e1087]:
+        - generic [ref=e1089]:
+          - generic [ref=e1090]:
+            - heading "San Antonio de Jicamarca" [level=3] [ref=e1091]
+            - generic [ref=e1092]: comisaria
+          - generic [ref=e1093]:
+            - generic [ref=e1094]: COM-073
+            - generic [ref=e1095]: pendiente
+        - generic [ref=e1097]:
+          - img [ref=e1098]
+          - generic [ref=e1101]:
+            - generic [ref=e1102]: San Antonio, Lima
+            - generic [ref=e1103]: Lima
+        - text: "0"
+        - generic [ref=e1105]:
+          - button "Ver detalles" [ref=e1106] [cursor=pointer]:
+            - img [ref=e1107]
+          - button "Ver avances" [ref=e1110] [cursor=pointer]:
+            - img [ref=e1111]
+          - button "Ver historial" [ref=e1113] [cursor=pointer]:
+            - img [ref=e1114]
+          - button "Ver evolución" [ref=e1116] [cursor=pointer]:
+            - img [ref=e1117]
+          - button "Registrar avance manual" [ref=e1119] [cursor=pointer]:
+            - img [ref=e1120]
+          - button "Ver gráficos de avance" [ref=e1122] [cursor=pointer]:
+            - img [ref=e1123]
+          - button "Editar" [ref=e1126] [cursor=pointer]:
+            - img [ref=e1127]
+          - button "Eliminar" [ref=e1129] [cursor=pointer]:
+            - img [ref=e1130]
+      - generic [ref=e1133]:
+        - generic [ref=e1135]:
+          - generic [ref=e1136]:
+            - heading "Pro" [level=3] [ref=e1137]
+            - generic [ref=e1138]: comisaria
+          - generic [ref=e1139]:
+            - generic [ref=e1140]: COM-072
+            - generic [ref=e1141]: pendiente
+        - generic [ref=e1143]:
+          - img [ref=e1144]
+          - generic [ref=e1147]:
+            - generic [ref=e1148]: Lima, Lima
+            - generic [ref=e1149]: Lima
+        - text: "0"
+        - generic [ref=e1151]:
+          - button "Ver detalles" [ref=e1152] [cursor=pointer]:
+            - img [ref=e1153]
+          - button "Ver avances" [ref=e1156] [cursor=pointer]:
+            - img [ref=e1157]
+          - button "Ver historial" [ref=e1159] [cursor=pointer]:
+            - img [ref=e1160]
+          - button "Ver evolución" [ref=e1162] [cursor=pointer]:
+            - img [ref=e1163]
+          - button "Registrar avance manual" [ref=e1165] [cursor=pointer]:
+            - img [ref=e1166]
+          - button "Ver gráficos de avance" [ref=e1168] [cursor=pointer]:
+            - img [ref=e1169]
+          - button "Editar" [ref=e1172] [cursor=pointer]:
+            - img [ref=e1173]
+          - button "Eliminar" [ref=e1175] [cursor=pointer]:
+            - img [ref=e1176]
+      - generic [ref=e1179]:
+        - generic [ref=e1181]:
+          - generic [ref=e1182]:
+            - heading "Pamplona" [level=3] [ref=e1183]
+            - generic [ref=e1184]: comisaria
+          - generic [ref=e1185]:
+            - generic [ref=e1186]: COM-071
+            - generic [ref=e1187]: pendiente
+        - generic [ref=e1189]:
+          - img [ref=e1190]
+          - generic [ref=e1193]:
+            - generic [ref=e1194]: San Juan de Miraflores, Lima
+            - generic [ref=e1195]: Lima
+        - text: "0"
+        - generic [ref=e1197]:
+          - button "Ver detalles" [ref=e1198] [cursor=pointer]:
+            - img [ref=e1199]
+          - button "Ver avances" [ref=e1202] [cursor=pointer]:
+            - img [ref=e1203]
+          - button "Ver historial" [ref=e1205] [cursor=pointer]:
+            - img [ref=e1206]
+          - button "Ver evolución" [ref=e1208] [cursor=pointer]:
+            - img [ref=e1209]
+          - button "Registrar avance manual" [ref=e1211] [cursor=pointer]:
+            - img [ref=e1212]
+          - button "Ver gráficos de avance" [ref=e1214] [cursor=pointer]:
+            - img [ref=e1215]
+          - button "Editar" [ref=e1218] [cursor=pointer]:
+            - img [ref=e1219]
+          - button "Eliminar" [ref=e1221] [cursor=pointer]:
+            - img [ref=e1222]
+      - generic [ref=e1225]:
+        - generic [ref=e1227]:
+          - generic [ref=e1228]:
+            - heading "Mariscal Cáceres" [level=3] [ref=e1229]
+            - generic [ref=e1230]: comisaria
+          - generic [ref=e1231]:
+            - generic [ref=e1232]: COM-070
+            - generic [ref=e1233]: pendiente
+        - generic [ref=e1235]:
+          - img [ref=e1236]
+          - generic [ref=e1239]:
+            - generic [ref=e1240]: Lima, Lima
+            - generic [ref=e1241]: Lima
+        - text: "0"
+        - generic [ref=e1243]:
+          - button "Ver detalles" [ref=e1244] [cursor=pointer]:
+            - img [ref=e1245]
+          - button "Ver avances" [ref=e1248] [cursor=pointer]:
+            - img [ref=e1249]
+          - button "Ver historial" [ref=e1251] [cursor=pointer]:
+            - img [ref=e1252]
+          - button "Ver evolución" [ref=e1254] [cursor=pointer]:
+            - img [ref=e1255]
+          - button "Registrar avance manual" [ref=e1257] [cursor=pointer]:
+            - img [ref=e1258]
+          - button "Ver gráficos de avance" [ref=e1260] [cursor=pointer]:
+            - img [ref=e1261]
+          - button "Editar" [ref=e1264] [cursor=pointer]:
+            - img [ref=e1265]
+          - button "Eliminar" [ref=e1267] [cursor=pointer]:
+            - img [ref=e1268]
+      - generic [ref=e1271]:
+        - generic [ref=e1273]:
+          - generic [ref=e1274]:
+            - heading "José Gálvez" [level=3] [ref=e1275]
+            - generic [ref=e1276]: comisaria
+          - generic [ref=e1277]:
+            - generic [ref=e1278]: COM-069
+            - generic [ref=e1279]: pendiente
+        - generic [ref=e1281]:
+          - img [ref=e1282]
+          - generic [ref=e1285]:
+            - generic [ref=e1286]: Lima, Lima
+            - generic [ref=e1287]: Lima
+        - text: "0"
+        - generic [ref=e1289]:
+          - button "Ver detalles" [ref=e1290] [cursor=pointer]:
+            - img [ref=e1291]
+          - button "Ver avances" [ref=e1294] [cursor=pointer]:
+            - img [ref=e1295]
+          - button "Ver historial" [ref=e1297] [cursor=pointer]:
+            - img [ref=e1298]
+          - button "Ver evolución" [ref=e1300] [cursor=pointer]:
+            - img [ref=e1301]
+          - button "Registrar avance manual" [ref=e1303] [cursor=pointer]:
+            - img [ref=e1304]
+          - button "Ver gráficos de avance" [ref=e1306] [cursor=pointer]:
+            - img [ref=e1307]
+          - button "Editar" [ref=e1310] [cursor=pointer]:
+            - img [ref=e1311]
+          - button "Eliminar" [ref=e1313] [cursor=pointer]:
+            - img [ref=e1314]
+      - generic [ref=e1317]:
+        - generic [ref=e1319]:
+          - generic [ref=e1320]:
+            - heading "Jicamarca" [level=3] [ref=e1321]
+            - generic [ref=e1322]: comisaria
+          - generic [ref=e1323]:
+            - generic [ref=e1324]: COM-068
+            - generic [ref=e1325]: pendiente
+        - generic [ref=e1327]:
+          - img [ref=e1328]
+          - generic [ref=e1331]:
+            - generic [ref=e1332]: San Antonio, Lima
+            - generic [ref=e1333]: Lima
+        - text: "0"
+        - generic [ref=e1335]:
+          - button "Ver detalles" [ref=e1336] [cursor=pointer]:
+            - img [ref=e1337]
+          - button "Ver avances" [ref=e1340] [cursor=pointer]:
+            - img [ref=e1341]
+          - button "Ver historial" [ref=e1343] [cursor=pointer]:
+            - img [ref=e1344]
+          - button "Ver evolución" [ref=e1346] [cursor=pointer]:
+            - img [ref=e1347]
+          - button "Registrar avance manual" [ref=e1349] [cursor=pointer]:
+            - img [ref=e1350]
+          - button "Ver gráficos de avance" [ref=e1352] [cursor=pointer]:
+            - img [ref=e1353]
+          - button "Editar" [ref=e1356] [cursor=pointer]:
+            - img [ref=e1357]
+          - button "Eliminar" [ref=e1359] [cursor=pointer]:
+            - img [ref=e1360]
+      - generic [ref=e1363]:
+        - generic [ref=e1365]:
+          - generic [ref=e1366]:
+            - heading "Ensenada" [level=3] [ref=e1367]
+            - generic [ref=e1368]: comisaria
+          - generic [ref=e1369]:
+            - generic [ref=e1370]: COM-067
+            - generic [ref=e1371]: pendiente
+        - generic [ref=e1373]:
+          - img [ref=e1374]
+          - generic [ref=e1377]:
+            - generic [ref=e1378]: Ancón, Lima
+            - generic [ref=e1379]: Lima
+        - text: "0"
+        - generic [ref=e1381]:
+          - button "Ver detalles" [ref=e1382] [cursor=pointer]:
+            - img [ref=e1383]
+          - button "Ver avances" [ref=e1386] [cursor=pointer]:
+            - img [ref=e1387]
+          - button "Ver historial" [ref=e1389] [cursor=pointer]:
+            - img [ref=e1390]
+          - button "Ver evolución" [ref=e1392] [cursor=pointer]:
+            - img [ref=e1393]
+          - button "Registrar avance manual" [ref=e1395] [cursor=pointer]:
+            - img [ref=e1396]
+          - button "Ver gráficos de avance" [ref=e1398] [cursor=pointer]:
+            - img [ref=e1399]
+          - button "Editar" [ref=e1402] [cursor=pointer]:
+            - img [ref=e1403]
+          - button "Eliminar" [ref=e1405] [cursor=pointer]:
+            - img [ref=e1406]
+      - generic [ref=e1409]:
+        - generic [ref=e1411]:
+          - generic [ref=e1412]:
+            - heading "Collique" [level=3] [ref=e1413]
+            - generic [ref=e1414]: comisaria
+          - generic [ref=e1415]:
+            - generic [ref=e1416]: COM-066
+            - generic [ref=e1417]: pendiente
+        - generic [ref=e1419]:
+          - img [ref=e1420]
+          - generic [ref=e1423]:
+            - generic [ref=e1424]: Comas, Lima
+            - generic [ref=e1425]: Lima
+        - text: "0"
+        - generic [ref=e1427]:
+          - button "Ver detalles" [ref=e1428] [cursor=pointer]:
+            - img [ref=e1429]
+          - button "Ver avances" [ref=e1432] [cursor=pointer]:
+            - img [ref=e1433]
+          - button "Ver historial" [ref=e1435] [cursor=pointer]:
+            - img [ref=e1436]
+          - button "Ver evolución" [ref=e1438] [cursor=pointer]:
+            - img [ref=e1439]
+          - button "Registrar avance manual" [ref=e1441] [cursor=pointer]:
+            - img [ref=e1442]
+          - button "Ver gráficos de avance" [ref=e1444] [cursor=pointer]:
+            - img [ref=e1445]
+          - button "Editar" [ref=e1448] [cursor=pointer]:
+            - img [ref=e1449]
+          - button "Eliminar" [ref=e1451] [cursor=pointer]:
+            - img [ref=e1452]
+      - generic [ref=e1455]:
+        - generic [ref=e1457]:
+          - generic [ref=e1458]:
+            - heading "Ciudad y Campo" [level=3] [ref=e1459]
+            - generic [ref=e1460]: comisaria
+          - generic [ref=e1461]:
+            - generic [ref=e1462]: COM-065
+            - generic [ref=e1463]: pendiente
+        - generic [ref=e1465]:
+          - img [ref=e1466]
+          - generic [ref=e1469]:
+            - generic [ref=e1470]: Lima, Lima
+            - generic [ref=e1471]: Lima
+        - text: "0"
+        - generic [ref=e1473]:
+          - button "Ver detalles" [ref=e1474] [cursor=pointer]:
+            - img [ref=e1475]
+          - button "Ver avances" [ref=e1478] [cursor=pointer]:
+            - img [ref=e1479]
+          - button "Ver historial" [ref=e1481] [cursor=pointer]:
+            - img [ref=e1482]
+          - button "Ver evolución" [ref=e1484] [cursor=pointer]:
+            - img [ref=e1485]
+          - button "Registrar avance manual" [ref=e1487] [cursor=pointer]:
+            - img [ref=e1488]
+          - button "Ver gráficos de avance" [ref=e1490] [cursor=pointer]:
+            - img [ref=e1491]
+          - button "Editar" [ref=e1494] [cursor=pointer]:
+            - img [ref=e1495]
+          - button "Eliminar" [ref=e1497] [cursor=pointer]:
+            - img [ref=e1498]
+      - generic [ref=e1501]:
+        - generic [ref=e1503]:
+          - generic [ref=e1504]:
+            - heading "Chancay" [level=3] [ref=e1505]
+            - generic [ref=e1506]: comisaria
+          - generic [ref=e1507]:
+            - generic [ref=e1508]: COM-064
+            - generic [ref=e1509]: pendiente
+        - generic [ref=e1511]:
+          - img [ref=e1512]
+          - generic [ref=e1515]:
+            - generic [ref=e1516]: Chancay, Lima
+            - generic [ref=e1517]: Lima
+        - text: "0"
+        - generic [ref=e1519]:
+          - button "Ver detalles" [ref=e1520] [cursor=pointer]:
+            - img [ref=e1521]
+          - button "Ver avances" [ref=e1524] [cursor=pointer]:
+            - img [ref=e1525]
+          - button "Ver historial" [ref=e1527] [cursor=pointer]:
+            - img [ref=e1528]
+          - button "Ver evolución" [ref=e1530] [cursor=pointer]:
+            - img [ref=e1531]
+          - button "Registrar avance manual" [ref=e1533] [cursor=pointer]:
+            - img [ref=e1534]
+          - button "Ver gráficos de avance" [ref=e1536] [cursor=pointer]:
+            - img [ref=e1537]
+          - button "Editar" [ref=e1540] [cursor=pointer]:
+            - img [ref=e1541]
+          - button "Eliminar" [ref=e1543] [cursor=pointer]:
+            - img [ref=e1544]
+      - generic [ref=e1547]:
+        - generic [ref=e1549]:
+          - generic [ref=e1550]:
+            - heading "Carabayllo" [level=3] [ref=e1551]
+            - generic [ref=e1552]: comisaria
+          - generic [ref=e1553]:
+            - generic [ref=e1554]: COM-063
+            - generic [ref=e1555]: pendiente
+        - generic [ref=e1557]:
+          - img [ref=e1558]
+          - generic [ref=e1561]:
+            - generic [ref=e1562]: Carabayllo, Lima
+            - generic [ref=e1563]: Lima
+        - text: "0"
+        - generic [ref=e1565]:
+          - button "Ver detalles" [ref=e1566] [cursor=pointer]:
+            - img [ref=e1567]
+          - button "Ver avances" [ref=e1570] [cursor=pointer]:
+            - img [ref=e1571]
+          - button "Ver historial" [ref=e1573] [cursor=pointer]:
+            - img [ref=e1574]
+          - button "Ver evolución" [ref=e1576] [cursor=pointer]:
+            - img [ref=e1577]
+          - button "Registrar avance manual" [ref=e1579] [cursor=pointer]:
+            - img [ref=e1580]
+          - button "Ver gráficos de avance" [ref=e1582] [cursor=pointer]:
+            - img [ref=e1583]
+          - button "Editar" [ref=e1586] [cursor=pointer]:
+            - img [ref=e1587]
+          - button "Eliminar" [ref=e1589] [cursor=pointer]:
+            - img [ref=e1590]
+      - generic [ref=e1593]:
+        - generic [ref=e1595]:
+          - generic [ref=e1596]:
+            - heading "Alfonso Ugarte" [level=3] [ref=e1597]
+            - generic [ref=e1598]: comisaria
+          - generic [ref=e1599]:
+            - generic [ref=e1600]: COM-062
+            - generic [ref=e1601]: pendiente
+        - generic [ref=e1603]:
+          - img [ref=e1604]
+          - generic [ref=e1607]:
+            - generic [ref=e1608]: Lima, Lima
+            - generic [ref=e1609]: Lima
+        - text: "0"
+        - generic [ref=e1611]:
+          - button "Ver detalles" [ref=e1612] [cursor=pointer]:
+            - img [ref=e1613]
+          - button "Ver avances" [ref=e1616] [cursor=pointer]:
+            - img [ref=e1617]
+          - button "Ver historial" [ref=e1619] [cursor=pointer]:
+            - img [ref=e1620]
+          - button "Ver evolución" [ref=e1622] [cursor=pointer]:
+            - img [ref=e1623]
+          - button "Registrar avance manual" [ref=e1625] [cursor=pointer]:
+            - img [ref=e1626]
+          - button "Ver gráficos de avance" [ref=e1628] [cursor=pointer]:
+            - img [ref=e1629]
+          - button "Editar" [ref=e1632] [cursor=pointer]:
+            - img [ref=e1633]
+          - button "Eliminar" [ref=e1635] [cursor=pointer]:
+            - img [ref=e1636]
+    - generic [ref=e1641]:
+      - generic [ref=e1642]:
+        - generic [ref=e1643]:
+          - img [ref=e1645]
+          - heading "Nueva Comisaría" [level=3] [ref=e1649]
+        - button [ref=e1650] [cursor=pointer]:
+          - img [ref=e1651]
+      - generic [ref=e1653]:
+        - generic [ref=e1655]:
+          - generic [ref=e1656]: Nombre de la Comisaría *
+          - 'textbox "Ej: CPNP Ensenada, Comisaría Alfonso Ugarte, CPNP San Borja" [ref=e1657]'
+          - paragraph [ref=e1658]: 📝 Escribe el nombre de la comisaría manualmente
+        - generic [ref=e1659]:
+          - generic [ref=e1660]: Dirección Completa *
+          - 'textbox "Escribe: CPNP Carabayllo, Comisaría Alfonso Ugarte, etc..." [ref=e1661]'
+          - paragraph [ref=e1662]: 📍 Escribe la dirección completa de la comisaría
+        - generic [ref=e1663]:
+          - generic [ref=e1664]:
+            - generic [ref=e1665]: Distrito *
+            - textbox [ref=e1666]
+          - generic [ref=e1667]:
+            - generic [ref=e1668]: Provincia *
+            - textbox [ref=e1669]
+          - generic [ref=e1670]:
+            - generic [ref=e1671]: Departamento *
+            - textbox [ref=e1672]
+        - generic [ref=e1673]:
+          - generic [ref=e1674]: Presupuesto Total (S/)
+          - textbox "0.00" [ref=e1675]
+        - generic [ref=e1676]:
+          - generic [ref=e1677]:
+            - img [ref=e1678]
+            - text: Imagen de la Comisaría
+          - generic [ref=e1681] [cursor=pointer]:
+            - img [ref=e1683]
+            - paragraph [ref=e1686]: Haz clic para seleccionar una imagen
+            - paragraph [ref=e1687]: JPG, PNG o GIF (máximo 5MB)
+        - generic [ref=e1688]:
+          - generic [ref=e1689]: Coordenadas GPS (Opcional)
+          - 'textbox "Ejemplo: -12.0464, -77.0428" [ref=e1690]'
+          - paragraph [ref=e1691]: "💡 Pega las coordenadas desde Google Maps: clic derecho → \"¿Qué hay aquí?\" → copiar coordenadas"
+      - generic [ref=e1692]:
+        - button "Cancelar" [ref=e1693] [cursor=pointer]
+        - button "Crear Comisaría" [ref=e1694] [cursor=pointer]
+  - generic [ref=e365]:
+    - img [ref=e367]
+    - button "Open Tanstack query devtools" [ref=e435] [cursor=pointer]:
+      - img [ref=e436]

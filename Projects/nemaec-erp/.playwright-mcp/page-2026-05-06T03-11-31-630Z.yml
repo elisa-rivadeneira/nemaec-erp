@@ -1,0 +1,73 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - img "NEMAEC Logo" [ref=e4]
+    - generic [ref=e6]: SISTEMA NEMAEC
+    - generic [ref=e7]: Cargando Sistema de Gestión Nacional...
+  - generic [ref=e9]:
+    - generic [ref=e10]:
+      - generic [ref=e12]:
+        - img "NEMAEC Logo" [ref=e14]
+        - generic [ref=e15]:
+          - generic [ref=e16]: SISTEMA NEMAEC
+          - generic [ref=e17]: Gestión de Obras Nacionales
+      - navigation [ref=e18]:
+        - link "Dashboard Nacional" [ref=e19] [cursor=pointer]:
+          - /url: /dashboard
+          - img [ref=e20]
+          - generic [ref=e22]: Dashboard Nacional
+        - button "Comisarías" [ref=e24] [cursor=pointer]:
+          - img [ref=e25]
+          - generic [ref=e27]: Comisarías
+          - img [ref=e28]
+        - button "Seguimiento" [ref=e31] [cursor=pointer]:
+          - img [ref=e32]
+          - generic [ref=e34]: Seguimiento
+          - img [ref=e35]
+        - button "Usuarios de Obra" [ref=e38] [cursor=pointer]:
+          - img [ref=e39]
+          - generic [ref=e41]: Usuarios de Obra
+          - img [ref=e42]
+        - link "Reportes" [ref=e44] [cursor=pointer]:
+          - /url: /reportes
+          - img [ref=e45]
+          - generic [ref=e47]: Reportes
+        - link "Configuración" [ref=e48] [cursor=pointer]:
+          - /url: /configuracion
+          - img [ref=e49]
+          - generic [ref=e52]: Configuración
+      - generic [ref=e54]:
+        - img [ref=e55]
+        - generic [ref=e57]:
+          - generic [ref=e58]: 8 Alertas Críticas
+          - generic [ref=e59]: Requieren acción inmediata
+      - button [ref=e61] [cursor=pointer]:
+        - img [ref=e62]
+    - generic [ref=e65]:
+      - generic [ref=e66]:
+        - generic [ref=e67]:
+          - generic [ref=e68]:
+            - img [ref=e69]
+            - heading "Avances desde App Móvil" [level=1] [ref=e71]
+          - paragraph [ref=e72]: Registros verificados por el monitor de obra en campo
+        - generic [ref=e73]:
+          - button "Sincronizar al ERP" [disabled] [ref=e74]:
+            - img [ref=e75]
+            - text: Sincronizar al ERP
+          - button "Actualizar" [disabled] [ref=e77]:
+            - img [ref=e78]
+            - text: Actualizar
+      - generic [ref=e80]:
+        - generic [ref=e81]:
+          - paragraph [ref=e82]: Total registros
+          - paragraph [ref=e83]: "0"
+        - generic [ref=e84]:
+          - paragraph [ref=e85]: Confirmados
+          - paragraph [ref=e86]: "0"
+          - paragraph [ref=e87]: Monitor estuvo de acuerdo
+        - generic [ref=e88]:
+          - paragraph [ref=e89]: Corregidos
+          - paragraph [ref=e90]: "0"
+          - paragraph [ref=e91]: Monitor ajustó el %
+        - generic [ref=e92]:
+          - paragraph [ref=e93]: Comisarías activas
+          - paragraph [ref=e94]: "0"
